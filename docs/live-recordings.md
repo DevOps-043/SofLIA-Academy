@@ -3,6 +3,8 @@
 Estado: implementado y verificado localmente; pendiente de activación y PoC real.
 Cambio coordinado: SofLIA-HUB/openspec/changes/record-webinars-and-publish-replays.
 
+Las aulas nuevas pueden usar Video SDK. Su activación, credenciales independientes e importación REST se describen en [aulas con Video SDK](live-video-sdk.md). Los requisitos de anfitrión Meeting y licencia Webinars de esta guía corresponden a las sesiones Meeting anteriores.
+
 ## Responsabilidad y acceso
 
 Soflia programa los eventos mediante anfitriones centrales de su cuenta Zoom.

@@ -1,4 +1,5 @@
 import "server-only";
+import { createVideoStudioJoin } from "./video-sdk.server";
 import { createHmac } from "node:crypto";
 import { z } from "zod";
 import { checked, LiveError, type LiveContext } from "./server";
@@ -46,6 +47,7 @@ export async function createZoomStudioJoin(
 ) {
   if (["ended", "cancelled"].includes(session.status))
     throw new LiveError(409, "La sesión está cerrada");
+  if (session.video_provider === "zoom-video") return createVideoStudioJoin(context, session, actor);
   const clientId = process.env.ZOOM_MEETING_SDK_CLIENT_ID;
   const clientSecret = process.env.ZOOM_MEETING_SDK_CLIENT_SECRET;
   if (!clientId || !clientSecret)

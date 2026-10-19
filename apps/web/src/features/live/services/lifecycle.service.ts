@@ -1,4 +1,5 @@
 import "server-only";
+import { endVideoSession } from "../video-sdk.server";
 import { z } from "zod";
 import type { LiveContext } from "../server";
 import { checked, LiveError } from "../errors";
@@ -22,9 +23,10 @@ export async function changeSessionStatus(
   const webinar = session.session_type === "webinar";
   const resourceId = webinar ? session.zoom_webinar_id : session.zoom_meeting_id;
   const resource = webinar ? "webinars" : "meetings";
-  if (resourceId && status === "cancelled")
+  if (session.video_provider === "zoom-video") await endVideoSession(context, session);
+  if (session.video_provider !== "zoom-video" && resourceId && status === "cancelled")
     await zoomRequest(`/${resource}/${resourceId}`, "DELETE");
-  if (resourceId && status === "ended")
+  if (session.video_provider !== "zoom-video" && resourceId && status === "ended")
     await zoomRequest(`/${resource}/${resourceId}/status`, "PUT", {
       action: "end",
     });

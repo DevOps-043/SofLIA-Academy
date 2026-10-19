@@ -39,8 +39,8 @@ export function InstructorForms({
           </select>
         </label>
         <p className={styles.muted}>
-          Para una clase normal, elige Reunión. Webinar requiere licencia de
-          Zoom Webinars y permisos adicionales en la integración.
+          Para una clase participativa, elige Reunión. La disponibilidad del
+          formato Webinar depende de la configuración audiovisual de Soflia.
         </p>
         <label>
           Curso

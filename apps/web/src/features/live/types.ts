@@ -9,6 +9,7 @@ export interface LiveSession {
   starts_at: string;
   duration_minutes: number;
   status: LiveStatus;
+  video_provider?: "zoom-meeting" | "zoom-video";
   zoom_meeting_id: string | null;
   zoom_webinar_id?: string | null;
   session_type?: "meeting" | "webinar";

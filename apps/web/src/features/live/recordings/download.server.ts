@@ -30,13 +30,14 @@ async function responseFor(
   signal: AbortSignal,
   refresh = false,
   validator = "",
+  tokenFor: (refresh: boolean) => Promise<string> = recordingDownloadToken,
 ) {
   let url = recordingDownloadUrl(value);
   const initial = url.origin;
   const authorized = ["zoom.us", "zoom.com"].some(
     (domain) => url.hostname === domain || url.hostname.endsWith("." + domain),
   );
-  const token = await recordingDownloadToken(refresh);
+  const token = await tokenFor(refresh);
   for (let redirect = 0; redirect < 5; redirect++) {
     const response = await fetch(url, {
       redirect: "manual",
@@ -59,7 +60,7 @@ async function responseFor(
     }
     if (response.status === 401 && !refresh) {
       await response.body?.cancel();
-      return responseFor(value, offset, signal, true, validator);
+      return responseFor(value, offset, signal, true, validator, tokenFor);
     }
     return response;
   }
@@ -73,6 +74,7 @@ export async function downloadRecording(
   directory: string,
   signal: AbortSignal,
   heartbeat: () => Promise<void>,
+  tokenFor: (refresh: boolean) => Promise<string> = recordingDownloadToken,
 ) {
   if (
     !/^[a-f0-9-]{36}$/i.test(fileId) ||
@@ -101,7 +103,7 @@ export async function downloadRecording(
   let offset = strong ? prior?.size || 0 : 0;
   if (offset > expectedBytes) offset = 0;
   if (offset === expectedBytes) return target;
-  const response = await responseFor(value, offset, signal, false, validator);
+  const response = await responseFor(value, offset, signal, false, validator, tokenFor);
   if (!response.ok || !response.body) {
     await response.body?.cancel();
     throw new Error("No se pudo descargar el vídeo de Zoom.");

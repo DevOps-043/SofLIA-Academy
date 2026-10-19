@@ -61,7 +61,9 @@ export const studioSnapshotSchema = z.object({
   asset_urls: z.record(z.string(), z.string().url().max(4096)),
 }).strict();
 export type StudioSnapshot = z.infer<typeof studioSnapshotSchema>;
-export const zoomJoinSchema = z.object({ meetingNumber: z.string().regex(/^\d{9,11}$/), signature: text(4096), userName: text(160), password: z.string().max(100), zak: z.string().max(8192).optional(), userEmail:z.string().email().max(254).optional(), recording_required:z.literal(true).default(true), recording_recovery_allowed:z.boolean().default(false) }).strict();
+const meetingJoinSchema = z.object({ provider: z.literal("zoom-meeting").optional(), meetingNumber: z.string().regex(/^\d{9,11}$/), signature: text(4096), userName: text(160), password: z.string().max(100), zak: z.string().max(8192).optional(), userEmail:z.string().email().max(254).optional(), recording_required:z.literal(true).default(true), recording_recovery_allowed:z.boolean().default(false) }).strict();
+export const videoJoinSchema = z.object({ provider: z.literal("zoom-video"), sessionName: text(200), token: text(4096), userName: text(160), password: z.string().min(1).max(10), recording_required: z.literal(true).default(true) }).strict();
+export const zoomJoinSchema = z.union([meetingJoinSchema, videoJoinSchema]);
 export type ZoomJoin = z.infer<typeof zoomJoinSchema>;
 export const studioResponseSchema = z.object({ snapshot: studioSnapshotSchema.optional(), zoom: zoomJoinSchema.optional(), recording_snapshot: recordingSnapshotSchema.optional(), playback: recordingResponseSchema.shape.playback, upload: z.object({ path: text(500), token: text(8192), url: z.string().url().max(4096) }).strict().optional() }).strict();
 export type StudioResult = ({ success: true } & z.infer<typeof studioResponseSchema>) | { success: false; code: 'not_ready' | 'access_denied' | 'conflict' | 'unavailable'; error: string };
