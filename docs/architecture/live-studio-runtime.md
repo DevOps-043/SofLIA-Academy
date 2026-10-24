@@ -41,7 +41,7 @@ localmente en PGlite, incluida aplicación doble, roles, deduplicación, concurr
 y payload con ledger manipulado. No se aplicó SQL remoto ni se publicó API.
 
 Orden de rollout: migración en staging, API Learning, comprobar consumidores
-anteriores, después Hub con `participation_version: 1`. Sin negociación, el servicio
+anteriores, después Hub que negocia por cabecera `X-Soflia-Studio-Participation: 1`. Sin negociación, el servicio
 proyecta exactamente los campos del snapshot anterior; nuevos comandos requieren
 negociación. El contrato conserva la unión Meeting/Video ya consumida por Hub,
 sin activar un proveedor adicional ni cambiar credenciales. Probar dos cuentas
@@ -59,3 +59,12 @@ al cambio y ESLint no encuentra @typescript-eslint/recommended; no se modificó
 su baseline. El reporte completo del consumidor está en Hub, cambio OpenSpec
 redesign-participant-studio, reports/reactions-and-chat-interval.md. El ejemplo
 loopback no acredita Realtime Supabase ni una reunión Zoom real.
+
+
+Corrección de ingreso con API anterior: Hub ya no agrega participation_version al
+JSON, porque el contrato anterior es estricto. La cabecera nueva se ignora en el
+servidor anterior y se interpreta en el nuevo. La respuesta moderna confirma
+snapshot.participation_version=1; sin confirmación Hub oculta comandos nuevos y
+conserva aula/chat/medios anteriores. El parámetro JSON opcional queda aceptado
+solo para consumidores intermedios. La cabecera no autoriza ninguna operación:
+se siguen verificando bearer, organización, membresía y rol en el servidor.

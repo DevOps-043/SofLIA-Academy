@@ -17,8 +17,8 @@ describe('fronteras del estudio en Learning', () => {
     const state=emptyStudioState();state.moderation.message_interval_seconds=15;
     const ctx=context({from:(table:string)=>{const chain={select:()=>chain,eq:()=>chain,single:async()=>({data:{display_name:'Docente'},error:null}),maybeSingle:async()=>({data:table==='live_studio_state'?{state}:table==='organizations'?{is_active:true}:null,error:null})};return chain;}});
     mocks.liveSession.mockResolvedValue({session:{id:session,course_id:org,status:'live',title:'Clase'},canManage:true});mocks.liveActorContext.mockResolvedValue(ctx);
-    const legacy=await executeStudio(ctx,session,{type:'snapshot'});expect(legacy.snapshot?.state).not.toHaveProperty('reaction_events');expect(legacy.snapshot?.state.moderation).not.toHaveProperty('message_interval_seconds');
-    const modern=await executeStudio(ctx,session,{type:'snapshot'},1);expect(modern.snapshot?.state).toHaveProperty('reaction_events',[]);expect(modern.snapshot?.state.moderation).toHaveProperty('message_interval_seconds',15);
+    const legacy=await executeStudio(ctx,session,{type:'snapshot'});expect(legacy.snapshot).not.toHaveProperty('participation_version');expect(legacy.snapshot?.state).not.toHaveProperty('reaction_events');expect(legacy.snapshot?.state.moderation).not.toHaveProperty('message_interval_seconds');
+    const modern=await executeStudio(ctx,session,{type:'snapshot'},1);expect(modern.snapshot).toHaveProperty('participation_version',1);expect(modern.snapshot?.state).toHaveProperty('reaction_events',[]);expect(modern.snapshot?.state.moderation).toHaveProperty('message_interval_seconds',15);
     await expect(executeStudio(ctx,session,{type:'command',id:user,revision:0,command:{type:'reaction',emoji:'👏',room_id:null}})).rejects.toThrow('Actualiza Hub');
   });
   it('delega presencia obsoleta al merge SQL pero mantiene CAS para acciones del instructor', async () => {

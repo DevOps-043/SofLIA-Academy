@@ -83,7 +83,7 @@ export async function executeStudio(context: LiveContext, sessionId: string, ope
   // Revalidar membresía tras llamadas al proveedor antes de entregar contenido.
   const finalAccess = await revalidateStudioAccess(context, sessionId);
   if (finalAccess.canManage !== canManage) throw new LiveError(403, 'Los permisos de la sesión cambiaron');
-  const response=studioResponseSchema.parse({ snapshot: { session_id: sessionId, user_id: actor.id, can_manage: actor.canManage, title: session.title, server_time: now, state: visible, asset_urls } });
+  const response=studioResponseSchema.parse({ snapshot: { ...(participationVersion===1?{participation_version:1 as const}:{}), session_id: sessionId, user_id: actor.id, can_manage: actor.canManage, title: session.title, server_time: now, state: visible, asset_urls } });
   if(participationVersion!==1&&response.snapshot){
     // Los Hub anteriores usan esquemas estrictos: mantener exactamente su forma.
     const {reaction_events:_events,participation:_participation,...legacyState}=response.snapshot.state;

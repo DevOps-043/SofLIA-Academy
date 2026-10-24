@@ -61,6 +61,7 @@ export const studioStateSchema = z.object({
 }).strict();
 export type StudioState = z.infer<typeof studioStateSchema>;
 export const studioSnapshotSchema = z.object({
+  participation_version:z.literal(1).optional(),
   session_id: id, user_id: id, can_manage: z.boolean(), title: text(160), server_time: z.string().datetime(),
   state: studioStateSchema.omit({ quizzes: true }).extend({ quizzes: z.array(quizBase.omit({ correct: true }).extend({ correct: z.number().int().min(0).max(5).optional() })).max(20) }),
   asset_urls: z.record(z.string(), z.string().url().max(4096)),
