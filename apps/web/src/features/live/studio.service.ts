@@ -17,7 +17,8 @@ async function revalidateStudioAccess(context: LiveContext, sessionId: string) {
   return liveSession(fresh, sessionId);
 }
 
-export async function executeStudio(context: LiveContext, sessionId: string, operation: z.infer<typeof studioOperationSchema>) {
+export async function executeStudio(context: LiveContext, sessionId: string, operation: z.infer<typeof studioOperationSchema>, participationVersion:0|1=0) {
+  if(participationVersion!==1&&operation.type==='command'&&['reaction','chat_interval'].includes(operation.command.type))throw new LiveError(409,'Actualiza Hub para usar los controles de participación.');
   if(operation.type==='recordings')return recordingOperation(context,sessionId,operation.operation);
   const { session, canManage } = await liveSession(context, sessionId);
   const user = checked(await context.db.from('users').select('display_name,first_name').eq('id', context.userId).single());
@@ -52,12 +53,14 @@ export async function executeStudio(context: LiveContext, sessionId: string, ope
       if (operation.command.type !== 'presence' && operation.revision !== state.revision) throw new LiveError(409, 'El estado cambió. Actualiza antes de repetir la acción');
       try { next = applyStudioCommand(state, operation.command, actor, operation.id, new Date().toISOString(), randomUUID); }
       catch (error) {
-        if (error instanceof StudioDomainError) throw new LiveError(error.code === 'forbidden' ? 403 : error.code === 'closed' ? 409 : 400, error.message);
+        if (error instanceof StudioDomainError) throw new LiveError(error.code === 'forbidden' ? 403 : error.code === 'closed' ? 409 : error.code === 'rate_limited' ? 429 : 400, error.message);
         throw error;
       }
       await verifyStudioAssets(context, sessionId, state, next);
       const committed = await context.db.rpc('live_studio_commit', { p_org: context.orgId, p_user: context.userId, p_session: sessionId, p_id: operation.id, p_hash: hash, p_expected: operation.revision, p_type: operation.command.type, p_state: next as unknown as Json });
       if (committed.error) {
+        if(committed.error.message.includes('STUDIO_SLOW_MODE'))throw new LiveError(429,'Espera el intervalo configurado antes de volver a enviar.');
+        if(committed.error.message.includes('STUDIO_REACTION_RATE'))throw new LiveError(429,'Espera un segundo antes de volver a reaccionar.');
         if (/STUDIO_(CONFLICT|ID_CONFLICT)/.test(committed.error.message)) throw new LiveError(409, 'El estado cambió. Actualiza antes de repetir la acción');
         if (committed.error.message.includes('LIVE_FORBIDDEN')) throw new LiveError(403, 'El acceso a la sesión cambió');
         if (committed.error.message.includes('STUDIO_INVALID_ASSET')) throw new LiveError(409, 'El archivo caducó. Vuelve a subirlo antes de publicar');
@@ -80,5 +83,12 @@ export async function executeStudio(context: LiveContext, sessionId: string, ope
   // Revalidar membresía tras llamadas al proveedor antes de entregar contenido.
   const finalAccess = await revalidateStudioAccess(context, sessionId);
   if (finalAccess.canManage !== canManage) throw new LiveError(403, 'Los permisos de la sesión cambiaron');
-  return studioResponseSchema.parse({ snapshot: { session_id: sessionId, user_id: actor.id, can_manage: actor.canManage, title: session.title, server_time: now, state: visible, asset_urls } });
+  const response=studioResponseSchema.parse({ snapshot: { session_id: sessionId, user_id: actor.id, can_manage: actor.canManage, title: session.title, server_time: now, state: visible, asset_urls } });
+  if(participationVersion!==1&&response.snapshot){
+    // Los Hub anteriores usan esquemas estrictos: mantener exactamente su forma.
+    const {reaction_events:_events,participation:_participation,...legacyState}=response.snapshot.state;
+    const {message_interval_seconds:_interval,...moderation}=legacyState.moderation;
+    return {snapshot:{...response.snapshot,state:{...legacyState,moderation}}};
+  }
+  return response;
 }

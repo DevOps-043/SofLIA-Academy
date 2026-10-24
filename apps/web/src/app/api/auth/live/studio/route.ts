@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const limited = rateLimitMiddleware(request, input.operation.type === 'snapshot' ? RateLimitTier.API_READ : RateLimitTier.API_MUTATION, userId);
     if (limited) return new NextResponse(limited.body, { status: limited.status, headers: { ...Object.fromEntries(new Headers(limited.headers)), 'Cache-Control': 'no-store' } });
     const context = await hubActorContext(userId, input.organization_slug);
-    const response = json(await executeStudio(context, input.session_id, input.operation));
+    const response = json(await executeStudio(context, input.session_id, input.operation,input.participation_version??0));
     response.headers.set('Referrer-Policy', 'no-referrer');
     return response;
   });

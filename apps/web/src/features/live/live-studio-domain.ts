@@ -1,11 +1,11 @@
 import { studioCommandSchema, studioStateSchema, type StudioCommand, type StudioState } from './live-studio.contract';
 
 export class StudioDomainError extends Error {
-  constructor(public code: 'forbidden' | 'invalid' | 'closed', message: string) { super(message); }
+  constructor(public code: 'forbidden' | 'invalid' | 'closed' | 'rate_limited', message: string) { super(message); }
 }
 export type StudioActor = { id: string; name: string; canManage: boolean; courseId: string; status: string };
 export function emptyStudioState(): StudioState {
-  return { version: 1, revision: 0, engine_revision: null, moderation: { locked: false, reactions: true, restrictions: {} }, messages: [], members: [], rooms: [], scenes: [], active_scene_id: null, materials: [], quizzes: [], active_quiz_id: null, answers: [], practices: [], submissions: [], clock: null };
+  return { version: 1, revision: 0, engine_revision: null, moderation: { locked: false, reactions: true, message_interval_seconds:0, restrictions: {} }, reaction_events:[],participation:{},messages: [], members: [], rooms: [], scenes: [], active_scene_id: null, materials: [], quizzes: [], active_quiz_id: null, answers: [], practices: [], submissions: [], clock: null };
 }
 function deny(message = 'No tienes permisos para esta operación'): never { throw new StudioDomainError('forbidden', message); }
 function invalid(message: string): never { throw new StudioDomainError('invalid', message); }
@@ -18,14 +18,29 @@ export function applyStudioCommand(previous: StudioState, input: StudioCommand, 
   const state = structuredClone(studioStateSchema.parse(previous));
   if (state.moderation.restrictions[actor.id] === 'blocked') deny('Tu acceso a esta sesión está bloqueado');
   if (['ended', 'cancelled'].includes(actor.status) && command.type !== 'presence') throw new StudioDomainError('closed', 'La sesión está cerrada');
-  const participantCommands = ['post', 'presence', 'answer_quiz', 'submit_practice'];
+  const participantCommands = ['post', 'reaction', 'presence', 'answer_quiz', 'submit_practice'];
   if (!actor.canManage && !participantCommands.includes(command.type)) deny();
   const currentRoom = state.members.find((member) => member.user_id === actor.id)?.room_id ?? null;
   const roomAllowed = (room: string | null) => !room || state.rooms.some((entry) => entry.id === room && (actor.canManage || entry.user_ids.includes(actor.id)));
+  const milliseconds=Date.parse(now);
+  state.reaction_events=state.reaction_events.filter(event=>milliseconds-Date.parse(event.created_at)>=0&&milliseconds-Date.parse(event.created_at)<5000);
+  state.participation=Object.fromEntries(Object.entries(state.participation).filter(([,entry])=>Math.max(Date.parse(entry.last_message_at||'')||0,Date.parse(entry.last_reaction_at||'')||0)>milliseconds-300000));
+  const previousParticipation=state.participation[actor.id]??{};
+  function waitSince(timestamp:string|undefined,seconds:number){const remaining=timestamp?Math.ceil((Date.parse(timestamp)+seconds*1000-milliseconds)/1000):0;if(remaining>0)throw new StudioDomainError('rate_limited',`Espera ${remaining} s antes de volver a enviar.`);}
   switch (command.type) {
+    case 'chat_interval': state.moderation.message_interval_seconds=command.seconds;break;
+    case 'reaction': {
+      if(!state.moderation.reactions)deny('Las reacciones están deshabilitadas');
+      if(!roomAllowed(command.room_id)||command.room_id!==currentRoom)deny('Entra a la sala antes de reaccionar');
+      waitSince(previousParticipation.last_reaction_at,1);
+      state.participation[actor.id]={...previousParticipation,last_reaction_at:now};
+      state.reaction_events=[...state.reaction_events.slice(-99),{id:commandId,user_id:actor.id,author:actor.name,emoji:command.emoji,room_id:command.room_id,created_at:now}];break;
+    }
     case 'post': {
       if (!actor.canManage && (state.moderation.locked || state.moderation.restrictions[actor.id] === 'chat')) deny('Tu chat está en modo lectura');
       if (!roomAllowed(command.room_id) || command.room_id !== currentRoom) deny('Entra a la sala antes de escribir');
+      if(!actor.canManage)waitSince(previousParticipation.last_message_at,state.moderation.message_interval_seconds);
+      state.participation[actor.id]={...previousParticipation,last_message_at:now};
       state.messages = [...state.messages.slice(-99), { id: commandId, user_id: actor.id, author: actor.name, instructor: actor.canManage, content: command.content, question: command.question, room_id: command.room_id, created_at: now }]; break;
     }
     case 'moderation': state.moderation.locked = command.locked; state.moderation.reactions = command.reactions; break;
@@ -99,6 +114,8 @@ export function projectStudioState(state: StudioState, actor: StudioActor, now: 
   if (state.moderation.restrictions[actor.id] === 'blocked') deny('Tu acceso a esta sesión está bloqueado');
   return {
     ...state,
+    reaction_events:(state.reaction_events??[]).filter(event=>event.room_id===room&&Date.parse(now)-Date.parse(event.created_at)>=0&&Date.parse(now)-Date.parse(event.created_at)<5000),
+    participation:state.participation?.[actor.id]?{[actor.id]:state.participation[actor.id]}:{},
     messages: state.messages.filter((message) => actor.canManage || message.room_id === room),
     members: state.members.filter((member) => Date.parse(now) - Date.parse(member.seen_at) < 90000),
     moderation: { ...state.moderation, restrictions: actor.canManage ? state.moderation.restrictions : state.moderation.restrictions[actor.id] ? { [actor.id]: state.moderation.restrictions[actor.id] } : {} },

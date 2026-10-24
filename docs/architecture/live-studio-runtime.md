@@ -15,3 +15,47 @@ El job de retención limpia ledger/estado y reclama hasta 100 assets por ejecuci
 Pruebas de migración PGlite cubren reejecución, CAS, deduplicación, acceso RLS, revocación y presencia concurrente. El frontend y operación completa se documentan en `docs/architecture/learning-live-workspace.md` y `docs/operations/live-studio-runtime.md` del repositorio SofLIA-HUB.
 
 Rollback: retirar endpoint o volver al cliente anterior, preservando tablas y bucket. No se ejecutó SQL remoto, no se publicó y no se modificaron secretos.
+
+
+## Reacciones y cadencia de mensajes
+
+El cambio local de 24 de octubre añade `reaction` y `chat_interval` al contrato
+académico. Reacciones: seis emojis permitidos, identidad derivada del servidor,
+ventana visible de cinco segundos, cien eventos como máximo y un segundo entre
+reacciones por usuario. No se insertan en mensajes. El acceso bloqueado y la
+configuración de reacciones se verifican; el modo lectura solo afecta mensajes.
+Eventos visibles únicamente en la sala actual.
+
+El instructor establece 0–300 segundos de espera entre mensajes de participantes;
+0 la desactiva. Es por usuario/sesión y sobrevive cambios de sala e historial.
+El ledger separado de mensajes mantiene solo la participación propia en la
+proyección; se poda a cinco minutos al procesar comandos. El instructor está
+exento de espera de mensajes. Dominio valida primero y la RPC verifica de nuevo
+contra estado persistido bajo bloqueo de sesión, antes de guardar hora de base
+de datos. CAS/idempotencia y los permisos existentes se conservan. HTTP 429 no
+se debe reintentar automáticamente.
+
+Migración incremental: `supabase/migrations/20261024180000_live_studio_participation.sql`.
+Reentrante, reemplaza live_studio_commit, sin nuevas tablas o permisos. Se probó
+localmente en PGlite, incluida aplicación doble, roles, deduplicación, concurrencia
+y payload con ledger manipulado. No se aplicó SQL remoto ni se publicó API.
+
+Orden de rollout: migración en staging, API Learning, comprobar consumidores
+anteriores, después Hub con `participation_version: 1`. Sin negociación, el servicio
+proyecta exactamente los campos del snapshot anterior; nuevos comandos requieren
+negociación. El contrato conserva la unión Meeting/Video ya consumida por Hub,
+sin activar un proveedor adicional ni cambiar credenciales. Probar dos cuentas
+reales antes de generalizar. Para rollback de funcionalidad, poner intervalo 0 y
+revertir UI/API coordinadamente; conservar estado y función mientras exista Hub
+nuevo. No hacer DROP. Restaurar función anterior solo después de retirar los
+comandos nuevos; los datos no requieren borrado.
+
+
+Validación local de este cambio: 21 archivos / 133 pruebas de live aprobados;
+SQL de participación aplicado dos veces en PGlite con concurrencia, deduplicación,
+roles y timestamp sellado por base de datos. Tipos estrictos del contrato y dominio
+aprobados. El typecheck global mantiene errores de módulos/configuración ajenos
+al cambio y ESLint no encuentra @typescript-eslint/recommended; no se modificó
+su baseline. El reporte completo del consumidor está en Hub, cambio OpenSpec
+redesign-participant-studio, reports/reactions-and-chat-interval.md. El ejemplo
+loopback no acredita Realtime Supabase ni una reunión Zoom real.
