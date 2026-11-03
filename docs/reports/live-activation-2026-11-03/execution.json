@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-03",
+  "project_id": "mrqnnmuckznvukjvfkly",
+  "authorization": "Aprobar estas dos migraciones en Learning principal",
+  "migrations": [
+    {
+      "source": "supabase/migrations/20261019120000_live_video_sdk.sql",
+      "remote_version": "20261103184110",
+      "name": "live_video_sdk",
+      "sha256_file_bytes": "4F5D27F7D0A277B3DE301FF97A4C1CF46C3543FC2A8C8DE0F5E03A3C4C766985"
+    },
+    {
+      "source": "supabase/migrations/20261103120000_live_studio_participation.sql",
+      "remote_version": "20261103184120",
+      "name": "live_studio_participation",
+      "sha256_file_bytes": "4FCE0E78345B98E5E1EEFDD98378386BC5B6BFD365D714EEEF48F8884890E696"
+    }
+  ],
+  "previous_commit_body_md5": "9ab207c904968e0bc56a3587fbde3d74",
+  "postflight": {
+    "states": 1,
+    "realtime": true,
+    "functions": [
+      {
+        "anon": false,
+        "name": "live_finalize_video_session",
+        "rate_limit": false,
+        "legacy_guard": false,
+        "service_role": true,
+        "authenticated": false,
+        "security_definer": false
+      },
+      {
+        "anon": false,
+        "name": "live_studio_commit",
+        "rate_limit": true,
+        "legacy_guard": true,
+        "service_role": true,
+        "authenticated": false,
+        "security_definer": false
+      },
+      {
+        "anon": false,
+        "name": "live_studio_commit_core_v1",
+        "rate_limit": false,
+        "legacy_guard": false,
+        "service_role": true,
+        "authenticated": false,
+        "security_definer": false
+      }
+    ],
+    "video_rls": true,
+    "video_rows": 0,
+    "new_state_rows": 0,
+    "session_counts": {
+      "scheduled": 1
+    },
+    "video_provider": true,
+    "private_buckets": true,
+    "provider_counts": {
+      "zoom-meeting": 1
+    },
+    "video_table_public_access": false
+  },
+  "advisors": [
+    {
+      "name": "rls_enabled_no_policy",
+      "level": "INFO",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+      "tables": [
+        "live_studio_commands",
+        "live_studio_state",
+        "live_video_credentials"
+      ]
+    }
+  ],
+  "deployment_performed": false,
+  "video_enabled": false,
+  "pilot_performed": false
+}

@@ -43,6 +43,13 @@ begin
       and split_part(persisted->>'engine_revision',':',4)::bigint>split_part(p_state->>'engine_revision',':',4)::bigint
       then raise exception 'STUDIO_CONFLICT'; end if;
   end if;
+  -- Instalar la migración no amplía el JSON que espera un servidor anterior.
+  if not (p_state ? 'reaction_events' and p_state ? 'participation' and (p_state->'moderation') ? 'message_interval_seconds') then
+    if p_type in ('reaction','chat_interval')
+      or (persisted ? 'reaction_events' or persisted ? 'participation' or (persisted->'moderation') ? 'message_interval_seconds')
+      then raise exception 'STUDIO_CONFLICT'; end if;
+    return public.live_studio_commit_core_v1(p_org,p_user,p_session,p_id,p_hash,p_expected,p_type,p_state);
+  end if;
   stamp_text := to_char(stamp at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"');
   ledger := coalesce(persisted->'participation','{}'::jsonb);
   select coalesce(jsonb_object_agg(key,value),'{}'::jsonb) into ledger from jsonb_each(ledger)

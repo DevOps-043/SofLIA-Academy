@@ -91,4 +91,22 @@ describe('participación transaccional',()=>{
     const next={...older,engine_revision:`engine:${id(50)}:${id(51)}:5`};
     await expect(commit('import_engine',next,teacher)).rejects.toThrow('STUDIO_CONFLICT');
   });
+  it('preserva JSON legado antes de activar el nuevo servidor y rechaza una degradación posterior',async()=>{
+    const {reaction_events,participation,moderation,...old}=emptyStudioState();
+    const {message_interval_seconds,...legacyModeration}=moderation;
+    void reaction_events;void participation;void message_interval_seconds;
+    const legacy={...old,moderation:legacyModeration};
+    await db.query('update live_studio_state set state=$1',[legacy]);
+    async function raw(next:unknown,revision:number){
+      await db.exec('reset role;set role service_role');
+      return db.query('select live_studio_commit($1,$2,$3,$4,$5,$6,$7,$8)',[org,teacher,session,randomUUID(),'a'.repeat(64),revision,'moderation',next]);
+    }
+    await raw({...legacy,revision:1},0);
+    const stored=await state();
+    expect(stored).not.toHaveProperty('reaction_events');expect(stored).not.toHaveProperty('participation');
+    expect(stored.moderation).not.toHaveProperty('message_interval_seconds');
+    await raw({...emptyStudioState(),revision:2},1);
+    await expect(raw({...legacy,revision:3},2)).rejects.toThrow('STUDIO_CONFLICT');
+    expect((await state()).revision).toBe(2);
+  });
 });
