@@ -1,12 +1,12 @@
 # Aulas con Zoom Video SDK
 
-Estado: implementación local coordinada con Hub; pendiente de activación y prueba con cuenta real. Actualizado: 2026-10-19.
+Estado: SQL aprobado aplicado en Learning principal; despliegue, activación y prueba con cuenta real pendientes. Actualizado: 2026-11-03.
 
 El cambio `migrate-zoom-video-sdk` del Hub añade Video SDK 2.6.0. Learning mantiene la autorización y programación; Hub reproduce el aula en su iframe aislado. El campo `video_provider` fija el proveedor por aula. Las anteriores conservan Meeting SDK; cambiar el entorno solo afecta a nuevas programaciones.
 
 ## Preparación
 
-1. Revisar y aplicar en staging `supabase/migrations/20261019120000_live_video_sdk.sql` después de las migraciones del estudio y grabaciones. Es aditiva e idempotente; crea credenciales privadas con RLS y una función accesible exclusivamente por service_role. No se ejecutó SQL remoto durante la implementación.
+1. En Learning principal se aplicó con aprobación `supabase/migrations/20261019120000_live_video_sdk.sql` con versión remota 20261103184110; participación tiene versión 20261103184120. Consultar el [reporte de ejecución](reports/live-activation-2026-11-03/execution.md). En otros entornos, revisar y aplicar después de las migraciones del estudio y grabaciones. Es aditiva e idempotente; crea credenciales privadas con RLS y una función accesible exclusivamente por service_role. Revisar el historial remoto antes de usar db push, porque sus versiones difieren de los prefijos locales.
 2. Habilitar Video SDK y grabación cloud en Zoom Build Platform. Configurar en el servidor `ZOOM_VIDEO_SDK_KEY`, `ZOOM_VIDEO_SDK_SECRET`, `ZOOM_VIDEO_API_KEY` y `ZOOM_VIDEO_ACCOUNT_ID`. API_KEY es una **clave API de Platform Studio** con autenticación Bearer; no es la SDK Key ni la antigua pareja API key/secret para firmar JWT. Las claves SDK firman exclusivamente el ingreso. No usar prefijos públicos ni distribuir credenciales administrativas al Hub.
 3. Verificar privacidad, avisos, regiones, retención y presupuesto; entonces establecer `ZOOM_VIDEO_RECORDING_PRIVACY_APPROVED=true`. Se conservan las reglas de [grabaciones privadas](live-recordings.md).
 4. Publicar Learning con la migración y el contrato sincronizado del Hub. Mantener inicialmente `LIVE_VIDEO_PROVIDER=zoom-meeting` o sin configurar. Tras la prueba real, habilitar nuevas aulas con `LIVE_VIDEO_PROVIDER=zoom-video`. Un valor desconocido se rechaza; no hay cambio silencioso de proveedor ante un fallo.
