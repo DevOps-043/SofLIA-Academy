@@ -174,3 +174,9 @@ Fuentes oficiales: [Zoom REST](https://developers.zoom.us/docs/api/meetings/),
 y [compatibilidad S3](https://supabase.com/docs/guides/storage/s3/compatibility).
 La licencia/capacidad de la cuenta real y el flujo audiovisual real siguen pendientes
 de PoC autorizada; las pruebas locales no los acreditan.
+
+## Diagnóstico seguro
+
+npm run recordings:health -- --help describe el diagnóstico. Sin --database comprueba exclusivamente la presencia de nombres de configuración y la aprobación de privacidad, sin leer archivos .env ni contactar servicios. No imprime valores. Con --database consulta contadores de trabajos pendientes/en ejecución/fallidos, leases vencidos y última actividad. La última actividad no demuestra que un worker esté vivo: el resultado conserva worker_liveness como unknown. Ni configuración completa ni contadores sustituyen el piloto de captura, archivo y reproducción real.
+
+La preparación desde Engine y la participación negociada del aula se describen en [integración de preparación](architecture/live-engine-preparation.md). Estas funciones no activan grabación, licencias ni publicación por organización.

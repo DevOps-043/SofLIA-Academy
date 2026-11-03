@@ -15,3 +15,7 @@ El job de retención limpia ledger/estado y reclama hasta 100 assets por ejecuci
 Pruebas de migración PGlite cubren reejecución, CAS, deduplicación, acceso RLS, revocación y presencia concurrente. El frontend y operación completa se documentan en `docs/architecture/learning-live-workspace.md` y `docs/operations/live-studio-runtime.md` del repositorio SofLIA-HUB.
 
 Rollback: retirar endpoint o volver al cliente anterior, preservando tablas y bucket. No se ejecutó SQL remoto, no se publicó y no se modificaron secretos.
+
+## Preparación y participación coordinadas
+
+La continuación del 3 de noviembre de 2026 añade reacciones y cadencia transaccionales, negociación de respuesta legacy y entrega firmada de preparación desde Engine. El contrato, autorización, límites y migración están en [preparación de sesiones](live-engine-preparation.md). La firma del servidor no sustituye membresía, permiso docente ni comprobación de curso en Learning.
