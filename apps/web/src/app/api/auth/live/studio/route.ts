@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { rateLimitMiddleware, RateLimitTier } from '@/lib/rate-limit/advanced-rate-limit';
 import { handleLive, json } from '@/features/live/server';
 import { verifiedHubUser, hubActorContext, readWorkspaceBody } from '@/features/live/hub-auth.server';
-import { studioRequestSchema } from '@/features/live/live-studio.contract';
+import { STUDIO_RECORDING_NOTICE_HEADER, STUDIO_RECORDING_NOTICE_VERSION, studioRequestSchema } from '@/features/live/live-studio.contract';
 import { executeStudio } from '@/features/live/studio.service';
 
 export async function POST(request: NextRequest) {
@@ -13,7 +13,12 @@ export async function POST(request: NextRequest) {
     if (limited) return new NextResponse(limited.body, { status: limited.status, headers: { ...Object.fromEntries(new Headers(limited.headers)), 'Cache-Control': 'no-store' } });
     const context = await hubActorContext(userId, input.organization_slug);
     const participation = request.headers.get('X-Soflia-Studio-Participation') === '1' || input.participation_version === 1;
-    const response = json(await executeStudio(context, input.session_id, input.operation, participation));
+    const recordingNoticeVersion: typeof STUDIO_RECORDING_NOTICE_VERSION | undefined = request.headers.get(STUDIO_RECORDING_NOTICE_HEADER) === String(STUDIO_RECORDING_NOTICE_VERSION)
+      ? STUDIO_RECORDING_NOTICE_VERSION : undefined;
+    const operation = input.operation.type === 'zoom'
+      ? { ...input.operation, recording_notice_version: recordingNoticeVersion }
+      : input.operation;
+    const response = json(await executeStudio(context, input.session_id, operation, participation));
     response.headers.set('Referrer-Policy', 'no-referrer');
     return response;
   });
