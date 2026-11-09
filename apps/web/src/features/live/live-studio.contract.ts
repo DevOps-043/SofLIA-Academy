@@ -32,11 +32,14 @@ export const studioCommandSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('import_engine'), manifest: engineSessionManifestSchema }).strict(),
 ]);
 export type StudioCommand = z.infer<typeof studioCommandSchema>;
+export const STUDIO_RECORDING_NOTICE_VERSION = 1;
+export const STUDIO_RECORDING_NOTICE_HEADER = 'X-Soflia-Studio-Recording-Notice';
+export const STUDIO_RECORDING_NOTICE_REQUIRED = 'Se requiere aceptar el aviso vigente de grabación.';
 export const studioOperationSchema = z.discriminatedUnion('type', [
   z.object({type:z.literal('recordings'),operation:recordingOperationSchema}).strict(),
   z.object({ type: z.literal('snapshot') }).strict(),
   z.object({ type: z.literal('command'), id, revision: z.number().int().nonnegative(), command: studioCommandSchema }).strict(),
-  z.object({ type: z.literal('zoom') }).strict(),
+  z.object({ type: z.literal('zoom'), recording_notice_version: z.literal(STUDIO_RECORDING_NOTICE_VERSION).optional() }).strict(),
   z.object({ type: z.literal('upload'), name: text(160), mime: text(100), bytes: z.number().int().min(1).max(25 * 1024 * 1024) }).strict(),
 ]);
 export const studioRequestSchema = studioReferenceSchema.extend({ operation: studioOperationSchema }).strict();

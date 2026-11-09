@@ -5,9 +5,9 @@ import { checked, LiveError, type LiveContext } from "./server";
 import type { LiveSession } from "./types";
 import type { StudioActor } from "./live-studio-domain";
 import { zoomRequest } from "./zoom.server";
-import { zoomJoinSchema } from "./live-studio.contract";
+import { STUDIO_RECORDING_NOTICE_REQUIRED, STUDIO_RECORDING_NOTICE_VERSION, zoomJoinSchema } from "./live-studio.contract";
 import {
-  preflightRecordingHost,
+  verifyRecordingHost,
   verifyAutomaticRecording,
   requireIdleHost,
 } from "./recordings/platform-hosts.server";
@@ -43,9 +43,12 @@ export async function createZoomStudioJoin(
   context: LiveContext,
   session: LiveSession,
   actor: StudioActor,
+  recordingNoticeVersion?: number,
 ) {
   if (["ended", "cancelled"].includes(session.status))
     throw new LiveError(409, "La sesión está cerrada");
+  if (actor.canManage && recordingNoticeVersion !== STUDIO_RECORDING_NOTICE_VERSION)
+    throw new LiveError(428, STUDIO_RECORDING_NOTICE_REQUIRED);
   const clientId = process.env.ZOOM_MEETING_SDK_CLIENT_ID;
   const clientSecret = process.env.ZOOM_MEETING_SDK_CLIENT_SECRET;
   if (!clientId || !clientSecret)
@@ -68,7 +71,7 @@ export async function createZoomStudioJoin(
   let zak: string | undefined;
   let userEmail:string|undefined;
   if (actor.canManage) {
-    const host=await preflightRecordingHost(
+    const host=await verifyRecordingHost(
       credentials.host_id,
       session.session_type === "webinar",
     );

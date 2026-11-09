@@ -26,7 +26,7 @@ export async function executeStudio(context: LiveContext, sessionId: string, ope
   const state = row ? studioStateSchema.parse(row.state) : emptyStudioState();
   projectStudioState(state, actor, new Date().toISOString());
   if (operation.type === 'zoom') {
-    const zoom = await createZoomStudioJoin(context, session, actor);
+    const zoom = await createZoomStudioJoin(context, session, actor, operation.recording_notice_version);
     const finalAccess = await revalidateStudioAccess(context, sessionId);
     const latest = checked(await context.db.from('live_studio_state').select('state').eq('session_id', sessionId).maybeSingle());
     if (finalAccess.canManage !== canManage || ['ended', 'cancelled'].includes(finalAccess.session.status)) throw new LiveError(403, 'Los permisos de la sesión cambiaron');

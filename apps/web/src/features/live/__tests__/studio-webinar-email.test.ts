@@ -1,8 +1,10 @@
 // @vitest-environment node
 import { describe,it,expect,vi,afterEach } from 'vitest';
 vi.mock('../zoom.server',()=>({zoomRequest:vi.fn(async()=>({token:'zak-de-prueba'}))}));
-vi.mock('../recordings/platform-hosts.server',()=>({preflightRecordingHost:vi.fn(async()=>({email:'anfitrion@soflia.test'})),verifyAutomaticRecording:vi.fn(),requireIdleHost:vi.fn()}));
+vi.mock('../recordings/platform-hosts.server',()=>({verifyRecordingHost:vi.fn(async()=>({email:'anfitrion@soflia.test'})),verifyAutomaticRecording:vi.fn(),requireIdleHost:vi.fn()}));
 import { createZoomStudioJoin } from '../studio-zoom.server';
+import { STUDIO_RECORDING_NOTICE_VERSION } from '../live-studio.contract';
+import { verifyRecordingHost, verifyAutomaticRecording } from '../recordings/platform-hosts.server';
 import { zoomRequest } from '../zoom.server';
 import type { LiveContext } from '../server';
 import type { StudioActor } from '../live-studio-domain';
@@ -16,9 +18,19 @@ describe('Ingreso al webinar sin cuenta docente de Zoom',()=>{
  it.each([true,false])('elige un correo de servidor para el rol de anfitrión %s',async host=>{
   vi.stubEnv('ZOOM_MEETING_SDK_CLIENT_ID','sdk-prueba');vi.stubEnv('ZOOM_MEETING_SDK_CLIENT_SECRET','secreto-prueba');
   const actor={name:'Persona',canManage:host} as StudioActor;
-  const result=await createZoomStudioJoin(context('alumno@soflia.test'),session,actor);
+  vi.stubEnv('ZOOM_RECORDING_PRIVACY_APPROVED', undefined);
+  const result=await createZoomStudioJoin(context('alumno@soflia.test'),session,actor,host ? STUDIO_RECORDING_NOTICE_VERSION : undefined);
   expect(result.userEmail).toBe(host?'anfitrion@soflia.test':'alumno@soflia.test');
   if(!host)expect(zoomRequest).not.toHaveBeenCalled();
+  else {
+   expect(verifyRecordingHost).toHaveBeenCalledWith('central', true);
+   expect(verifyAutomaticRecording).toHaveBeenCalledWith(session, 'central');
+  }
+ });
+ it.each([undefined, 0])('rechaza al instructor sin aceptación vigente (%s) antes de consultar al proveedor', async version => {
+  await expect(createZoomStudioJoin(context(null),session,{name:'Instructor',canManage:true} as StudioActor,version)).rejects.toMatchObject({status:428});
+  expect(verifyRecordingHost).not.toHaveBeenCalled();
+  expect(zoomRequest).not.toHaveBeenCalled();
  });
  it('no inventa un correo para un participante sin perfil completo',async()=>{
   vi.stubEnv('ZOOM_MEETING_SDK_CLIENT_ID','sdk-prueba');vi.stubEnv('ZOOM_MEETING_SDK_CLIENT_SECRET','secreto-prueba');
