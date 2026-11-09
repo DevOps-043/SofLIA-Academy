@@ -98,6 +98,13 @@ Realtime y el bridge SDK por ventana/origen/nonce, sin un nuevo sondeo del rende
    Verificar licencias, scopes API/eventos, cuota, grabación automática,
    capacidad webinar, privacidad del original, on-demand/correos y retención Zoom.
    Mantener ZOOM_RECORDING_PRIVACY_APPROVED sin aprobar hasta esa revisión.
+
+   El ingreso del instructor al estudio de Hub usa la aceptación del aviso en
+   cada intento. Learning valida la versión aceptada en la petición autenticada
+   antes de emitir el acceso y conserva las comprobaciones de la cuenta y de
+   grabación automática. En Meeting, la aceptación sustituye la aprobación de
+   cuenta para ese ingreso. La aprobación de cuenta se sigue usando al programar
+   eventos, en el acceso heredado y para activar aulas del proveedor Video.
 3. Configurar RECORDING_S3_ENDPOINT, RECORDING_S3_ACCESS_KEY, RECORDING_S3_SECRET_KEY
    y, si hace falta, RECORDING_S3_REGION. Deben corresponder al Storage de SOFIA,
    bucket live-recordings. Aprobar límites globales del proyecto y del bucket;

@@ -3,7 +3,7 @@ import { createHmac } from 'node:crypto';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createZoomStudioJoin } from '../studio-zoom.server';
 import { signVideoSdk, prepareVideoSession, videoProviderForNewSession, videoSessionPath, endVideoSession } from '../video-sdk.server';
-import { zoomJoinSchema } from '../live-studio.contract';
+import { STUDIO_RECORDING_NOTICE_VERSION, zoomJoinSchema } from '../live-studio.contract';
 import { ingestVideoRecording, loadVideoRecording, parseVideoRecording } from '../recordings/video.server';
 vi.mock('../server', async () => ({ ...(await import('../errors')) }));
 vi.mock('../zoom.server', () => ({ zoomRequest: vi.fn() }));
@@ -39,6 +39,17 @@ describe('Video SDK en el servidor', () => {
     configuration(); const db = credentialsDb({ account_id: 'otra' });
     await expect(createZoomStudioJoin({ db } as never, { id, status: 'ended', video_provider: 'zoom-video' } as never, actor)).rejects.toThrow('cerrada');
     await expect(createZoomStudioJoin({ db } as never, { id, status: 'live', video_provider: 'zoom-video' } as never, actor)).rejects.toThrow('no coincide');
+  });
+  it('exige el aviso al anfitrión y conserva la activación de la cuenta Video', async () => {
+    configuration();
+    const db = credentialsDb();
+    const session = { id, status: 'live', video_provider: 'zoom-video' } as never;
+    const host = { ...actor, canManage: true };
+    await expect(createZoomStudioJoin({ db } as never, session, host)).rejects.toMatchObject({ status: 428 });
+    expect(db.from).not.toHaveBeenCalled();
+    await expect(createZoomStudioJoin({ db } as never, session, host, STUDIO_RECORDING_NOTICE_VERSION)).resolves.toMatchObject({ provider: 'zoom-video' });
+    vi.stubEnv('ZOOM_VIDEO_RECORDING_PRIVACY_APPROVED', undefined);
+    await expect(createZoomStudioJoin({ db } as never, session, host, STUDIO_RECORDING_NOTICE_VERSION)).rejects.toMatchObject({ status: 503 });
   });
   it('comprueba grabación automática al programar y no acepta una respuesta degradada', async () => {
     configuration(); const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ session_id: 'remota', session_name: `soflia_${id}`, settings: { auto_recording: 'cloud' } })));

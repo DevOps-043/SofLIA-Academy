@@ -28,6 +28,10 @@ export async function preflightRecordingHost(host: string, webinar: boolean) {
       503,
       "Soflia debe verificar privacidad y retención de la grabación del proveedor antes de habilitar webinars.",
     );
+  return verifyRecordingHost(host, webinar);
+}
+
+export async function verifyRecordingHost(host: string, webinar: boolean) {
   const configured = await configuredZoomHost(host);
   if (configured.id !== host)
     throw new LiveError(
