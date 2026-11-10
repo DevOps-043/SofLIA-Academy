@@ -5,6 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { LiveDatabase } from "../apps/web/src/features/live/database.types";
 import { setTimeout as sleep } from "node:timers/promises";
 import { drainRecordingQueue } from "../apps/web/src/features/live/recordings/batch";
+
 async function main() {
   if (process.argv.includes("--help")) {
     console.log(
@@ -21,13 +22,24 @@ async function main() {
   const once = process.argv.includes("--once");
   if (process.argv.includes("--drain")) {
     const deadline = setTimeout(() => abort.abort(), 4 * 60 * 60 * 1000);
+    let phase = "reconciliar grabaciones";
     try {
       const processed = await drainRecordingQueue(
-        async () => { await reconcileRecordings(db, abort.signal); },
-        () => processRecordingJob(db, abort.signal),
+        async () => {
+          const found = await reconcileRecordings(db, abort.signal);
+          console.log(`[Grabaciones] Reconciliación terminada: ${found} grabaciones vinculadas.`);
+        },
+        () => {
+          phase = "procesar la cola";
+          return processRecordingJob(db, abort.signal);
+        },
         abort.signal,
       );
       console.log(`[Grabaciones] Lote terminado: ${processed} trabajos archivados.`);
+    } catch (error) {
+      const kind = abort.signal.aborted ? "cancelación" : error instanceof Error && error.name === "ZodError" ? "respuesta con formato inesperado" : "operación rechazada";
+      console.error(`[Grabaciones] Error al ${phase} (${kind}).`);
+      process.exitCode = 1;
     } finally {
       clearTimeout(deadline);
     }

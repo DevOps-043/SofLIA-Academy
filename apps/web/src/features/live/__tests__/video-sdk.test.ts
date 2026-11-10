@@ -56,6 +56,7 @@ describe('Video SDK en el servidor', () => {
     vi.stubGlobal('fetch', fetcher); const prepared = await prepareVideoSession(id);
     expect(prepared.password.length).toBe(10); expect(prepared.name).toBe(`soflia_${id}`);
     expect(fetcher.mock.calls[0][0]).toBe('https://api.zoom.us/v2/videosdk/sessions');
+    expect(fetcher.mock.calls[0][1].headers).toMatchObject({ 'x-api-key': 'api-privada' });
     expect(JSON.parse(fetcher.mock.calls[0][1].body).settings.auto_recording).toBe('cloud');
     fetcher.mockResolvedValue(new Response(JSON.stringify({ session_id: 'remota', session_name: `soflia_${id}`, settings: { auto_recording: 'none' } })));
     await expect(prepareVideoSession(id)).rejects.toThrow();
@@ -103,5 +104,20 @@ describe('grabación Video SDK privada', () => {
     configuration(); const db = credentialsDb(); vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ ...metadata, session_key: '00000000-0000-4000-8000-000000000032' }))));
     await expect(loadVideoRecording(db as never, { session_id: id, account_id: 'video:cuenta', host_id: 'video:cuenta', provider_uuid: 'instancia' } as never)).rejects.toThrow('otra aula');
     expect(db.rpc).not.toHaveBeenCalled();
+  });
+  it('solicita un token de descarga separado y no lo guarda con los metadatos', async () => {
+    configuration();
+    const db = credentialsDb();
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      ...metadata,
+      download_access_token: 'token-temporal',
+    })));
+    vi.stubGlobal('fetch', fetcher);
+    const result = await loadVideoRecording(db as never, {
+      session_id: id, account_id: 'video:cuenta', host_id: 'video:cuenta', provider_uuid: 'instancia',
+    } as never);
+    expect(result.downloadToken).toBe('token-temporal');
+    expect(new URL(fetcher.mock.calls[0][0]).searchParams.get('include_fields')).toBe('download_access_token');
+    expect(JSON.stringify(db.rpc.mock.calls)).not.toContain('token-temporal');
   });
 });

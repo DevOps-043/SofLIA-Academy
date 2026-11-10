@@ -1,6 +1,5 @@
 import "server-only";
 import { loadVideoRecording } from "./video.server";
-import { videoDownloadToken } from "../video-sdk.server";
 import path from "node:path";
 import { tmpdir } from "node:os";
 import { unlink } from "node:fs/promises";
@@ -139,7 +138,8 @@ export async function processRecordingJob(
     const sourceSession = checked(await db.from("live_sessions").select("zoom_meeting_id,zoom_webinar_id,session_type,video_provider").eq("id", run.session_id).single());
     if (!sourceSession) throw new Error("La sesión de grabación no existe.");
     const video = sourceSession.video_provider === "zoom-video";
-    const meta = video ? await loadVideoRecording(db, run) : z
+    const videoMeta = video ? await loadVideoRecording(db, run) : null;
+    const meta = videoMeta ?? z
       .object({
         uuid: z.string(),
         host_id: z.string(),
@@ -203,7 +203,7 @@ export async function processRecordingJob(
             ),
             controller.signal,
             renew,
-            video ? videoDownloadToken : undefined,
+            videoMeta ? async () => videoMeta.downloadToken : undefined,
           );
           break;
         } catch (error) {

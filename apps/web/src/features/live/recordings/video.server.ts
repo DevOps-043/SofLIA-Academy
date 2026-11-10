@@ -7,6 +7,15 @@ import { checked, LiveError } from "../errors";
 import { videoCredentials, videoRequest, videoSessionPath } from "../video-sdk.server";
 import { zoomRecordingFileSchema, selectRecordingFiles } from "./events.server";
 import { recordingDb, RECORDING_CURSOR_COLUMNS, type RecordingRun } from "./database";
+import { logger } from "@/lib/utils/logger";
+
+function checkedCursor<T>(result: { data: T; error: { message: string; code: string } | null }, operation: string) {
+  if (result.error) {
+    const code = /^[A-Z0-9]{5}$/.test(result.error.code) ? result.error.code : undefined;
+    logger.warn("Supabase rechazó una operación del cursor de grabaciones.", { operation, code });
+  }
+  return checked(result);
+}
 
 export const videoRecordingSchema = z.object({
   session_id: z.string().min(1).max(256), session_name: z.string().min(1).max(200),
@@ -40,12 +49,18 @@ export async function loadVideoRecording(db: SupabaseClient<LiveDatabase>, run: 
   const credentials = await videoCredentials({ db }, run.session_id);
   if (run.account_id !== `video:${credentials.account_id}` || run.host_id !== `video:${credentials.account_id}`)
     throw new LiveError(403, "La cuenta del trabajo Video SDK no coincide.");
-  const meta = parseVideoRecording(await videoRequest(`/videosdk/sessions/${videoSessionPath(run.provider_uuid, true)}/recordings`));
+  const result = await videoRequest(
+    `/videosdk/sessions/${videoSessionPath(run.provider_uuid, true)}/recordings?include_fields=download_access_token&ttl=14400`,
+  );
+  const meta = parseVideoRecording(result);
   if (meta.session_id !== run.provider_uuid || meta.session_key !== run.session_id || meta.session_name !== credentials.session_name)
     throw new LiveError(403, "La instancia Video SDK pertenece a otra aula.");
   await ingestVideoRecording(db, meta);
+  const { download_access_token: downloadToken } = z.object({
+    download_access_token: z.string().min(1).max(8192),
+  }).parse(result);
   return { uuid: meta.session_id, id: meta.session_key, host_id: run.host_id,
-    start_time: meta.start_time, recording_files: meta.recording_files };
+    start_time: meta.start_time, recording_files: meta.recording_files, downloadToken };
 }
 
 /** Cursor por cuenta, ventanas de hasta 29 días y diez páginas por ejecución. */
@@ -53,17 +68,23 @@ export async function reconcileVideoRecordings(db: SupabaseClient<LiveDatabase>,
   const account = process.env.ZOOM_VIDEO_ACCOUNT_ID;
   if (!account || !process.env.ZOOM_VIDEO_API_KEY) return 0;
   const store = recordingDb(db), host = `video:${account}`;
-  const previous = checked(await store.from("live_recording_cursors").select(RECORDING_CURSOR_COLUMNS).eq("host_id", host).maybeSingle());
+  const previous = checkedCursor(
+    await store.from("live_recording_cursors").select(RECORDING_CURSOR_COLUMNS).eq("host_id", host).maybeSingle(),
+    "lectura",
+  );
   const recent = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
   const from = previous?.to_date && previous.to_date < recent ? previous.to_date : recent;
   const to = new Date(Math.min(Date.now(), Date.parse(from) + 29 * 86400000)).toISOString().slice(0, 10);
-  const cursor = (checked(await store.rpc("live_recording_claim_cursor", { p_host: host, p_from: from, p_to: to })) || [])[0];
+  const cursor = checkedCursor(
+    await store.rpc("live_recording_claim_cursor", { p_host: host, p_from: from, p_to: to }),
+    "reclamo",
+  )?.[0];
   if (!cursor?.lease_id) return 0;
   let token = cursor.next_page_token || "", imported = 0;
   const save = async (next: string, complete: boolean) => {
-    const row = checked(await store.from("live_recording_cursors").update({ next_page_token: next, window_complete: complete,
+    const row = checkedCursor(await store.from("live_recording_cursors").update({ next_page_token: next, window_complete: complete,
       lease_until: new Date(Date.now() + 300000).toISOString(), updated_at: new Date().toISOString() })
-      .eq("host_id", host).eq("lease_id", cursor.lease_id!).gt("lease_until", new Date().toISOString()).select("host_id").maybeSingle());
+      .eq("host_id", host).eq("lease_id", cursor.lease_id!).gt("lease_until", new Date().toISOString()).select("host_id").maybeSingle(), "avance");
     if (!row) throw new LiveError(409, "La reconciliación Video SDK cambió de propietario.");
   };
   try {
@@ -90,7 +111,7 @@ export async function reconcileVideoRecordings(db: SupabaseClient<LiveDatabase>,
       if (!token) break;
     }
   } finally {
-    checked(await store.from("live_recording_cursors").update({ lease_id: null, lease_until: null }).eq("host_id", host).eq("lease_id", cursor.lease_id));
+    checkedCursor(await store.from("live_recording_cursors").update({ lease_id: null, lease_until: null }).eq("host_id", host).eq("lease_id", cursor.lease_id), "liberación");
   }
   return imported;
 }

@@ -6,6 +6,7 @@ import type { LiveContext } from "./server";
 import type { LiveSession } from "./types";
 import type { StudioActor } from "./live-studio-domain";
 import { zoomJoinSchema } from "./live-studio.contract";
+import { logger } from "@/lib/utils/logger";
 
 function required(key: string): string {
   const value = process.env[key];
@@ -26,8 +27,6 @@ export function videoConfiguration() {
     throw new LiveError(503, "Verifica privacidad, retención y grabación cloud de la cuenta Video SDK antes de activarla.");
   return { key, secret, account };
 }
-/** Clave API de Platform Studio: exclusivamente servidor, separada del JWT de ingreso. */
-export async function videoDownloadToken(_refresh = false) { return required("ZOOM_VIDEO_API_KEY"); }
 export function videoSessionPath(id: string, recording = false) {
   const encoded = encodeURIComponent(id);
   return (recording ? id.includes("/") : id.startsWith("+") || id.startsWith("/") || id.includes("//")) ? encodeURIComponent(encoded) : encoded;
@@ -35,12 +34,17 @@ export function videoSessionPath(id: string, recording = false) {
 export async function videoRequest(path: string, method = "GET", body?: unknown): Promise<unknown> {
   if (!path.startsWith("/videosdk/")) throw new LiveError(500, "Ruta Video SDK inválida.");
   const response = await fetch(`https://api.zoom.us/v2${path}`, {
-    method, headers: { Authorization: `Bearer ${await videoDownloadToken()}`, "Content-Type": "application/json" },
+    method,
+    headers: { "x-api-key": required("ZOOM_VIDEO_API_KEY"), "Content-Type": "application/json" },
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     cache: "no-store", signal: AbortSignal.timeout(20000), redirect: "error",
   });
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
+    logger.warn("Zoom Video SDK rechazó una petición.", {
+      status: response.status,
+      code: Number.isSafeInteger(detail?.code) ? detail.code : undefined,
+    });
     if (detail?.code === 300 && path.includes("next_page_token="))
       throw new LiveError(502, "La paginación de Video SDK caducó.");
     throw new LiveError(response.status === 429 ? 503 : 502,
