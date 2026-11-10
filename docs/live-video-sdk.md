@@ -1,6 +1,8 @@
 # Aulas con Zoom Video SDK
 
-Estado: SQL aprobado aplicado en Learning principal; despliegue, activación y prueba con cuenta real pendientes. Actualizado: 2026-11-03.
+Estado: SQL aplicado, proveedor Video SDK configurado y versión con JWT publicada en producción.
+La prueba completa de un aula creada en Learning sigue pendiente. Actualizado el 2026-11-10.
+Consultar el [reporte de activación](reports/live-activation-2026-11-10/execution.md).
 
 El cambio `migrate-zoom-video-sdk` del Hub añade Video SDK 2.6.0. Learning mantiene la autorización y programación; Hub reproduce el aula en su iframe aislado. El campo `video_provider` fija el proveedor por aula. Las anteriores conservan Meeting SDK; cambiar el entorno solo afecta a nuevas programaciones.
 

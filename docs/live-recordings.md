@@ -1,6 +1,8 @@
 # Grabaciones de webinars
 
-Estado: implementado y verificado localmente; pendiente de activación y PoC real.
+Estado: importador activado en GitHub Actions y consulta real de Zoom verificada.
+La prueba completa de archivo y reproducción de un aula de Learning sigue pendiente.
+Corte operativo del 2026-11-10 en el [reporte de activación](reports/live-activation-2026-11-10/execution.md).
 Cambio coordinado: SofLIA-HUB/openspec/changes/record-webinars-and-publish-replays.
 
 Las aulas nuevas pueden usar Video SDK. Su activación, credenciales independientes e importación REST se describen en [aulas con Video SDK](live-video-sdk.md). Los requisitos de anfitrión Meeting y licencia Webinars de esta guía corresponden a las sesiones Meeting anteriores.
