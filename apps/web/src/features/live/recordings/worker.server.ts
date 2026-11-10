@@ -277,7 +277,7 @@ export async function processRecordingJob(
       latest?.ends_at || null,
       latest?.coverage || "unknown",
     );
-    if (coverage === "complete" && sourceSession.session_type === "webinar") {
+    if (!video && coverage === "complete" && sourceSession.session_type === "webinar") {
       const editorial = await zoomRequest(
         `/webinars/${encodeURIComponent(sourceSession.zoom_webinar_id!)}`,
       ).catch(() => null);
@@ -328,6 +328,8 @@ export async function processRecordingJob(
         ).toISOString(),
       }),
     );
+    // El scheduler debe observar el fallo aunque la recuperación esté encolada.
+    throw new Error("La importación quedó pendiente de recuperación.");
   } finally {
     clearInterval(timer);
     clearTimeout(deadline);

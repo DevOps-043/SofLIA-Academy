@@ -4,10 +4,11 @@ import { reconcileRecordings } from "../apps/web/src/features/live/recordings/re
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { LiveDatabase } from "../apps/web/src/features/live/database.types";
 import { setTimeout as sleep } from "node:timers/promises";
+import { drainRecordingQueue } from "../apps/web/src/features/live/recordings/batch";
 async function main() {
   if (process.argv.includes("--help")) {
     console.log(
-      "Uso: npm run recordings:worker -- [--once]. Credenciales gestionadas por el entorno; no se cargan archivos .env.",
+      "Uso: npm run recordings:worker -- [--once | --drain]. --drain reconcilia y procesa hasta diez trabajos, sin esperar más; límite de cuatro horas. Credenciales gestionadas por el entorno; no se cargan archivos .env.",
     );
     return;
   }
@@ -18,6 +19,20 @@ async function main() {
     20000,
   ) as unknown as SupabaseClient<LiveDatabase>;
   const once = process.argv.includes("--once");
+  if (process.argv.includes("--drain")) {
+    const deadline = setTimeout(() => abort.abort(), 4 * 60 * 60 * 1000);
+    try {
+      const processed = await drainRecordingQueue(
+        async () => { await reconcileRecordings(db, abort.signal); },
+        () => processRecordingJob(db, abort.signal),
+        abort.signal,
+      );
+      console.log(`[Grabaciones] Lote terminado: ${processed} trabajos archivados.`);
+    } finally {
+      clearTimeout(deadline);
+    }
+    return;
+  }
   let nextReconciliation = 0;
   while (!abort.signal.aborted) {
     try {
