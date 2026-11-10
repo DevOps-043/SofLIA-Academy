@@ -8,6 +8,7 @@ import { videoCredentials, videoRequest, videoSessionPath } from "../video-sdk.s
 import { zoomRecordingFileSchema, selectRecordingFiles } from "./events.server";
 import { recordingDb, RECORDING_CURSOR_COLUMNS, type RecordingRun } from "./database";
 import { logger } from "@/lib/utils/logger";
+import { videoApiCredentialNames } from "../video-api-credentials";
 
 function checkedCursor<T>(result: { data: T; error: { message: string; code: string } | null }, operation: string) {
   if (result.error) {
@@ -66,7 +67,9 @@ export async function loadVideoRecording(db: SupabaseClient<LiveDatabase>, run: 
 /** Cursor por cuenta, ventanas de hasta 29 días y diez páginas por ejecución. */
 export async function reconcileVideoRecordings(db: SupabaseClient<LiveDatabase>, signal?: AbortSignal) {
   const account = process.env.ZOOM_VIDEO_ACCOUNT_ID;
-  if (!account || !process.env.ZOOM_VIDEO_API_KEY) return 0;
+  if (!account) return 0;
+  if (process.env.LIVE_VIDEO_PROVIDER !== "zoom-video" &&
+      !videoApiCredentialNames(process.env).some(name => process.env[name])) return 0;
   const store = recordingDb(db), host = `video:${account}`;
   const previous = checkedCursor(
     await store.from("live_recording_cursors").select(RECORDING_CURSOR_COLUMNS).eq("host_id", host).maybeSingle(),

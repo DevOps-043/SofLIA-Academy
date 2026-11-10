@@ -2,7 +2,7 @@
 import { createHmac } from 'node:crypto';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createZoomStudioJoin } from '../studio-zoom.server';
-import { signVideoSdk, prepareVideoSession, videoProviderForNewSession, videoSessionPath, endVideoSession } from '../video-sdk.server';
+import { signVideoSdk, prepareVideoSession, videoProviderForNewSession, videoRequest, videoSessionPath, endVideoSession } from '../video-sdk.server';
 import { STUDIO_RECORDING_NOTICE_VERSION, zoomJoinSchema } from '../live-studio.contract';
 import { ingestVideoRecording, loadVideoRecording, parseVideoRecording } from '../recordings/video.server';
 vi.mock('../server', async () => ({ ...(await import('../errors')) }));
@@ -60,6 +60,24 @@ describe('Video SDK en el servidor', () => {
     expect(JSON.parse(fetcher.mock.calls[0][1].body).settings.auto_recording).toBe('cloud');
     fetcher.mockResolvedValue(new Response(JSON.stringify({ session_id: 'remota', session_name: `soflia_${id}`, settings: { auto_recording: 'none' } })));
     await expect(prepareVideoSession(id)).rejects.toThrow();
+  });
+  it('firma un JWT REST corto con el par API y nunca lo mezcla con la clave S2S', async () => {
+    configuration();
+    vi.stubEnv('ZOOM_VIDEO_API_JWT_ISSUER', 'emisor-api');
+    vi.stubEnv('ZOOM_VIDEO_API_JWT_SECRET', 'secreto-api');
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ sessions: [] })));
+    vi.stubGlobal('fetch', fetcher);
+    await videoRequest('/videosdk/recordings');
+    const { Authorization, ...headers } = fetcher.mock.calls[0][1].headers;
+    expect(headers).not.toHaveProperty('x-api-key');
+    const [header, payload, signature] = Authorization.slice('Bearer '.length).split('.');
+    const claims = JSON.parse(Buffer.from(payload, 'base64url').toString());
+    expect(claims).toMatchObject({ iss: 'emisor-api', aud: null });
+    expect(claims.exp - claims.iat).toBe(900);
+    expect(signature).toBe(createHmac('sha256', 'secreto-api').update(`${header}.${payload}`).digest('base64url'));
+    vi.stubEnv('ZOOM_VIDEO_API_JWT_SECRET', '');
+    await expect(videoRequest('/videosdk/recordings')).rejects.toThrow('ZOOM_VIDEO_API_JWT_SECRET');
+    expect(fetcher).toHaveBeenCalledTimes(1);
   });
   it('conserva Meeting por defecto y rechaza configuración desconocida', () => {
     vi.stubEnv('LIVE_VIDEO_PROVIDER', ''); expect(videoProviderForNewSession()).toBe('zoom-meeting');

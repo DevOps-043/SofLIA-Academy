@@ -166,18 +166,20 @@ lee código y no se persiste en Git. No se ejecuta con secretos en pull requests
 No sube vídeos como artifacts ni usa caché. Los temporales privados desaparecen
 con el runner; el archivo definitivo permanece en `live-recordings` de Supabase.
 
-Secretos requeridos del repositorio, exclusivos del paso de importación:
+Secretos del repositorio, exclusivos del paso de importación:
 
 | Secreto de Actions | Uso |
 | --- | --- |
 | `RECORDING_SUPABASE_SERVICE_ROLE_KEY` | Clave de servidor de Learning; acceso administrativo, nunca frontend |
 | `RECORDING_ZOOM_VIDEO_API_KEY` | Lectura de grabaciones Video SDK de la cuenta y de una sesión |
+| `RECORDING_ZOOM_VIDEO_API_JWT_ISSUER` y `RECORDING_ZOOM_VIDEO_API_JWT_SECRET` | Alternativa a la clave S2S si Zoom requiere JWT. Ambos son obligatorios cuando se usa este modo |
 | `RECORDING_S3_ACCESS_KEY` | Acceso S3 al almacenamiento aprobado |
 | `RECORDING_S3_SECRET_KEY` | Secreto del mismo acceso S3 |
 
-La clave Zoom del worker no requiere credenciales SDK de ingreso, crear sesiones
-ni eliminar grabaciones. Tiene vencimiento: renovar antes de 90 días y actualizar
-el secreto de Actions. Las claves S3 y Supabase actuales son administrativas;
+La clave S2S de lectura no requiere credenciales SDK de ingreso ni permisos para
+crear sesiones o eliminar grabaciones. Renovarla antes de su vencimiento y
+actualizar el secreto de Actions. El par JWT puede tener acceso más amplio al
+proyecto y solo se instala con autorización explícita. Las claves S3 y Supabase actuales son administrativas;
 limitar quién puede modificar workflows o `main`. Nunca imprimir valores ni
 agregar secretos a issues, commits, artifacts o argumentos de shell.
 

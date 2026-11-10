@@ -7,9 +7,10 @@ import type { LiveSession } from "./types";
 import type { StudioActor } from "./live-studio-domain";
 import { zoomJoinSchema } from "./live-studio.contract";
 import { logger } from "@/lib/utils/logger";
+import { VIDEO_API_KEY, VIDEO_API_JWT_ISSUER, VIDEO_API_JWT_SECRET, videoApiCredentialNames } from "./video-api-credentials";
 
 function required(key: string): string {
-  const value = process.env[key];
+  const value = process.env[key]?.trim();
   if (!value) throw new LiveError(503, `Configura ${key} en Learning para habilitar Video SDK.`);
   return value;
 }
@@ -22,7 +23,7 @@ export function videoProviderForNewSession() {
 export function videoConfiguration() {
   const key = required("ZOOM_VIDEO_SDK_KEY"), secret = required("ZOOM_VIDEO_SDK_SECRET");
   const account = required("ZOOM_VIDEO_ACCOUNT_ID");
-  required("ZOOM_VIDEO_API_KEY");
+  for (const name of videoApiCredentialNames(process.env)) required(name);
   if (process.env.ZOOM_VIDEO_RECORDING_PRIVACY_APPROVED !== "true")
     throw new LiveError(503, "Verifica privacidad, retención y grabación cloud de la cuenta Video SDK antes de activarla.");
   return { key, secret, account };
@@ -31,11 +32,27 @@ export function videoSessionPath(id: string, recording = false) {
   const encoded = encodeURIComponent(id);
   return (recording ? id.includes("/") : id.startsWith("+") || id.startsWith("/") || id.includes("//")) ? encodeURIComponent(encoded) : encoded;
 }
+function videoApiHeaders(): Record<string, string> {
+  if (videoApiCredentialNames(process.env).includes(VIDEO_API_KEY))
+    return { "x-api-key": required(VIDEO_API_KEY) };
+
+  const issuedAt = Math.floor(Date.now() / 1000);
+  const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
+  const payload = Buffer.from(JSON.stringify({
+    aud: null,
+    iss: required(VIDEO_API_JWT_ISSUER),
+    iat: issuedAt,
+    exp: issuedAt + 15 * 60,
+  })).toString("base64url");
+  const claims = `${header}.${payload}`;
+  const signature = createHmac("sha256", required(VIDEO_API_JWT_SECRET)).update(claims).digest("base64url");
+  return { Authorization: `Bearer ${claims}.${signature}` };
+}
 export async function videoRequest(path: string, method = "GET", body?: unknown): Promise<unknown> {
   if (!path.startsWith("/videosdk/")) throw new LiveError(500, "Ruta Video SDK inválida.");
   const response = await fetch(`https://api.zoom.us/v2${path}`, {
     method,
-    headers: { "x-api-key": required("ZOOM_VIDEO_API_KEY"), "Content-Type": "application/json" },
+    headers: { ...videoApiHeaders(), "Content-Type": "application/json" },
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     cache: "no-store", signal: AbortSignal.timeout(20000), redirect: "error",
   });
