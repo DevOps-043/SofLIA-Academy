@@ -23,7 +23,7 @@ export function videoProviderForNewSession() {
 export function videoConfiguration() {
   const key = required("ZOOM_VIDEO_SDK_KEY"), secret = required("ZOOM_VIDEO_SDK_SECRET");
   const account = required("ZOOM_VIDEO_ACCOUNT_ID");
-  for (const name of videoApiCredentialNames(process.env)) required(name);
+  videoApiCredentials();
   if (process.env.ZOOM_VIDEO_RECORDING_PRIVACY_APPROVED !== "true")
     throw new LiveError(503, "Verifica privacidad, retención y grabación cloud de la cuenta Video SDK antes de activarla.");
   return { key, secret, account };
@@ -32,20 +32,32 @@ export function videoSessionPath(id: string, recording = false) {
   const encoded = encodeURIComponent(id);
   return (recording ? id.includes("/") : id.startsWith("+") || id.startsWith("/") || id.includes("//")) ? encodeURIComponent(encoded) : encoded;
 }
+function videoApiCredentials() {
+  if (!videoApiCredentialNames(process.env).includes(VIDEO_API_KEY)) {
+    return { kind: "jwt" as const, issuer: required(VIDEO_API_JWT_ISSUER), secret: required(VIDEO_API_JWT_SECRET) };
+  }
+  const value = required(VIDEO_API_KEY);
+  if (!value.startsWith("jwt:")) return { kind: "key" as const, value };
+  // Netlify comparte el límite de entorno de Lambda entre todas las variables.
+  const parts = /^jwt:([^:\s]+):([^:\s]+)$/.exec(value);
+  if (!parts) throw new LiveError(503, "El par JWT de Video SDK está incompleto.");
+  return { kind: "jwt" as const, issuer: parts[1], secret: parts[2] };
+}
+
 function videoApiHeaders(): Record<string, string> {
-  if (videoApiCredentialNames(process.env).includes(VIDEO_API_KEY))
-    return { "x-api-key": required(VIDEO_API_KEY) };
+  const credentials = videoApiCredentials();
+  if (credentials.kind === "key") return { "x-api-key": credentials.value };
 
   const issuedAt = Math.floor(Date.now() / 1000);
   const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
   const payload = Buffer.from(JSON.stringify({
     aud: null,
-    iss: required(VIDEO_API_JWT_ISSUER),
+    iss: credentials.issuer,
     iat: issuedAt,
     exp: issuedAt + 15 * 60,
   })).toString("base64url");
   const claims = `${header}.${payload}`;
-  const signature = createHmac("sha256", required(VIDEO_API_JWT_SECRET)).update(claims).digest("base64url");
+  const signature = createHmac("sha256", credentials.secret).update(claims).digest("base64url");
   return { Authorization: `Bearer ${claims}.${signature}` };
 }
 export async function videoRequest(path: string, method = "GET", body?: unknown): Promise<unknown> {

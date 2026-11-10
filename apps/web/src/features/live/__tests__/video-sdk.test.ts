@@ -79,6 +79,20 @@ describe('Video SDK en el servidor', () => {
     await expect(videoRequest('/videosdk/recordings')).rejects.toThrow('ZOOM_VIDEO_API_JWT_SECRET');
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
+  it('acepta el par JWT en una sola variable y rechaza un par truncado', async () => {
+    configuration();
+    vi.stubEnv('ZOOM_VIDEO_API_KEY', 'jwt:emisor-api:secreto-api');
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ sessions: [] })));
+    vi.stubGlobal('fetch', fetcher);
+    await videoRequest('/videosdk/recordings');
+    const { Authorization } = fetcher.mock.calls[0][1].headers;
+    const [header, payload, signature] = Authorization.slice('Bearer '.length).split('.');
+    expect(JSON.parse(Buffer.from(payload, 'base64url').toString()).iss).toBe('emisor-api');
+    expect(signature).toBe(createHmac('sha256', 'secreto-api').update(`${header}.${payload}`).digest('base64url'));
+    vi.stubEnv('ZOOM_VIDEO_API_KEY', 'jwt:emisor-api:');
+    await expect(videoRequest('/videosdk/recordings')).rejects.toThrow('incompleto');
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
   it('conserva Meeting por defecto y rechaza configuración desconocida', () => {
     vi.stubEnv('LIVE_VIDEO_PROVIDER', ''); expect(videoProviderForNewSession()).toBe('zoom-meeting');
     vi.stubEnv('LIVE_VIDEO_PROVIDER', 'otro'); expect(() => videoProviderForNewSession()).toThrow();
