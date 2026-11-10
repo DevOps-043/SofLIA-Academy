@@ -4,6 +4,7 @@ import { constants } from "node:fs";
 import path from "node:path";
 import { recordingDownloadToken } from "../zoom.server";
 import { RECORDING_MAX_BYTES, RECORDING_HEARTBEAT_MS } from "./config";
+import { assertRecordingDiskSpace } from "./disk.server";
 
 export function recordingDownloadUrl(value: string): URL {
   const url = new URL(value);
@@ -103,6 +104,7 @@ export async function downloadRecording(
   let offset = strong ? prior?.size || 0 : 0;
   if (offset > expectedBytes) offset = 0;
   if (offset === expectedBytes) return target;
+  await assertRecordingDiskSpace(directory, expectedBytes, prior?.size || 0);
   const response = await responseFor(value, offset, signal, false, validator, tokenFor);
   if (!response.ok || !response.body) {
     await response.body?.cancel();
