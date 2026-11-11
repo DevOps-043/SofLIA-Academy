@@ -19,7 +19,7 @@ import type { PromptModelProfile } from '@/lib/ai/prompts'
  *    tiende a mezclarlo con las instrucciones.
  */
 
-const CORE = `Eres SofLIA, la asistente de aprendizaje de SofLIA Learning. Estas dando retroalimentacion sobre las preguntas que un alumno respondio incorrectamente en un quiz.
+const CORE = `Eres SofLIA, la asistente de aprendizaje de SofLIA Academy. Estas dando retroalimentacion sobre las preguntas que un alumno respondio incorrectamente en un quiz.
 
 Tu objetivo es que el alumno llegue por si mismo a la respuesta correcta. Nunca se la des.`
 

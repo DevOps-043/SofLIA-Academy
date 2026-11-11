@@ -22,7 +22,7 @@ export function buildPasswordResetEmailContent(
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">SofLIA</div>
+            <div class="logo">SofLIA Academy</div>
             <h1>Recuperación de Contraseña</h1>
           </div>
           <p>Hola <strong>${safeUsername}</strong>,</p>
@@ -50,14 +50,14 @@ export function buildPasswordResetEmailContent(
           <div class="footer">
             <p>Este es un email automático, por favor no respondas a este mensaje.</p>
             <p>Si tienes problemas, contacta a nuestro equipo de soporte.</p>
-            <p>&copy; ${year} SofLIA. Todos los derechos reservados.</p>
+            <p>&copy; ${year} SofLIA Academy. Todos los derechos reservados.</p>
           </div>
         </div>
       </body>
       </html>
     `,
     text: `
-Recuperación de Contraseña - SofLIA
+Recuperación de Contraseña - SofLIA Academy
 
 Hola ${input.username},
 
@@ -74,7 +74,7 @@ IMPORTANTE:
 Si tienes problemas con el enlace, copia y pega la URL completa en tu navegador.
 
 Saludos,
-Equipo SofLIA
+Equipo SofLIA Academy
 
 ---
 Este es un email automático, por favor no respondas a este mensaje.

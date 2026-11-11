@@ -49,7 +49,7 @@ export function buildLessonAutoNotePromptForOpenAi(
   _profile: PromptModelProfile,
   input: LessonAutoNotePromptInput,
 ): string {
-  return `Genera el apunte automatico de una leccion de SofLIA Learning.
+  return `Genera el apunte automatico de una leccion de SofLIA Academy.
 
 El objetivo es una nota concisa y accionable con la que el usuario recuerde y aplique lo aprendido, tenga o no quiz y conversacion.
 

@@ -82,7 +82,7 @@ export function RecordingPanel({
               })
             }
           />
-          Permitir ver después en Learning
+          Permitir ver después en SofLIA Academy
         </label>
       )}
       {snapshot?.can_manage && (
@@ -143,7 +143,7 @@ export function RecordingPanel({
                 {run.published
                   ? "Retirar repetición"
                   : run.coverage === "complete"
-                    ? "Publicar en Learning"
+                    ? "Publicar en SofLIA Academy"
                     : "Publicar esta edición revisada"}
               </button>
             )}

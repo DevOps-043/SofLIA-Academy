@@ -6,7 +6,7 @@ Cambio coordinado: SofLIA-HUB/openspec/changes/record-webinars-and-publish-repla
 ## Responsabilidad y acceso
 
 Soflia programa los eventos mediante anfitriones centrales de su cuenta Zoom.
-El instructor usa su identidad de Learning y no necesita asociar una cuenta
+El instructor usa su identidad de Academy y no necesita asociar una cuenta
 Zoom ni comprar una licencia individual. La plataforma conserva la obligación
 de contratar capacidad de grabación cloud y, para recursos webinar, Zoom Webinars.
 Almacenar el vídeo en Soflia no elimina ese requisito del proveedor.
@@ -16,7 +16,7 @@ La grabación no depende del disco del instructor. Cerrar Hub no interrumpe la
 importación del archivo; si la salida del anfitrión termina el evento en Zoom,
 la captura también termina. La aplicación nunca reconstruye minutos perdidos.
 Para ingresar al webinar, el SDK recibe el correo del anfitrión central o el del
-perfil de Learning del participante. Se deriva en el servidor y se transmite
+perfil de Academy del participante. Se deriva en el servidor y se transmite
 solo en el grant de ingreso, sin crear ni exigir una cuenta Zoom al docente.
 
 Los vídeos quedan en el bucket privado live-recordings de SOFIA. Una política
@@ -83,7 +83,7 @@ Retirar bloquea nuevas concesiones; una ya emitida puede funcionar hasta vencer.
 Contenido ya descargado no puede retirarse del dispositivo del usuario.
 Una descarga iniciada antes del vencimiento puede terminar después de este;
 el TTL limita nuevas peticiones, no revoca bytes o respuestas ya en tránsito.
-Learning reutiliza la actualización de treinta segundos de la ficha; Hub usa
+Academy reutiliza la actualización de treinta segundos de la ficha; Hub usa
 Realtime y el bridge SDK por ventana/origen/nonce, sin un nuevo sondeo del renderer.
 
 ## Preparación y activación

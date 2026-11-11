@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { NotebookPageClient } from '@/features/notebook'
 
 export const metadata: Metadata = {
-  title: 'Libro de Apuntes | SofLIA',
+  title: 'Libro de Apuntes | SofLIA Academy',
   description:
     'Organiza tus apuntes por curso y lección y edítalos con un editor enriquecido.',
 }

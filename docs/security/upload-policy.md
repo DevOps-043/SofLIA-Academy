@@ -2,7 +2,7 @@
 
 ## Scope
 
-Applies to every endpoint that accepts multipart uploads or signed upload flows in SofLIA Learning.
+Applies to every endpoint that accepts multipart uploads or signed upload flows in SofLIA Academy.
 
 ## Bucket Rules
 

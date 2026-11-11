@@ -20,7 +20,7 @@ export function BusinessLogo() {
         <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden relative animate-[scaleIn_0.7s_cubic-bezier(0.34,1.56,0.64,1)_both] group-hover:scale-110 transition-transform duration-300 ease-out">
           <Image
             src="/icono.png"
-            alt="SofLIA Logo"
+            alt="SofLIA Academy Logo"
             width={40}
             height={40}
             className="w-full h-full object-contain"
@@ -29,7 +29,7 @@ export function BusinessLogo() {
 
         {/* Logo Text: slide-in entry */}
         <span className="font-bold text-lg lg:text-xl hidden sm:inline-block text-primary animate-[slideInUp_0.6s_ease-out_0.35s_both]">
-          SofLIA
+          SofLIA Academy
         </span>
 
         {/* Business Badge */}

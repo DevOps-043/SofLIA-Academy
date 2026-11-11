@@ -61,7 +61,7 @@ export function buildEnrichmentPromptForOpenAi(
     existingTags: string[]
   },
 ): string {
-  return `Eres el motor de enriquecimiento del Libro de Apuntes de SofLIA Learning. Analiza el apunte del usuario y extrae su estructura.
+  return `Eres el motor de enriquecimiento del Libro de Apuntes de SofLIA Academy. Analiza el apunte del usuario y extrae su estructura.
 
 ${TASK_RULES}
 

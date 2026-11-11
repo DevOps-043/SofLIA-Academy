@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { MfaSettingsPanel } from '@/features/auth/components/MfaSettingsPanel'
 
 export const metadata: Metadata = {
-  title: 'MFA | SofLIA',
+  title: 'MFA | SofLIA Academy',
   description: 'Multi-factor authentication settings for business administrators.',
 }
 

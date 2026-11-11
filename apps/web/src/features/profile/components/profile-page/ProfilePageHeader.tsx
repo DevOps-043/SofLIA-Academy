@@ -39,7 +39,7 @@ export function ProfilePageHeader({ saving, goBack, handleSave }: ProfilePageHea
             />
           </span>
           <span className={styles.navCopy}>
-            <span className={styles.navTitle}>SofLIA</span>
+            <span className={styles.navTitle}>SofLIA Academy</span>
             <span className={styles.navSubtitle}>Perfil</span>
           </span>
         </div>

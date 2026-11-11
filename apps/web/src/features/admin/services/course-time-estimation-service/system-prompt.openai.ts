@@ -36,7 +36,7 @@ const REASONING_HINT = `Para cada elemento, valora primero cuanto esfuerzo real 
 
 export function buildSystemPromptForOpenAi(profile: PromptModelProfile): string {
   return [
-    'Eres analista experto en tiempos estimados para contenido educativo en SofLIA Learning.',
+    'Eres analista experto en tiempos estimados para contenido educativo en SofLIA Academy.',
     'Tu tarea es definir el tiempo estimado real de los materiales y actividades que todavia no tienen tiempo guardado.',
     profile.reasonsInternally ? '' : REASONING_HINT,
     HEURISTIC_WARNING,

@@ -1,6 +1,6 @@
 # Spec de implementación: SSO web para Project Hub
 
-**Para:** equipo de SofLIA Learning
+**Para:** equipo de SofLIA Academy
 **Estado:** pendiente de implementar. El lado cliente (Project Hub) ya está
 implementado y en espera de estos dos endpoints — ver §7 para el estado
 actual.
@@ -12,12 +12,12 @@ ticket, del contrato que ahí se describe.
 
 ## 1. Problema que resuelve
 
-Las cuentas creadas por Google/Microsoft en Learning no tienen password en
+Las cuentas creadas por Google/Microsoft en Academy no tienen password en
 `auth.users` (Supabase Auth). Project Hub, igual que el Hub de escritorio
 antes de este cambio, solo sabe autenticar con `signInWithPassword` — así
 que esas cuentas no tienen ninguna vía de entrada a Project Hub hoy.
 
-La solución reutiliza el mecanismo que Learning **ya implementó** para el
+La solución reutiliza el mecanismo que Academy **ya implementó** para el
 Hub de escritorio (ticket de un solo uso + PKCE, ver `desktop_sso_tickets`),
 adaptado a un flujo de redirección HTTPS estándar en vez de un deep link
 `soflia://`. No es un sistema nuevo: son dos endpoints delgados que
@@ -45,14 +45,14 @@ ambos sin cambio de esquema.
 
 | Param | Requerido | Descripción |
 |---|---|---|
-| `state` | sí | Opaco. Project Hub lo genera y lo verifica; Learning solo debe devolverlo intacto. No interpretarlo, no loguearlo con detalle. |
+| `state` | sí | Opaco. Project Hub lo genera y lo verifica; Academy solo debe devolverlo intacto. No interpretarlo, no loguearlo con detalle. |
 | `code_challenge` | sí | Base64url de `SHA-256(code_verifier)`. Mismo formato que ya usa `/api/auth/desktop/start`. |
 | `redirect_uri` | sí | URL completa de retorno. **Nuevo respecto al flujo de escritorio.** |
 
 ### 3.2. Validación de `redirect_uri` (antes de ejecutar cualquier SSO)
 
 `redirect_uri` debe matchear **exactamente** (no solo el dominio) una entrada
-de una whitelist de orígenes de Project Hub configurada en Learning:
+de una whitelist de orígenes de Project Hub configurada en Academy:
 
 ```
 http://localhost:3000/api/auth/callback/learning     (dev)
@@ -68,7 +68,7 @@ final de la redirección.
 ### 3.3. Comportamiento
 
 1. Validar `redirect_uri` (§3.2).
-2. Ejecutar (o reutilizar, si ya hay sesión web de Learning) el mismo SSO
+2. Ejecutar (o reutilizar, si ya hay sesión web de Academy) el mismo SSO
    con Google/Microsoft que ya usa `/api/auth/desktop/start`. Sin cambios
    en esta parte — es agnóstica del cliente que la invocó.
 3. Al completarse: generar el ticket igual que hoy — guardar su **hash**
@@ -160,7 +160,7 @@ respuestas definitivas, no transitorias.
 - [ ] El ticket se guarda **hasheado**, nunca en claro.
 - [ ] Ventana de validez corta (~1 minuto) — solo tiene que sobrevivir un
       redirect y una llamada inmediata.
-- [ ] La identidad sale siempre del estado de sesión que Learning ya
+- [ ] La identidad sale siempre del estado de sesión que Academy ya
       estableció con Google/Microsoft, nunca de un correo/UUID que el
       cliente proponga en el body de `/exchange`.
 - [ ] Taxonomía de error indistinguible: ticket inexistente, expirado, ya
@@ -171,21 +171,21 @@ respuestas definitivas, no transitorias.
       de escritorio.
 - [ ] `Cache-Control: no-store` en la respuesta de `/exchange` (lleva un
       secreto de un solo uso).
-- [ ] `state` se devuelve intacto en el redirect final, sin que Learning lo
+- [ ] `state` se devuelve intacto en el redirect final, sin que Academy lo
       interprete ni lo modifique — Project Hub es quien lo firma y verifica.
 
 ## 6. Qué NO hace falta
 
 - Ningún cambio de esquema en `desktop_sso_tickets` ni en
   `consume_desktop_sso_ticket`.
-- Ninguna clave nueva del lado de Learning — la lógica de SSO con
+- Ninguna clave nueva del lado de Academy — la lógica de SSO con
   Google/Microsoft ya existe y se reutiliza sin cambios.
 - Ningún secreto nuevo compartido con Project Hub: el contrato es HTTP
   público (ticket de un solo uso + PKCE), no una API key.
 
 ## 7. Estado del lado Project Hub (ya implementado)
 
-Para que quien implemente esto en Learning pueda probar end-to-end sin
+Para que quien implemente esto en Academy pueda probar end-to-end sin
 adivinar el contrato del otro lado:
 
 - `GET https://<project-hub>/api/auth/learning/start?returnUrl=...` genera

@@ -1,6 +1,6 @@
-# SofLIA Learning
+# SofLIA Academy
 
-SofLIA Learning es una plataforma B2B de capacitacion en inteligencia artificial para organizaciones. Combina gestion de cursos, rutas de aprendizaje, certificaciones, analitica empresarial, asistencia con IA y automatizaciones operativas sobre una arquitectura monorepo con Next.js, Express y Supabase.
+SofLIA Academy es una plataforma B2B de capacitacion en inteligencia artificial para organizaciones. Combina gestion de cursos, rutas de aprendizaje, certificaciones, analitica empresarial, asistencia con IA y automatizaciones operativas sobre una arquitectura monorepo con Next.js, Express y Supabase.
 
 Este README esta actualizado a Junio 2026 con base en los ultimos commits y los cambios staged actuales del repositorio.
 
@@ -72,7 +72,7 @@ Requisitos:
 El repositorio usa arquitectura por dominio ("Screaming Architecture"). El codigo de negocio vive en features y no en carpetas genericas por capa.
 
 ```text
-SofLIA-Learning/
+SofLIA-Academy/
 +-- apps/
 |   +-- web/                  # Next.js App Router, API routes y UI principal
 |   |   +-- src/
@@ -476,4 +476,4 @@ Estos numeros son orientativos; el codigo y las migraciones son la fuente de ver
 
 ---
 
-Mantenido por el equipo SofLIA Learning.
+Mantenido por el equipo SofLIA Academy.

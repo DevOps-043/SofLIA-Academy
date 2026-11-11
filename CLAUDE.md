@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**SofLIA Learning** is a B2B educational platform for enterprise AI training. It is a pure B2B product — no consumer-facing subscriptions or communities. Built as a monorepo with Next.js for the frontend, Express for the backend, and Supabase as the database.
+**SofLIA Academy** is a B2B educational platform for enterprise AI training. It is a pure B2B product — no consumer-facing subscriptions or communities. Built as a monorepo with Next.js for the frontend, Express for the backend, and Supabase as the database.
 
 **Tech Stack:**
 - Frontend: Next.js ^15.5.18, React 18.3.1, TypeScript 5.9.3, TailwindCSS 3.4.18
@@ -34,7 +34,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Repository Structure
 
 ```
-SofLIA-Learning/
+SofLIA-Academy/
 ├── apps/
 │   ├── web/              # Frontend (Next.js)
 │   │   ├── src/

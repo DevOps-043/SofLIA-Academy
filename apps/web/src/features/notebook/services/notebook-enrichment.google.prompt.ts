@@ -12,7 +12,7 @@ export function buildEnrichmentPromptForGoogle(input: {
   noteText: string
   existingTags: string[]
 }): string {
-  return `Eres el motor de enriquecimiento del Libro de Apuntes de SofLIA Learning.
+  return `Eres el motor de enriquecimiento del Libro de Apuntes de SofLIA Academy.
 
 Analiza el apunte del usuario y responde UNICAMENTE con un objeto JSON valido con estas claves:
 {

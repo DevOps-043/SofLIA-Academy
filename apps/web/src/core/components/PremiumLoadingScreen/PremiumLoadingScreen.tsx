@@ -66,7 +66,7 @@ export function PremiumLoadingScreen({
         </span>
 
         <div className={styles.copy}>
-          <span className={styles.brand}>SofLIA</span>
+          <span className={styles.brand}>SofLIA Academy</span>
           <h1 className={styles.label}>{label}</h1>
           {description ? <p className={styles.description}>{description}</p> : null}
         </div>

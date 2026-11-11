@@ -31,7 +31,7 @@ En produccion, `/api/observability/health` requiere `Authorization: Bearer $OBSE
 | `OBSERVABILITY_APM_ENDPOINT` | URL de ingesta del proveedor APM/log pipeline. |
 | `OBSERVABILITY_APM_API_KEY` | Token bearer opcional para ingesta. |
 | `OBSERVABILITY_APM_SAMPLE_RATE` | Muestreo entre `0` y `1`; default `1`. |
-| `OBSERVABILITY_SERVICE_NAME` | Nombre del servicio; default `soflia-learning-web`. |
+| `OBSERVABILITY_SERVICE_NAME` | Nombre del servicio; default `soflia-academy-web`. |
 | `OBSERVABILITY_DASHBOARD_TOKEN` | Token bearer para consultar `/api/observability/health` en produccion. |
 
 ## Proveedores recomendados

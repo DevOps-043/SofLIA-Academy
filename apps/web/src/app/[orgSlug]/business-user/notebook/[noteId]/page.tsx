@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { NoteEditorPageClient } from '@/features/notebook'
 
 export const metadata: Metadata = {
-  title: 'Editar apunte | SofLIA',
+  title: 'Editar apunte | SofLIA Academy',
   description: 'Edita tu apunte con un editor de texto enriquecido.',
 }
 

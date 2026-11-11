@@ -1,6 +1,6 @@
 {
   "nav": {
-    "homeLabel": "Ir para o início da SofLIA",
+    "homeLabel": "Ir para o início da SofLIA Academy",
     "primaryLabel": "Navegação principal",
     "mobileLabel": "Navegação móvel",
     "system": "O sistema",
@@ -102,7 +102,7 @@
       },
       {
         "id": "learning",
-        "name": "SofLIA Learning",
+        "name": "SofLIA Academy",
         "role": "Aprendizagem aplicada",
         "description": "Entrega experiências de aprendizagem, prática orientada e rotas personalizadas conectadas ao trabalho real."
       },
@@ -157,7 +157,7 @@
       },
       {
         "id": "learning",
-        "title": "Implementação no SofLIA Learning",
+        "title": "Implementação no SofLIA Academy",
         "description": "Ativamos rotas personalizadas, acompanhamento, prática e mensuração dentro do ambiente SofLIA.",
         "outcome": "Execução em escala"
       },
@@ -388,7 +388,7 @@
     "note": "Uma conversa executiva, objetiva e sem compromisso."
   },
   "footer": {
-    "copyright": "© {{year}} SofLIA. Evolução de talentos com impacto mensurável.",
+    "copyright": "© {{year}} SofLIA Academy. Evolução de talentos com impacto mensurável.",
     "legalLabel": "Informações legais e acesso",
     "privacy": "Privacidade",
     "terms": "Termos",

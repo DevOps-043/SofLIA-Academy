@@ -8,7 +8,7 @@ import { clip, type LessonAutoNotePromptInput } from './lesson-auto-note.service
  */
 
 export function buildLessonAutoNotePromptForGoogle(input: LessonAutoNotePromptInput): string {
-  return `Genera un apunte automatico de leccion para SofLIA Learning.
+  return `Genera un apunte automatico de leccion para SofLIA Academy.
 
 Objetivo:
 Crear una nota concisa, estrategica y util para que el usuario recuerde y aplique lo aprendido al completar la leccion, tenga o no quiz o conversacion.

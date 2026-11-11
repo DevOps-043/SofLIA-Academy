@@ -176,7 +176,7 @@ export function getOpenApiDocument() {
   const document = generator.generateDocument({
     openapi: '3.0.3',
     info: {
-      title: 'SofLIA Learning API',
+      title: 'SofLIA Academy API',
       version: '0.1.0',
       description:
         'Incremental OpenAPI contract generated from Zod schemas. New API routes should register schemas here as they adopt request validation.',

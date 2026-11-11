@@ -1,7 +1,7 @@
 /**
  * Ecosystem tools mapped to the nodes of the SofLIA molecular 3D logo.
  *
- * SofLIA is the umbrella brand; Engine, Learning, Agent and Skills are the
+ * SofLIA is the umbrella brand; Engine, Academy, Agent and Skills are the
  * ecosystem tools. Each is "powered by SofLIA" but will ship its own 3D logo.
  * This config is the single source of truth the scrollytelling stage reads to
  * know which node of the molecule to zoom into and which tool logo to show.

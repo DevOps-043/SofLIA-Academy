@@ -1,7 +1,7 @@
 {
   "name": "@aprende-y-aplica/web",
   "version": "1.0.0",
-  "description": "Frontend de Aprende y Aplica - Chat-Bot-LIA",
+  "description": "Frontend de SofLIA Academy",
   "private": true,
   "scripts": {
     "dev": "next dev",

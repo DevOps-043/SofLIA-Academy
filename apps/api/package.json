@@ -1,7 +1,7 @@
 {
   "name": "@aprende-y-aplica/api",
   "version": "1.0.0",
-  "description": "Backend API de Aprende y Aplica - Chat-Bot-LIA",
+  "description": "Backend API de SofLIA Academy",
   "main": "dist/index.js",
   "private": true,
   "scripts": {

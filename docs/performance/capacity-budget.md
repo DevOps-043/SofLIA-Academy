@@ -1,6 +1,6 @@
 # Capacity Budget
 
-This budget is the operating target for SofLIA Learning at 10,000 concurrent active users. It mirrors Task 4.0 from `TECH_DEBT_REMEDIATION.md` and is exposed at runtime through `/api/performance/metrics`.
+This budget is the operating target for SofLIA Academy at 10,000 concurrent active users. It mirrors Task 4.0 from `TECH_DEBT_REMEDIATION.md` and is exposed at runtime through `/api/performance/metrics`.
 
 ## Load Model
 

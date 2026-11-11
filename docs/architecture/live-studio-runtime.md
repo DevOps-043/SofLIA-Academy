@@ -40,7 +40,7 @@ Reentrante, reemplaza live_studio_commit, sin nuevas tablas o permisos. Se prob�
 localmente en PGlite, incluida aplicación doble, roles, deduplicación, concurrencia
 y payload con ledger manipulado. No se aplicó SQL remoto ni se publicó API.
 
-Orden de rollout: migración en staging, API Learning, comprobar consumidores
+Orden de rollout: migración en staging, API Academy, comprobar consumidores
 anteriores, después Hub que negocia por cabecera `X-Soflia-Studio-Participation: 1`. Sin negociación, el servicio
 proyecta exactamente los campos del snapshot anterior; nuevos comandos requieren
 negociación. El contrato conserva la unión Meeting/Video ya consumida por Hub,
