@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e  # Exit on error
 
-echo "🚀 Starting Netlify build for Aprende y Aplica monorepo..."
+echo "🚀 Starting Netlify build for SofLIA Academy monorepo..."
 
 # Make npm resilient to Netlify's intermittent registry network blips (ECONNRESET).
 # Without retries a single dropped connection during install fails the whole deploy.
