@@ -1,4 +1,5 @@
 import "server-only";
+import { isPlatformAdminRole } from "@/lib/auth/platform-role";
 import { NextResponse } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -37,7 +38,7 @@ async function readLiveActorContext(userId: string, organizationId: string) {
   const account = checked(
     await db
       .from("users")
-      .select("is_banned")
+      .select("is_banned,platform_role")
       .eq("id", userId)
       .maybeSingle(),
   );
@@ -67,6 +68,7 @@ async function readLiveActorContext(userId: string, organizationId: string) {
     userId,
     orgId: organizationId,
     isAdmin,
+    ...(isPlatformAdminRole(account.platform_role) ? { platformAdmin: true as const } : {}),
     canTeach: isAdmin || !!instructor,
     instructor,
   };
