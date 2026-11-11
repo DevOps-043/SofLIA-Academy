@@ -114,12 +114,12 @@ export default function DashboardPage() {
           <div className="flex items-center gap-3">
             <Image
               src="/Logo.png"
-              alt="SofLIA"
+              alt="SofLIA Academy"
               width={40}
               height={40}
               className="w-10 h-10 object-contain"
             />
-            <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">SofLIA</span>
+            <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">SofLIA Academy</span>
           </div>
 
           <div className="flex items-center gap-4">

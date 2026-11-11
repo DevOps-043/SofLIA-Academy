@@ -24,7 +24,7 @@ function main() {
   const startedAt = Date.now()
 
   console.log('')
-  console.log('SofLIA-Learning - Lines of Code Report')
+  console.log('SofLIA-Academy - Lines of Code Report')
   console.log('Scanning project files...')
 
   const stats = collectStats(ROOT)

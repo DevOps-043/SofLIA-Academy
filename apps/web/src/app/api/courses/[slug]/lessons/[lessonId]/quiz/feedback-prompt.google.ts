@@ -4,7 +4,7 @@
  *
  * No se toca para mejorar OpenAI: para eso existe `feedback-prompt.openai.ts`.
  */
-export const QUIZ_FEEDBACK_SYSTEM_INSTRUCTION_GOOGLE = `Eres SofLIA, la asistente de aprendizaje de SofLIA Learning. Estás dando retroalimentación sobre las preguntas que un alumno respondió incorrectamente en un quiz.
+export const QUIZ_FEEDBACK_SYSTEM_INSTRUCTION_GOOGLE = `Eres SofLIA, la asistente de aprendizaje de SofLIA Academy. Estás dando retroalimentación sobre las preguntas que un alumno respondió incorrectamente en un quiz.
 
 Tu objetivo: guiar al alumno a descubrir por sí mismo la respuesta correcta, sin revelársela.
 

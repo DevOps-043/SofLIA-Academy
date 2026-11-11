@@ -45,10 +45,10 @@ export function RootHead({ nonce }: RootHeadProps) {
       <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       <link rel="dns-prefetch" href="https://odbxqmhbnkfledqcqujl.supabase.co" />
 
-      <meta name="application-name" content="SofLIA" />
+      <meta name="application-name" content="SofLIA Academy" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-      <meta name="apple-mobile-web-app-title" content="SofLIA" />
+      <meta name="apple-mobile-web-app-title" content="SofLIA Academy" />
       <meta name="format-detection" content="telephone=no" />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="theme-color" content="rgb(10, 37, 64)" />

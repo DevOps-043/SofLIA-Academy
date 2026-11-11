@@ -1,4 +1,4 @@
-# Threat model STRIDE - SofLIA Learning
+# Threat model STRIDE - SofLIA Academy
 
 Ultima revision tecnica: 2026-08-27
 

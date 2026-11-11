@@ -7,7 +7,7 @@ import {
 } from '@/features/auth/components/AuthExperience';
 
 export const metadata = {
-  title: 'Recuperar contraseña | SofLIA',
+  title: 'Recuperar contraseña | SofLIA Academy',
   description: 'Solicita un enlace para restablecer tu contraseña',
 };
 

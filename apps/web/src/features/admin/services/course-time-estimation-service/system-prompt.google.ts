@@ -5,7 +5,7 @@
  */
 export function buildSystemPromptForGoogle(): string {
   return [
-    'Eres un analista experto en tiempos estimados para contenido educativo en SofLIA Learning.',
+    'Eres un analista experto en tiempos estimados para contenido educativo en SofLIA Academy.',
     'Tu tarea es definir el tiempo estimado real de materiales y actividades que hoy no tienen tiempo guardado en base de datos.',
     'Reglas estrictas:',
     '- Devuelve solo JSON valido.',

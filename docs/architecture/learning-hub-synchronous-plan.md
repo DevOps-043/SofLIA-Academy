@@ -1,14 +1,14 @@
-# Sesiones síncronas de Learning en Soflia Hub
+# Sesiones síncronas de Academy en Soflia Hub
 
 Estado: implementación local y contrato de integración. Decisión de producto confirmada el 10 de octubre de 2026. Destino vigente: aplicación de escritorio Soflia Hub.
 
 ## Distribución de responsabilidades
 
-Learning administra cursos, permisos, instructores, reuniones/webinars y agenda. El dashboard muestra sesiones asignadas como tarjetas y abre el escritorio mediante una referencia. Hub autentica al usuario y ejecuta la experiencia Zoom en su navegador integrado. No se agrega un aula web equivalente ni se utiliza el antiguo trigger de monitoreo como autorización de una clase.
+Academy administra cursos, permisos, instructores, reuniones/webinars y agenda. El dashboard muestra sesiones asignadas como tarjetas y abre el escritorio mediante una referencia. Hub autentica al usuario y ejecuta la experiencia Zoom en su navegador integrado. No se agrega un aula web equivalente ni se utiliza el antiguo trigger de monitoreo como autorización de una clase.
 
-Se retiraron de Learning LiveRoom, ZoomStage, useLiveRoom, ChatPanel, ActivityPanel, ActivityCard y los servicios de chat, actividades, archivos, respuestas, asistencia declarada y transcripción en vivo. Se retiraron Meeting SDK, firma de SDK, parche de Webpack, comprobación del bundle y permisos CSP de Zoom para el aula. Los cursos asíncronos y sus actividades no cambian.
+Se retiraron de Academy LiveRoom, ZoomStage, useLiveRoom, ChatPanel, ActivityPanel, ActivityCard y los servicios de chat, actividades, archivos, respuestas, asistencia declarada y transcripción en vivo. Se retiraron Meeting SDK, firma de SDK, parche de Webpack, comprobación del bundle y permisos CSP de Zoom para el aula. Los cursos asíncronos y sus actividades no cambian.
 
-La programación y lifecycle REST permanecen en Learning como administración. Hub no requiere credenciales administrativas Zoom ni service-role. Los datos históricos del aula y sus controles RLS se conservan; no se eliminaron datos remotos.
+La programación y lifecycle REST permanecen en Academy como administración. Hub no requiere credenciales administrativas Zoom ni service-role. Los datos históricos del aula y sus controles RLS se conservan; no se eliminaron datos remotos.
 
 ## Acceso al panel de instructor
 
@@ -22,11 +22,11 @@ La autenticación web de Live usa la misma autorización académica que el acces
 soflia://learning-session?organization_slug=<slug>&session_id=<uuid>
 ```
 
-Solo se aceptan esos dos parámetros, sin URL remota, contraseña, token o rol. La navegación ocurre por clic de la persona; el navegador/OS puede pedir confirmar la apertura de Hub. La ficha de Learning permite volver a abrir la sesión o consultar su estado.
+Solo se aceptan esos dos parámetros, sin URL remota, contraseña, token o rol. La navegación ocurre por clic de la persona; el navegador/OS puede pedir confirmar la apertura de Hub. La ficha de Academy permite volver a abrir la sesión o consultar su estado.
 
 Hub recibe la referencia al arrancar o al estar abierto. La conserva mientras se completa autenticación; aprovecha el inicio federado PKCE existente si está disponible. La lectura de la referencia pendiente es no destructiva y se confirma su consumo al procesarla, para soportar StrictMode y recargas.
 
-## Contrato HTTP entre main y Learning
+## Contrato HTTP entre main y Academy
 
 ```text
 POST /api/auth/live/access
@@ -36,7 +36,7 @@ Content-Type: application/json
 { "organization_slug": "acme", "session_id": "<uuid>" }
 ```
 
-Learning valida el bearer mediante Supabase Auth y verifica cuenta no bloqueada, organización activa, membresía activa, asignación vigente del curso e instructor. No se usa user_id ni rol enviados por el cliente. Asignaciones canceladas se excluyen del acceso, catálogo y RLS.
+Academy valida el bearer mediante Supabase Auth y verifica cuenta no bloqueada, organización activa, membresía activa, asignación vigente del curso e instructor. No se usa user_id ni rol enviados por el cliente. Asignaciones canceladas se excluyen del acceso, catálogo y RLS.
 
 Respuesta privada:
 
@@ -65,7 +65,7 @@ La apertura utiliza una pestaña sensible: la UI expone solo su origen, no conse
 
 Popups heredan sensibilidad; errores y eventos públicos redactan el destino privado. Se bloquean lectura de documentos y herramientas del agente en esa pestaña. El renderer espera hasta 30 segundos a que la identidad llegue a main, cancelando efectos anteriores si se desmonta o cambia la cuenta. Un 401 del backend se considera denegación.
 
-Zoom proporciona audio, video, pantalla, admisión y chat de su cliente web. Abrir la pestaña no acredita admisión a una reunión ni otorga permisos multimedia automáticamente. El [enriquecimiento V2](zoom-enrichment-v2.md) agrega antesala y colaboración nativa en Hub, con persistencia/autorización Learning: preguntas con votos, prácticas, ayuda y Pulse Checks. La nueva API educativa no restaura el aula multimedia web ni los servicios retirados. RTMS, LTI, LRS externo y Computer Use contextual siguen pendientes de configuración y validación de proveedores reales.
+Zoom proporciona audio, video, pantalla, admisión y chat de su cliente web. Abrir la pestaña no acredita admisión a una reunión ni otorga permisos multimedia automáticamente. El [enriquecimiento V2](zoom-enrichment-v2.md) agrega antesala y colaboración nativa en Hub, con persistencia/autorización Academy: preguntas con votos, prácticas, ayuda y Pulse Checks. La nueva API educativa no restaura el aula multimedia web ni los servicios retirados. RTMS, LTI, LRS externo y Computer Use contextual siguen pendientes de configuración y validación de proveedores reales.
 
 ## Reuniones y webinars
 
@@ -75,7 +75,7 @@ El webhook administrativo conserva HMAC y cuenta autorizada y agrega eventos web
 
 ### Configuración y diagnóstico
 
-Guardar `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID` y `ZOOM_CLIENT_SECRET` configura una sola integración administrativa con la cuenta Zoom maestra. Cada instructor no crea una app ni gestiona claves. Un administrador o propietario de su organización vincula al miembro activo de Learning con un anfitrión activo de esa cuenta maestra. Los correos pueden diferir: la autorización es el vínculo explícito por organización e instructor, conservando el ID canónico devuelto por Zoom.
+Guardar `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID` y `ZOOM_CLIENT_SECRET` configura una sola integración administrativa con la cuenta Zoom maestra. Cada instructor no crea una app ni gestiona claves. Un administrador o propietario de su organización vincula al miembro activo de Academy con un anfitrión activo de esa cuenta maestra. Los correos pueden diferir: la autorización es el vínculo explícito por organización e instructor, conservando el ID canónico devuelto por Zoom.
 
 La programación guarda de forma privada el ID del anfitrión utilizado. La apertura comprueba ese ID frente al recurso de Zoom y al vínculo vigente del instructor; cambiar o retirar el vínculo no concede acceso de anfitrión a sesiones de otro usuario. No se asigna la cuenta maestra automáticamente a todos los miembros o empresas.
 
@@ -89,14 +89,14 @@ El adaptador Zoom distingue anfitrión inexistente, permisos/licencia, autentica
 
 ## Límite de revocación
 
-El acceso se vuelve a autorizar en cada apertura desde Hub. Una join_url genérica de Zoom no se convierte en un enlace individual o efímero por consultarla en ese momento. Su copia puede seguir funcionando fuera de Learning según los controles Zoom del recurso. Registro/autenticación Zoom e invalidación de accesos individuales son necesarios si producto requiere esa revocación adicional.
+El acceso se vuelve a autorizar en cada apertura desde Hub. Una join_url genérica de Zoom no se convierte en un enlace individual o efímero por consultarla en ese momento. Su copia puede seguir funcionando fuera de Academy según los controles Zoom del recurso. Registro/autenticación Zoom e invalidación de accesos individuales son necesarios si producto requiere esa revocación adicional.
 
 ## Despliegue y verificación
 
 1. Aplicar la nueva migración mediante el flujo habitual de Supabase; esta tarea solo la prueba localmente.
-2. Desplegar Learning con API de acceso, contrato de tipos y catálogo.
+2. Desplegar Academy con API de acceso, contrato de tipos y catálogo.
 3. Publicar Hub con receptor, IPC y wrapper. Configurar el origen público VITE_LEARNING_BASE_URL y el SSO existente; no agregar secretos al bundle.
-4. Verificar scopes REST para reuniones, webinars y lectura de usuario Zoom. Learning no tiene una bandera de activación del módulo.
+4. Verificar scopes REST para reuniones, webinars y lectura de usuario Zoom. Academy no tiene una bandera de activación del módulo.
 5. Probar con docente, dos alumnos y dos organizaciones: arranque frío/caliente, login, revocación, webinar, permisos, pantalla, cierre y reapertura.
 
 No se desplegó ni publicó software ni se ejecutó una reunión real. La evidencia de Hub se registra en openspec/changes/launch-learning-live-sessions/reports/verification.md. Rollback de aplicación: volver a una versión compatible y validada, conservando base e historial. Las versiones anteriores de planes Word quedan como antecedentes; los documentos Learning Hub v2 describen la decisión vigente.

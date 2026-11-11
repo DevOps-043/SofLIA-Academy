@@ -54,7 +54,7 @@ export async function createZoomStudioJoin(
   const clientId = process.env.ZOOM_MEETING_SDK_CLIENT_ID;
   const clientSecret = process.env.ZOOM_MEETING_SDK_CLIENT_SECRET;
   if (!clientId || !clientSecret)
-    throw new LiveError(503, "Falta configurar Meeting SDK en Learning");
+    throw new LiveError(503, "Falta configurar Meeting SDK en SofLIA Academy");
   const meetingNumber =
     session.session_type === "webinar"
       ? session.zoom_webinar_id

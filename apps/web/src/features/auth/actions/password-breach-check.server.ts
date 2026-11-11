@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 
 const HIBP_RANGE_URL = 'https://api.pwnedpasswords.com/range'
-const HIBP_USER_AGENT = 'SofLIA-Learning-Security-Audit'
+const HIBP_USER_AGENT = 'SofLIA-Academy-Security-Audit'
 
 export interface PasswordBreachCheckResult {
   breachCount?: number

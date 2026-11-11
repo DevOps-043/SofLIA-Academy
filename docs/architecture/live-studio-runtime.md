@@ -18,4 +18,4 @@ Rollback: retirar endpoint o volver al cliente anterior, preservando tablas y bu
 
 ## Preparación y participación coordinadas
 
-La continuación del 3 de noviembre de 2026 añade reacciones y cadencia transaccionales, negociación de respuesta legacy y entrega firmada de preparación desde Engine. El contrato, autorización, límites y migración están en [preparación de sesiones](live-engine-preparation.md). La firma del servidor no sustituye membresía, permiso docente ni comprobación de curso en Learning.
+La continuación del 3 de noviembre de 2026 añade reacciones y cadencia transaccionales, negociación de respuesta legacy y entrega firmada de preparación desde Engine. El contrato, autorización, límites y migración están en [preparación de sesiones](live-engine-preparation.md). La firma del servidor no sustituye membresía, permiso docente ni comprobación de curso en SofLIA Academy.

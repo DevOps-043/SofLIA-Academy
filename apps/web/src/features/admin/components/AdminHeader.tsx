@@ -90,7 +90,7 @@ export function AdminHeader({ onMenuClick, title }: AdminHeaderProps) {
             <div className="flex min-w-0 items-center gap-2.5">
               <Image
                 src="/Logo.png"
-                alt="SofLIA"
+                alt="SofLIA Academy"
                 width={180}
                 height={48}
                 priority

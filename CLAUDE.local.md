@@ -312,7 +312,7 @@ Cada línea de código debe ser lo suficientemente clara para que:
 
 ## 16. CONTEXTO DEL PROYECTO
 
-- **Proyecto:** SofLIA Learning (plataforma B2B de training corporativo con IA)
+- **Proyecto:** SofLIA Academy (plataforma B2B de training corporativo con IA)
 - **Stack:** Next.js 14 + React 18 + TypeScript 5 + TailwindCSS / Express 4 + Node 22 / Supabase (PostgreSQL) / Zustand / OpenAI + Gemini 2.5 / rrweb / i18n (es, en, pt)
 - **Arquitectura:** Monorepo (apps/web, apps/api, packages/*) con Screaming Architecture por features
 - **Base de datos:** Supabase con RLS; migraciones en `supabase/migrations/`

@@ -25,7 +25,7 @@ describe('certificate-document.service', () => {
       issuedAt: '2026-04-11T18:00:00.000Z',
     })
 
-    expect(brandingSnapshot.platform.name).toBe('SofLIA')
+    expect(brandingSnapshot.platform.name).toBe('SofLIA Academy')
     expect(brandingSnapshot.platform.logoUrl).toContain('/icono.png')
     expect(brandingSnapshot.issuer.name).toBe('Board Ready')
     expect(documentSnapshot.programText).toBe(

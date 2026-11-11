@@ -1,7 +1,7 @@
-# Especificaciones del Proyecto - SofLIA Learning
+# Especificaciones del Proyecto - SofLIA Academy
 
 ## 📋 Información General
-- **Nombre del Proyecto**: SofLIA Learning
+- **Nombre del Proyecto**: SofLIA Academy
 - **Tipo**: Aplicación web full-stack
 - **Arquitectura**: Monorepo con Next.js (frontend) y Node.js/Express (backend)
 - **Base de datos**: Supabase

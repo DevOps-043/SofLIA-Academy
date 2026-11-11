@@ -6,7 +6,7 @@
 
 **Última actualización:** 30 de julio de 2026
 
-**Productos de referencia:** SofLIA Learning, SofLIA Engine, Pulse Hub y futuras herramientas del ecosistema
+**Productos de referencia:** SofLIA Academy, SofLIA Engine, Pulse Hub y futuras herramientas del ecosistema
 
 **Sustituye:** todas las versiones anteriores de `SOFIA_DESIGN_SYSTEM.md`
 

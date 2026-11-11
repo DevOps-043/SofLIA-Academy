@@ -1,6 +1,10 @@
-# MFA TOTP — SofLIA Learning
+# MFA TOTP — SofLIA Academy
 
 Multi-factor authentication via Time-based One-Time Passwords (TOTP, RFC 6238) for Admin and Business roles.
+
+New enrollments use `SofLIA Academy` as their issuer. Apply
+`supabase/migrations/20261111120000_soflia_academy_branding.sql` to update the
+database default. Existing enrollments keep their original issuer and remain valid.
 
 ## Threat model
 

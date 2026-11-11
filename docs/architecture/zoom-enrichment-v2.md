@@ -2,7 +2,7 @@
 
 Estado: implementación local del aula colaborativa; fases externas pendientes de configuración y validación. Fecha: 10 de octubre de 2026.
 
-Fuente de producto: [Propuesta de enriquecimiento](https://docs.google.com/document/d/1nvA2Z8rbU3l4gLWrdqOt1P85f3J6U7WoqJ_-OeYe1AM/edit). Conserva la [arquitectura Learning–Hub](learning-hub-synchronous-plan.md). No hay aula multimedia web nueva.
+Fuente de producto: [Propuesta de enriquecimiento](https://docs.google.com/document/d/1nvA2Z8rbU3l4gLWrdqOt1P85f3J6U7WoqJ_-OeYe1AM/edit). Conserva la [arquitectura Academy–Hub](learning-hub-synchronous-plan.md). No hay aula multimedia web nueva.
 
 ## Entrega implementada
 
@@ -28,7 +28,7 @@ Entrada máxima 32 KiB y salida de Hub 512 KiB; listas de 20 posts por canal, 5 
 
 La [migración aditiva](../../supabase/migrations/20261010225812_live_collaborative_workspace.sql) crea tablas `live_workspace_*` y `live_learning_events` en SOFIA. RLS habilitado; grants directos y RPC revocados de anon/authenticated. Solo el servidor accede; sus funciones invoker realizan autorización propia. No se reactivan publicaciones Realtime ni tablas de aula antiguas. Escrituras de cada sesión se serializan para proteger invariantes; las políticas organizacionales usan locks compartidos salvo actualización.
 
-La migración admite el esquema de Learning que tiene `course_skills` sin un catálogo local `public.skills`. En ese caso el aula opera y la lista de nombres de habilidades queda vacía; los IDs recibidos siguen validándose contra el curso de la sesión. Si existe el catálogo, se conservan sus claves foráneas y se devuelven sus nombres activos. No se crea un catálogo vacío ni se eliminan controles de acceso para instalar el aula.
+La migración admite el esquema de Academy que tiene `course_skills` sin un catálogo local `public.skills`. En ese caso el aula opera y la lista de nombres de habilidades queda vacía; los IDs recibidos siguen validándose contra el curso de la sesión. Si existe el catálogo, se conservan sus claves foráneas y se devuelven sus nombres activos. No se crea un catálogo vacío ni se eliminan controles de acceso para instalar el aula.
 
 Los UUID identifican comandos y eventos. Repetir clave con otro actor, sesión o contenido genera conflicto. El cliente conserva una mutación incierta y reintenta exactamente la misma solicitud antes de permitir una nueva. El registro de idempotencia dura 24 horas; una publicación/pulse conserva su UUID para impedir duplicación tras ese plazo.
 
@@ -51,7 +51,7 @@ El Video SDK crea su propio modelo de sesiones; no reemplaza de forma transparen
 
 ## Despliegue, validación y rollback
 
-Aplicar migración con el flujo habitual de SOFIA, desplegar Learning y luego un Hub compatible con contrato versión 1. Ejecutar purga programada y probar dos organizaciones, instructor, alumnos, revocación durante IA, webinar, arranque frío/caliente y sesión cerrada. No se afirma cumplimiento/certificación ISO 27001 por añadir este panel: exige controles y evidencia operativa adicionales.
+Aplicar migración con el flujo habitual de SOFIA, desplegar Academy y luego un Hub compatible con contrato versión 1. Ejecutar purga programada y probar dos organizaciones, instructor, alumnos, revocación durante IA, webinar, arranque frío/caliente y sesión cerrada. No se afirma cumplimiento/certificación ISO 27001 por añadir este panel: exige controles y evidencia operativa adicionales.
 
 Pruebas SQL ejecutan las tres migraciones Live en PGlite y comprueban aislamiento, permisos, concurrencia, votos/respuestas, xAPI y retención. Las pruebas de servicio comprueban FAQ privada y revocación durante generación; las de Hub comprueban antesala, transporte, logout, límites y reintentos. No se ejecutó RTMS ni una reunión Zoom real.
 

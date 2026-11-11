@@ -45,7 +45,7 @@ function resolveApmConfig(): ApmConfig {
     endpoint,
     apiKey: process.env.OBSERVABILITY_APM_API_KEY?.trim(),
     sampleRate: readSampleRate(),
-    serviceName: process.env.OBSERVABILITY_SERVICE_NAME || 'soflia-learning-web',
+    serviceName: process.env.OBSERVABILITY_SERVICE_NAME || 'soflia-academy-web',
     environment: process.env.NEXT_PUBLIC_APP_ENV || process.env.NODE_ENV || 'unknown',
   }
 }

@@ -70,9 +70,9 @@ class EmailService {
 
     try {
       const info = await this.transporter.sendMail({
-        from: `"SofLIA" <noreply@soflia.ai>`,
+        from: `"SofLIA Academy" <noreply@soflia.ai>`,
         to,
-        subject: 'Recuperación de Contraseña - SofLIA',
+        subject: 'Recuperación de Contraseña - SofLIA Academy',
         text,
         html,
       });
@@ -111,7 +111,7 @@ class EmailService {
 
     try {
       const info = await this.transporter.sendMail({
-        from: `"SofLIA" <noreply@soflia.ai>`,
+        from: `"SofLIA Academy" <noreply@soflia.ai>`,
         to,
         subject: `Invitación a ${organizationName}`,
         text,

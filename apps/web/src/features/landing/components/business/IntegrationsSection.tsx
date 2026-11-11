@@ -22,7 +22,7 @@ export function IntegrationsSection() {
             Integraciones Potentes
           </motion.h2>
           <motion.p className="mx-auto max-w-3xl text-xl" variants={fadeIn}>
-            Conecta SofLIA Learning Business con tus herramientas favoritas
+            Conecta SofLIA Academy Business con tus herramientas favoritas
           </motion.p>
         </motion.div>
 
