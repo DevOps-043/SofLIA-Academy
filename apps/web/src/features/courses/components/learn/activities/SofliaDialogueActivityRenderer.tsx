@@ -1,5 +1,6 @@
 "use client";
 
+import { SofliaChatProvider, SofliaComposerPresence } from "@/core/components/SofliaAvatar/SofliaChatProvider";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { DialogueFooter } from "./soflia-dialogue/DialogueFooter";
@@ -33,6 +34,11 @@ export function SofliaDialogueActivityRenderer({
   }
 
   return (
+    <SofliaChatProvider scope={`dialogue:${user?.id ?? ''}:${lessonId}:${activity.activity_id}`}
+      conversationId={dialogue.session?.sessionId} turn={dialogue.session?.turnsCount}
+      loading={dialogue.sending} draft={dialogue.draftMessage} error={Boolean(dialogue.error)} permission={dialogue.showInactivityPrompt}
+      response={dialogue.session?.messages.filter(message => message.role === 'assistant').slice(-1)[0]}
+      result={dialogue.session?.result ? { key: `${dialogue.session.sessionId}:${dialogue.session.result.activityResult}`, expression: dialogue.session.result.activityResult === 'completed' ? 'success' : 'concerned' } : undefined}>
     <div className={styles.dialogueSurface}>
       <DialogueHeader
         canPracticeAgain={dialogue.canPracticeAgain}
@@ -51,6 +57,7 @@ export function SofliaDialogueActivityRenderer({
         userInitials={userInitials}
         userProfilePictureUrl={user?.profile_picture_url}
       />
+      <SofliaComposerPresence />
       <DialogueFooter
         canPracticeAgain={dialogue.canPracticeAgain}
         canSendMessage={dialogue.canSendMessage}
@@ -68,5 +75,6 @@ export function SofliaDialogueActivityRenderer({
         showInactivityPrompt={dialogue.showInactivityPrompt}
       />
     </div>
+    </SofliaChatProvider>
   );
 }

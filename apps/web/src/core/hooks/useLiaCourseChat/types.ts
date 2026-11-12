@@ -34,6 +34,8 @@ export interface LoadedLiaMessage {
 }
 
 export interface UseLiaCourseChatReturn {
+  avatarTurn?: number;
+  avatarScope?: string;
   messages: SofLIAMessage[];
   isLoading: boolean;
   error: Error | null;
@@ -66,6 +68,7 @@ export interface SubmitCourseMessageParams {
 }
 
 export interface UseSubmitLiaCourseMessageParams {
+  onTurnStarted?: () => void;
   isLoading: boolean;
   messages: SofLIAMessage[];
   userId?: string;

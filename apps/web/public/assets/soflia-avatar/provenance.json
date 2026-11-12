@@ -1,0 +1,10 @@
+{
+  "source": "SofLIA Hub",
+  "commit": "abb97ec43fe4024152058154a86cfe0b0ca86134",
+  "conversion": "WebP sin pérdida: alpha y cada RGB visible idénticos al PNG aprobado; se descarta RGB de píxeles completamente transparentes",
+  "files": {
+    "body": 413752,
+    "light": 156508,
+    "badge-idle": 53476
+  }
+}

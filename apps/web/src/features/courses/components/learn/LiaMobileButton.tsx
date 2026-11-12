@@ -23,7 +23,7 @@ export function LiaMobileButton() {
       } : undefined}
     >
       <div className="w-6 h-6 rounded-full overflow-hidden border-2 border-current">
-        <img src="/lia-avatar.webp" alt="SofLIA" className="w-full h-full object-cover" />
+        <img src="/assets/soflia-avatar/badge-idle.webp" alt="SofLIA" className="w-full h-full object-contain" />
       </div>
       <span className="text-xs font-medium">SofLIA</span>
       {!isInteractionBlocked && (

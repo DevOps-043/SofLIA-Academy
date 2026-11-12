@@ -100,6 +100,9 @@ export function useCourseLiaController(props: CourseLiaProps) {
 
   return {
     ...base,
+    avatarTurn: base.liaChat.avatarTurn,
+    avatarScope: base.liaChat.avatarScope,
+    chatError: base.liaChat.error,
     ...speech,
     ...editActions,
     ...sendActions,

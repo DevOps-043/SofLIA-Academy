@@ -1,5 +1,7 @@
 'use client';
 
+import { SofliaChatAvatar } from '@/core/components/SofliaAvatar/SofliaChatProvider';
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MicOff } from 'lucide-react';
@@ -98,34 +100,7 @@ export function LiveVoiceStage({
           />
         ))}
 
-        <motion.img
-          src="/lia-avatar.webp"
-          alt="SofLIA"
-          animate={{
-            scale: isAssistantSpeaking ? [1, 1.04, 1] : 1,
-            boxShadow: isAssistantSpeaking
-              ? [
-                  `0 0 0 color-mix(in srgb, ${themeColors.accentColor} 0%, transparent)`,
-                  `0 0 42px color-mix(in srgb, ${themeColors.accentColor} 46%, transparent)`,
-                  `0 0 0 color-mix(in srgb, ${themeColors.accentColor} 0%, transparent)`,
-                ]
-              : `0 0 24px color-mix(in srgb, ${themeColors.accentColor} 22%, transparent)`,
-          }}
-          transition={{
-            duration: isAssistantSpeaking ? 1.2 : 0.3,
-            repeat: isAssistantSpeaking ? Infinity : 0,
-            ease: 'easeInOut',
-          }}
-          style={{
-            width: '84px',
-            height: '84px',
-            borderRadius: '50%',
-            objectFit: 'cover',
-            border: `2px solid ${themeColors.accentColor}`,
-            position: 'relative',
-            zIndex: 1,
-          }}
-        />
+        <SofliaChatAvatar size={248} />
       </div>
 
       <p

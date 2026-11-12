@@ -57,7 +57,7 @@ export function CourseLiaFloatingButton() {
             }}
             aria-label={t('lia.openAssistant')}
           >
-            <img src={LIA_AVATAR_SRC} alt={t('lia.title')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={LIA_AVATAR_SRC} alt={t('lia.title')} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </motion.button>
         </div>
       )}

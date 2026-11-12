@@ -1,5 +1,7 @@
 'use client';
 
+import { SofliaChatAvatar } from '@/core/components/SofliaAvatar/SofliaChatProvider';
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import type { AssistantTypewriterRevealState } from '@/core/hooks/useAssistantTypewriterReveal';
@@ -89,11 +91,7 @@ export function MessagesDisplay({
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
-              <img
-                src="/lia-avatar.webp"
-                alt="SofLIA"
-                className={styles.emptyAvatar}
-              />
+              <SofliaChatAvatar size={176} />
             </motion.div>
 
             <motion.div

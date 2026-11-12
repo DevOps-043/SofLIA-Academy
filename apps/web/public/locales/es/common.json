@@ -1781,5 +1781,24 @@
         "source": "Código Fuente Protegido"
       }
     }
+  },
+  "sofliaAvatar": {
+    "label": "SofLIA",
+    "expressions": {
+      "idle": "En espera",
+      "listening": "Escuchando",
+      "thinking": "Pensando",
+      "speaking": "Respondiendo",
+      "success": "Éxito",
+      "warning": "Advertencia",
+      "curious": "Curiosidad",
+      "happy": "Alegría",
+      "confused": "Duda",
+      "focused": "Concentración",
+      "acknowledging": "Confirmación",
+      "sleeping": "En reposo",
+      "surprised": "Sorpresa",
+      "concerned": "Preocupación"
+    }
   }
 }

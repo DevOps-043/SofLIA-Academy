@@ -1,0 +1,14 @@
+[
+  {
+    "expression": "warning",
+    "pattern": "\\b(borrar|eliminar|formatear|contrasena|password|credencial|token privado|tarjeta bancaria|transferir dinero)\\b|\\b(delete|erase|format disk|credential|credit card|password|excluir|apagar|formatar|senha|cartao bancario)\\b"
+  },
+  {
+    "expression": "confused",
+    "pattern": "\\?{2,}|\\b(no entiendo|no se como|no funciona|tengo un problema|estoy confundid[oa]|error desconocido)\\b|\\b(i do not understand|i don.t understand|not sure|does not work|nao entendo|nao sei|nao funciona)\\b"
+  },
+  {
+    "expression": "surprised",
+    "pattern": "!{2,}|\\b(sorpresa|sorprendente|increible|extraordinario|wow|ultima hora)\\b|\\b(surprise|amazing|incredible|surpresa|incrivel|extraordinario)\\b"
+  }
+]

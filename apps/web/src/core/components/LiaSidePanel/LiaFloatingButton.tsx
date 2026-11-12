@@ -98,7 +98,7 @@ function LiaFloatingButtonContent() {
               )}
 
               <img
-                src="/lia-avatar.webp"
+                src="/assets/soflia-avatar/badge-idle.webp"
                 alt="SofLIA"
                 style={{
                   width: '100%',

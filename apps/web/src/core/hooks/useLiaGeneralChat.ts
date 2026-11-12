@@ -29,6 +29,8 @@ type LegacyAuthUser = {
 };
 
 export interface UseLiaGeneralChatReturn {
+  avatarTurn?: number;
+  avatarScope?: string;
   messages: SofLIAMessage[];
   isLoading: boolean;
   error: Error | null;
@@ -96,6 +98,7 @@ export function useLiaGeneralChat(
       : []
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [avatarTurn, setAvatarTurn] = useState(0);
   const [error, setError] = useState<Error | null>(null);
 
   const conversationIdRef = useRef<string | null>(null);
@@ -123,6 +126,7 @@ export function useLiaGeneralChat(
         setMessages((prev) => [...prev, userMessage]);
       }
 
+      setAvatarTurn(value => value + 1);
       setIsLoading(true);
       setError(null);
 
@@ -379,6 +383,8 @@ export function useLiaGeneralChat(
   }, [user]);
 
   return {
+    avatarTurn,
+    avatarScope: JSON.stringify([user?.id, currentOrganization?.id]),
     messages,
     isLoading,
     error,

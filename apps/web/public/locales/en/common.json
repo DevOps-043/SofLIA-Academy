@@ -1781,5 +1781,24 @@
         "source": "Protected Source Code"
       }
     }
+  },
+  "sofliaAvatar": {
+    "label": "SofLIA",
+    "expressions": {
+      "idle": "Waiting",
+      "listening": "Listening",
+      "thinking": "Thinking",
+      "speaking": "Responding",
+      "success": "Success",
+      "warning": "Warning",
+      "curious": "Curiosity",
+      "happy": "Joy",
+      "confused": "Uncertainty",
+      "focused": "Focusing",
+      "acknowledging": "Confirmation",
+      "sleeping": "Resting",
+      "surprised": "Surprise",
+      "concerned": "Concern"
+    }
   }
 }

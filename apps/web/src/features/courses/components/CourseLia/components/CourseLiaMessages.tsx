@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 import type { SofLIAMessage } from '@/core/types/lia.types';
-import { LIA_AVATAR_SRC } from '../constants';
+import { SofliaChatAvatar } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 import styles from '../CourseLiaPanel.module.css';
 import type { NormalizedLiaLink } from '../lia-link.utils';
 import type { CourseLiaProps, CourseLiaThemeColors } from '../types';
@@ -48,11 +48,7 @@ export function CourseLiaMessages(props: CourseLiaMessagesProps) {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           >
-            <img
-              src={LIA_AVATAR_SRC}
-              alt={t('lia.title')}
-              className={styles.emptyAvatar}
-            />
+            <SofliaChatAvatar size={176} />
           </motion.div>
           <motion.div
             initial={{ y: 8, opacity: 0 }}

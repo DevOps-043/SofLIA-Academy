@@ -20,11 +20,14 @@ export function useLiaCourseChat(
 ): UseLiaCourseChatReturn {
   const { user } = useAuth();
   const currentOrganization = useOrganizationStore((state) => state.currentOrganization);
+  const avatarScope = JSON.stringify([user?.id, currentOrganization?.id]);
   const userProfile = user as (typeof user & LiaCourseChatUserProfile) | null;
   const [messages, setMessages] = useState<SofLIAMessage[]>(() =>
     createInitialCourseMessages(initialMessage)
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [avatarTurn, setAvatarTurn] = useState(0);
+  const onTurnStarted = useCallback(() => setAvatarTurn(value => value + 1), []);
   const [error, setError] = useState<Error | null>(null);
   const conversationIdRef = useRef<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -33,6 +36,7 @@ export function useLiaCourseChat(
     : userProfile?.display_name || userProfile?.nombre;
 
   const submitMessage = useSubmitLiaCourseMessage({
+    onTurnStarted,
     isLoading,
     messages,
     userId: user?.id,
@@ -66,6 +70,8 @@ export function useLiaCourseChat(
 
   return useMemo(
     () => ({
+      avatarScope,
+      avatarTurn,
       messages,
       isLoading,
       error,
@@ -78,6 +84,8 @@ export function useLiaCourseChat(
       getCurrentConversationId,
     }),
     [
+      avatarScope,
+      avatarTurn,
       messages,
       isLoading,
       error,

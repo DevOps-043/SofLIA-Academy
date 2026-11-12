@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { RotateCcw, Volume2, VolumeX, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { LIA_AVATAR_SRC } from '../constants';
+import { SofliaAvatarBadge } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 import styles from '../CourseLiaPanel.module.css';
 
 interface CourseLiaHeaderProps {
@@ -39,17 +39,7 @@ export function CourseLiaHeader({
               transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
             />
           ) : null}
-          <motion.img
-            src={LIA_AVATAR_SRC}
-            alt={t('lia.title')}
-            className={styles.avatar}
-            animate={isSpeaking ? { scale: [1, 1.05, 1] } : { scale: 1 }}
-            transition={{
-              duration: 1.2,
-              repeat: isSpeaking ? Infinity : 0,
-              ease: 'easeInOut',
-            }}
-          />
+          <SofliaAvatarBadge size={48} />
           <span className={styles.presence} aria-hidden="true" />
         </div>
 

@@ -1,5 +1,7 @@
 'use client';
 
+import { SofliaAvatarBadge } from '@/core/components/SofliaAvatar/SofliaChatProvider';
+
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -79,19 +81,7 @@ export function PanelHeader({
               transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
             />
           )}
-          <motion.img
-            layoutId="lia-avatar-header"
-            src="/lia-avatar.webp"
-            alt=""
-            className={styles.avatar}
-            whileHover={{ scale: 1.04 }}
-            animate={isSpeaking ? { scale: [1, 1.05, 1] } : { scale: 1 }}
-            transition={{
-              duration: 1.2,
-              repeat: isSpeaking ? Infinity : 0,
-              ease: 'easeInOut',
-            }}
-          />
+          <SofliaAvatarBadge size={48} />
           <span className={styles.presence} aria-hidden="true" />
         </button>
 
