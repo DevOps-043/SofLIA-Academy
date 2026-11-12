@@ -1,27 +1,27 @@
-import {
-  IBM_Plex_Sans,
-  Inter_Tight,
-  Newsreader,
-} from 'next/font/google'
+import localFont from 'next/font/local'
 
-// Display headlines across public pages and application panels.
-export const newsreader = Newsreader({
-  subsets: ['latin'],
+// Las familias del diseño se empaquetan para compilar sin descargas externas.
+export const newsreader = localFont({
+  src: [
+    { path: './fonts/newsreader-roman.ttf', weight: '300 400', style: 'normal' },
+    { path: './fonts/newsreader-italic.ttf', weight: '300 400', style: 'italic' },
+  ],
   variable: '--font-newsreader',
-  weight: ['300', '400'],
-  style: ['normal', 'italic'],
+  display: 'swap',
 })
 
-// Body copy, navigation, controls and buttons.
-export const interTight = Inter_Tight({
-  subsets: ['latin'],
+export const interTight = localFont({
+  src: './fonts/inter-tight.ttf',
+  weight: '400 700',
+  style: 'normal',
   variable: '--font-inter-tight',
-  weight: ['400', '500', '600', '700'],
+  display: 'swap',
 })
 
-// Labels, tables, data and numeric details.
-export const ibmPlexSans = IBM_Plex_Sans({
-  subsets: ['latin'],
+export const ibmPlexSans = localFont({
+  src: './fonts/ibm-plex-sans.ttf',
+  weight: '400 600',
+  style: 'normal',
   variable: '--font-ibm-plex',
-  weight: ['400', '500', '600'],
+  display: 'swap',
 })

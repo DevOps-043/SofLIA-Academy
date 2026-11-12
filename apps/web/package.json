@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npm run check:server-runtime && tsx ../../scripts/generate-openapi.ts",
+    "prebuild": "node ../../scripts/check-merge-conflicts.cjs && npm run check:server-runtime && tsx ../../scripts/generate-openapi.ts",
     "check:server-runtime": "node --no-experimental-require-module ../../scripts/check-server-sanitizer-runtime.cjs",
     "build": "next build",
     "postbuild": "node --no-experimental-require-module --conditions=react-server ../../scripts/check-built-notebook-runtime.cjs",

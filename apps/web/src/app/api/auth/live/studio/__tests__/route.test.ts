@@ -1,7 +1,7 @@
 // @vitest-environment node
-<<<<<<< HEAD
 import { beforeEach,describe,expect,it,vi } from 'vitest';
 import { NextRequest } from 'next/server';
+import { STUDIO_RECORDING_NOTICE_HEADER, STUDIO_RECORDING_NOTICE_VERSION } from '@/features/live/live-studio.contract';
 import { LiveError } from '@/features/live/errors';
 const mocks=vi.hoisted(()=>({getUser:vi.fn(),org:vi.fn(),actor:vi.fn(),execute:vi.fn()}));
 vi.mock('@/lib/supabase/admin',()=>({createAdminClient:()=>({auth:{getUser:mocks.getUser},from:()=>({select:()=>({eq:()=>({maybeSingle:mocks.org})})})})}));
@@ -22,35 +22,27 @@ describe('negociación HTTP del estudio',()=>{
   });
   it('no admite rol ni identidad elegidos en el cuerpo aunque la cabecera sea válida',async()=>{
     expect((await POST(request('1',{...input,role:'instructor'}))).status).toBe(400);expect(mocks.execute).not.toHaveBeenCalled();
-=======
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { NextRequest } from 'next/server';
-import { STUDIO_RECORDING_NOTICE_HEADER, STUDIO_RECORDING_NOTICE_VERSION } from '@/features/live/live-studio.contract';
-import { executeStudio } from '@/features/live/studio.service';
-import { POST } from '../route';
+  });
+});
 
-vi.mock('@/features/live/hub-auth.server', () => ({
-  verifiedHubUser: vi.fn(async () => 'instructor'),
-  hubActorContext: vi.fn(async () => ({ userId: 'instructor' })),
-  readWorkspaceBody: (request: Request) => request.json(),
-}));
-vi.mock('@/features/live/studio.service', () => ({ executeStudio: vi.fn(async () => ({})) }));
-vi.mock('@/lib/rate-limit/advanced-rate-limit', () => ({ rateLimitMiddleware: () => null, RateLimitTier: { API_MUTATION: 'mutation' } }));
 
-afterEach(() => vi.clearAllMocks());
-
-describe('aceptación del aviso de grabación en la ruta del estudio', () => {
-  it.each([undefined, '0', String(STUDIO_RECORDING_NOTICE_VERSION)])('interpreta la versión HTTP %s con el JSON anterior', async version => {
-    const sessionId = '00000000-0000-4000-8000-000000000031';
-    const headers = new Headers({ 'Content-Type': 'application/json' });
-    if (version !== undefined) headers.set(STUDIO_RECORDING_NOTICE_HEADER, version);
-    const response = await POST(new NextRequest('https://learning.test/api/auth/live/studio', {
-      method: 'POST', headers, body: JSON.stringify({ organization_slug: 'acme', session_id: sessionId, operation: { type: 'zoom' } }),
-    }));
+describe('aviso de grabación junto con negociación de participación', () => {
+  it.each([undefined, '0', String(STUDIO_RECORDING_NOTICE_VERSION)])('interpreta la versión HTTP %s conservando el JSON anterior', async version => {
+    const req = request(undefined, { ...input, operation: { type: 'zoom' } });
+    if (version !== undefined) req.headers.set(STUDIO_RECORDING_NOTICE_HEADER, version);
+    const response = await POST(req);
     expect(response.status).toBe(200);
-    expect(executeStudio).toHaveBeenCalledWith({ userId: 'instructor' }, sessionId, {
+    expect(mocks.execute).toHaveBeenCalledWith(expect.objectContaining({ userId: 'teacher' }), session, {
       type: 'zoom', recording_notice_version: version === String(STUDIO_RECORDING_NOTICE_VERSION) ? STUDIO_RECORDING_NOTICE_VERSION : undefined,
-    }, false);
->>>>>>> 5e8da1368862cae7dd427adacaa38fc0631ffd85
+    }, 0);
+    expect(response.headers.get('Referrer-Policy')).toBe('no-referrer');
+  });
+  it('conserva ambas cabeceras y no acepta el aviso enviado sólo en el cuerpo', async () => {
+    const body = { ...input, operation: { type: 'zoom', recording_notice_version: STUDIO_RECORDING_NOTICE_VERSION } };
+    await POST(request('1', body));
+    expect(mocks.execute).toHaveBeenLastCalledWith(expect.anything(), session, { type: 'zoom', recording_notice_version: undefined }, 1);
+    const req = request('1', body); req.headers.set(STUDIO_RECORDING_NOTICE_HEADER, String(STUDIO_RECORDING_NOTICE_VERSION));
+    await POST(req);
+    expect(mocks.execute).toHaveBeenLastCalledWith(expect.anything(), session, { type: 'zoom', recording_notice_version: STUDIO_RECORDING_NOTICE_VERSION }, 1);
   });
 });

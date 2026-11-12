@@ -8,6 +8,7 @@
     "packages/*"
   ],
   "scripts": {
+    "check:merge-conflicts": "node scripts/check-merge-conflicts.cjs",
     "recordings:maintenance": "node node_modules/tsx/dist/cli.mjs --conditions=react-server --tsconfig apps/web/tsconfig.json scripts/live-recording-maintenance.ts",
     "recordings:worker": "node node_modules/tsx/dist/cli.mjs --conditions=react-server --tsconfig apps/web/tsconfig.json scripts/live-recording-worker.ts",
     "dev": "npx concurrently --kill-others-on-fail -n \"FRONTEND,BACKEND\" -c \"cyan,magenta\" \"npm run dev:web\" \"npm run dev:api\"",

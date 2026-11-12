@@ -17,11 +17,11 @@ export async function deliverEnginePreparation(context:LiveContext,input:unknown
   const {session}=await liveSession(context,preparation.session_id,true);
   if(session.course_id!==preparation.manifest.course_id)throw new LiveError(403,'La preparación pertenece a otro curso.');
   if(session.status!=='scheduled')throw new LiveError(409,'Entrega la preparación antes de iniciar la sesión.');
-  const result=await executeStudio(context,session.id,{type:'snapshot'},true);
+  const result=await executeStudio(context,session.id,{type:'snapshot'},1);
   const snapshot=studioSnapshotSchema.parse('snapshot' in result?result.snapshot:undefined);
   if(snapshot.state.answers.length||snapshot.state.submissions.length)throw new LiveError(409,'La sesión ya tiene trabajo de participantes.');
   const digest=createHash('sha256').update(JSON.stringify(preparation)).digest('hex');
   const commandId=`${digest.slice(0,8)}-${digest.slice(8,12)}-5${digest.slice(13,16)}-a${digest.slice(17,20)}-${digest.slice(20,32)}`;
-  await executeStudio(context,session.id,{type:'command',id:commandId,revision:snapshot.state.revision,command:{type:'import_engine',manifest:preparation.manifest}},true);
+  await executeStudio(context,session.id,{type:'command',id:commandId,revision:snapshot.state.revision,command:{type:'import_engine',manifest:preparation.manifest}},1);
   return {delivered:true,session_id:session.id,engine_revision:preparation.manifest.revision};
 }

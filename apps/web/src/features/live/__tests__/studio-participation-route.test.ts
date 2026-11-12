@@ -11,7 +11,7 @@ vi.mock('@/lib/rate-limit/advanced-rate-limit',()=>({rateLimitMiddleware:()=>nul
 const id='00000000-0000-4000-8000-000000000001';
 afterEach(()=>vi.resetAllMocks());
 describe('negociación HTTP del estudio',()=>{
-  it.each([['1',true],['2',false],['',false]] as const)('negocia cabecera %s sin cambiar el JSON de ingreso',async(header,enabled)=>{
+  it.each([['1',1],['2',0],['',0]] as const)('negocia cabecera %s sin cambiar el JSON de ingreso',async(header,enabled)=>{
     vi.mocked(verifiedHubUser).mockResolvedValue(id);vi.mocked(hubActorContext).mockResolvedValue({userId:id} as never);vi.mocked(executeStudio).mockResolvedValue({} as never);
     const request=new NextRequest('https://learning.example/api/auth/live/studio',{method:'POST',headers:{'Content-Type':'application/json',...(header?{'X-Soflia-Studio-Participation':header}:{})},body:JSON.stringify({organization_slug:'empresa',session_id:id,operation:{type:'snapshot'}})});
     expect((await POST(request)).status).toBe(200);

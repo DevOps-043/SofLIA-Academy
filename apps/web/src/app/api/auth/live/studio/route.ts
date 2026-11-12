@@ -12,17 +12,13 @@ export async function POST(request: NextRequest) {
     const limited = rateLimitMiddleware(request, input.operation.type === 'snapshot' ? RateLimitTier.API_READ : RateLimitTier.API_MUTATION, userId);
     if (limited) return new NextResponse(limited.body, { status: limited.status, headers: { ...Object.fromEntries(new Headers(limited.headers)), 'Cache-Control': 'no-store' } });
     const context = await hubActorContext(userId, input.organization_slug);
-<<<<<<< HEAD
-    const response = json(await executeStudio(context, input.session_id, input.operation,request.headers.get('X-Soflia-Studio-Participation')==='1'?1:input.participation_version??0));
-=======
-    const participation = request.headers.get('X-Soflia-Studio-Participation') === '1' || input.participation_version === 1;
+    const participationVersion = request.headers.get('X-Soflia-Studio-Participation') === '1' || input.participation_version === 1 ? 1 : 0;
     const recordingNoticeVersion: typeof STUDIO_RECORDING_NOTICE_VERSION | undefined = request.headers.get(STUDIO_RECORDING_NOTICE_HEADER) === String(STUDIO_RECORDING_NOTICE_VERSION)
       ? STUDIO_RECORDING_NOTICE_VERSION : undefined;
     const operation = input.operation.type === 'zoom'
       ? { ...input.operation, recording_notice_version: recordingNoticeVersion }
       : input.operation;
-    const response = json(await executeStudio(context, input.session_id, operation, participation));
->>>>>>> 5e8da1368862cae7dd427adacaa38fc0631ffd85
+    const response = json(await executeStudio(context, input.session_id, operation, participationVersion));
     response.headers.set('Referrer-Policy', 'no-referrer');
     return response;
   });
