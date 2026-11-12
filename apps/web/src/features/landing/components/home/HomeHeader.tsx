@@ -60,7 +60,7 @@ export function HomeHeader() {
           <span className={styles.brandMark}>
             <Image src="/Logo.png" alt="" fill sizes="36px" className="object-contain" priority />
           </span>
-          <span className={styles.brandName}>SofLIA</span>
+          <span className={styles.brandName}>SofLIA Academy</span>
         </Link>
 
         <nav

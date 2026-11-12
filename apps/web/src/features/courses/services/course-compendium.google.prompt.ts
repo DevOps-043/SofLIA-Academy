@@ -46,7 +46,7 @@ export function buildCourseCompendiumPromptForGoogle(input: {
     if (extractsLength >= PROMPT_INPUT_MAX) break
   }
 
-  return `Genera la síntesis de estudio de un curso completado en SofLIA Learning.
+  return `Genera la síntesis de estudio de un curso completado en SofLIA Academy.
 
 Objetivo:
 El usuario acaba de completar el curso. Crea una guía de estudio que le ayude a reforzar y repasar todo lo aprendido, basada en sus apuntes.

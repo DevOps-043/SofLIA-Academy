@@ -1,0 +1,18 @@
+/* Las familias de Next/font se sustituyen por la tipografía local sólo en QA. */
+:root { --font-system-ui: 'Segoe UI', system-ui, sans-serif; --font-system-display: 'Segoe UI', system-ui, sans-serif; --font-system-label: 'Segoe UI', system-ui, sans-serif; }
+.light body { background: var(--color-bg-dark) !important; color: var(--color-primary); }
+body { margin: 0; font-family: var(--font-system-ui); background: var(--color-bg-dark); color: var(--color-gray-900); }
+.dark body { background: var(--color-bg-dark); color: var(--color-gray-50); }
+main { padding: 18px 24px 50px; }
+.qa-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; padding: 8px 0 22px; font-size: 12px; }
+.qa-controls label { display: flex; align-items: center; gap: 7px; }
+.qa-controls select, .qa-controls button { padding: 8px 12px; border: 1px solid var(--color-gray-500); border-radius: 9px; background: var(--color-bg-light); color: var(--color-primary); }
+.qa-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.qa-grid > section { min-width: 0; }
+.qa-heading { margin: 4px 0 12px; font-size: 12px; opacity: .65; }
+.qa-frame { position: relative; inset: auto; width: 100%; height: 700px; max-height: none; font-family: var(--font-system-ui); }
+[data-qa-surface="notebook"] { --editor-action: var(--color-accent); --editor-text: var(--color-primary); --editor-muted: var(--color-gray-500); --editor-subtext: var(--color-primary); --editor-border: var(--color-gray-200); --editor-card: var(--color-bg-light); --editor-input: var(--color-bg-light); --editor-panel: var(--color-bg-light); --editor-accent: var(--color-accent); }
+.dark [data-qa-surface="notebook"] { --editor-text: var(--color-gray-50); --editor-muted: var(--color-gray-500); --editor-subtext: var(--color-gray-200); --editor-border: var(--color-gray-800); --editor-card: var(--color-gray-900); --editor-input: var(--color-gray-800); --editor-panel: var(--color-bg-dark); }
+.qa-expressions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 40px; font-size: 11px; }
+.qa-expressions > div { text-align: center; }
+@media (max-width: 850px) { main { padding: 16px; } .qa-grid { grid-template-columns: 1fr; } .qa-frame { height: 650px; } }

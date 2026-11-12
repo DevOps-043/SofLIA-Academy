@@ -1,0 +1,76 @@
+.soflia-avatar {
+  --avatar-gaze-x: 0%; --avatar-gaze-y: 0%; --avatar-blink: 1; --avatar-energy: 0;
+  --avatar-float: 0px; --avatar-nod: 0px; --avatar-breath: .15; --avatar-sweep: 0%;
+  --avatar-drift: 0px; --avatar-sway: 0deg; --avatar-face-lift: 0px; --avatar-pulse: .5; --avatar-counter-pulse: .5;
+  --avatar-face-x: 0px; --avatar-face-tilt: 0deg; --avatar-tone: .4; --avatar-eye-open: 1; --avatar-eye-shift: 0px; --avatar-brow-lift: 0px;
+  position: relative; width: 100%; height: 100%; overflow: visible; isolation: isolate; container-type: size;
+  color: var(--color-avatar-face); user-select: none;
+}
+.soflia-avatar__rig {
+  position: absolute; inset: 0; margin: auto; width: min(100cqw, calc(100cqh * 1312 / 1199)); height: auto; aspect-ratio: 1312 / 1199;
+  transform: translate(var(--avatar-drift), var(--avatar-float)) rotate(var(--avatar-sway));
+  transform-origin: 51% 70%; will-change: transform;
+}
+.soflia-avatar__layer, .soflia-avatar__expression, .soflia-avatar__gaze {
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+}
+.soflia-avatar__layer { object-fit: contain; }
+.soflia-avatar__expression { mask-image: url('/assets/soflia-avatar/visor.svg'); mask-size: 100% 100%; mask-repeat: no-repeat; }
+.soflia-avatar__gaze { transform: translate(var(--avatar-gaze-x), var(--avatar-gaze-y)); will-change: transform; }
+.soflia-avatar__light { opacity: calc(var(--avatar-breath) + var(--avatar-energy) * .65); filter: brightness(1.3); mask-image: linear-gradient(115deg, transparent, black 35%, black 65%, transparent); mask-position: var(--avatar-sweep) 0; mask-size: 180% 100%; }
+.soflia-avatar__shadow { position: absolute; left: 22%; right: 20%; top: 84%; height: 7%; border-radius: 50%; background: currentColor; filter: blur(10px); opacity: calc(.14 + var(--avatar-energy) * .14); }
+.soflia-avatar .avatar-face {
+  color: inherit; position: absolute; left: 29%; top: 40%; width: 43%; height: 22%;
+  filter: drop-shadow(0 0 .2cqw currentColor) drop-shadow(0 0 .65cqw currentColor);
+  animation: soflia-face-appear .22s ease-out both;
+  transform: translate(var(--avatar-face-x), calc(var(--avatar-face-lift) + var(--avatar-nod))) rotate(var(--avatar-face-tilt));
+  transform-origin: 50% 50%; will-change: transform;
+}
+.soflia-avatar .avatar-face > * { opacity: calc(.96 + var(--avatar-pulse) * .04); }
+.soflia-avatar .avatar-face__fine { stroke-width: 4.5; }
+.soflia-avatar .avatar-face__blink { clip-path: inset(calc((1 - var(--avatar-blink)) * 49%) 0); }
+.soflia-avatar .avatar-face--thinking, .soflia-avatar .avatar-face--success, .soflia-avatar .avatar-face--warning, .soflia-avatar .avatar-face--confused {
+  left: 37%; top: 36%; width: 28%; height: 30.65%;
+}
+.soflia-avatar .avatar-face--listening { left: 37%; top: 37%; width: 28%; height: 28%; }
+.soflia-avatar .avatar-face__thinking { stroke-width: 4.5; stroke-dasharray: .2 12; transform-origin: 50px 50px; animation: soflia-face-think 4.5s linear infinite; }
+.soflia-avatar .avatar-face__orbit { transform-origin: 50px 50px; animation: soflia-face-think 2.8s linear reverse infinite; }
+.soflia-avatar .avatar-face__thought-dots { stroke-width: 2; opacity: calc(.7 + var(--avatar-pulse) * .3); }
+.soflia-avatar .avatar-face__thought-dots circle:nth-child(2) { opacity: calc(.6 + var(--avatar-counter-pulse) * .4); }
+.soflia-avatar .avatar-face__bar { transform-box: fill-box; transform-origin: center; transform: scaleY(calc(.5 + var(--avatar-pulse) * .25 + var(--avatar-energy) * .8)); }
+.soflia-avatar .avatar-face__bar--0 { transform: scaleY(clamp(.4, calc(.45 + var(--avatar-pulse) * .15 + var(--avatar-wave-0, 0) * 1.2 + var(--avatar-energy) * .4), 1.4)); }
+.soflia-avatar .avatar-face__bar--1 { transform: scaleY(clamp(.4, calc(.45 + var(--avatar-counter-pulse) * .15 + var(--avatar-wave-1, 0) * 1.2 + var(--avatar-energy) * .4), 1.4)); }
+.soflia-avatar .avatar-face__bar--2 { transform: scaleY(clamp(.4, calc(.45 + var(--avatar-pulse) * .15 + var(--avatar-wave-2, 0) + var(--avatar-energy) * .4), 1.3)); }
+.soflia-avatar .avatar-face__bar--3 { transform: scaleY(clamp(.4, calc(.45 + var(--avatar-counter-pulse) * .15 + var(--avatar-wave-3, 0) * 1.2 + var(--avatar-energy) * .4), 1.4)); }
+.soflia-avatar .avatar-face__bar--4 { transform: scaleY(clamp(.4, calc(.45 + var(--avatar-pulse) * .15 + var(--avatar-wave-4, 0) * 1.2 + var(--avatar-energy) * .4), 1.4)); }
+.soflia-avatar .avatar-face__open-eye { fill: currentColor; stroke-width: 1.5; transform-box: fill-box; transform-origin: center; transform: translateX(var(--avatar-eye-shift)) scaleY(var(--avatar-eye-open)); }
+.soflia-avatar .avatar-face__eyebrow { stroke-width: 3.5; opacity: .95; transform: translateY(var(--avatar-brow-lift)); }
+.soflia-avatar .avatar-face__mouth { stroke-width: 3.5; fill: currentColor; fill-opacity: .22; }
+.soflia-avatar .avatar-face__surprise-mouth { stroke-width: 3.5; fill: currentColor; fill-opacity: .18; transform-box: fill-box; transform-origin: center; transform: scaleY(calc(.9 + var(--avatar-pulse) * .2)); }
+.soflia-avatar .avatar-face__sleep-mouth { stroke-width: 2.5; opacity: .95; transform-box: fill-box; transform-origin: center; transform: scaleY(calc(.7 + var(--avatar-breath) * 1.2)); }
+.soflia-avatar .avatar-face--speaking { filter: drop-shadow(0 0 .2cqw currentColor) drop-shadow(0 0 .65cqw currentColor); }
+.soflia-avatar .avatar-face__confirm { stroke-width: 9; }
+.soflia-avatar .avatar-face__warning, .soflia-avatar .avatar-face__doubt { stroke-width: 8; }
+.soflia-avatar .avatar-face__warning { opacity: calc(.94 + var(--avatar-pulse) * .06); }
+.soflia-avatar .avatar-face__sleeping { opacity: .88; stroke-width: 4.5; }
+.soflia-avatar__sleep-cues { position: absolute; left: 83%; top: 18%; width: 12%; height: 18%; pointer-events: none; z-index: 2; }
+.soflia-avatar__sleep-cues span { position: absolute; left: 0; top: 0; font: 600 clamp(11px, 4.8cqw, 24px) system-ui; filter: drop-shadow(0 0 3px currentColor); animation: soflia-sleep-rise 3s linear infinite; opacity: 0; will-change: transform, opacity; }
+.soflia-avatar__sleep-cues span:nth-child(2) { animation-delay: -1s; }
+.soflia-avatar__sleep-cues span:nth-child(3) { animation-delay: -2s; }
+.soflia-avatar[data-expression="warning"] { color: var(--color-avatar-warning); }
+.soflia-avatar[data-expression="sleeping"] .soflia-avatar__light { opacity: .04; }
+.soflia-avatar[data-running="false"] * { animation-play-state: paused !important; }
+.soflia-avatar[data-running="false"] .avatar-face { animation: none; opacity: 1; }
+.soflia-avatar[data-running="false"] .soflia-avatar__rig { transform: none; }
+.soflia-avatar[data-running="false"] .soflia-avatar__rig, .soflia-avatar[data-running="false"] .soflia-avatar__gaze { will-change: auto; }
+@keyframes soflia-face-think { to { transform: rotate(360deg); } }
+@keyframes soflia-face-appear { from { opacity: .85; } to { opacity: 1; } }
+@keyframes soflia-sleep-rise { 0% { opacity: 0; transform: translate(0, 0) scale(.7); } 15% { opacity: .75; } 75% { opacity: .65; } 100% { opacity: 0; transform: translate(80%, -220%) scale(1.12); } }
+@media (prefers-reduced-motion: reduce) {
+  .soflia-avatar * { animation: none !important; transition: none !important; }
+  .soflia-avatar__rig, .soflia-avatar__gaze { transform: none; }
+  .soflia-avatar .avatar-face { transform: none; will-change: auto; }
+  .soflia-avatar__sleep-cues span { display: none; animation: none; transform: none; will-change: auto; }
+  .soflia-avatar__sleep-cues span:first-child { display: block; opacity: .65; }
+  .soflia-avatar__sleep-cues span:first-child::after { content: 'zz'; }
+}

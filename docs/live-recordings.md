@@ -1,12 +1,16 @@
 # Grabaciones de webinars
 
-Estado: implementado y verificado localmente; pendiente de activación y PoC real.
+Estado: importador activado en GitHub Actions y consulta real de Zoom verificada.
+La prueba completa de archivo y reproducción de un aula de Learning sigue pendiente.
+Corte operativo del 2026-11-10 en el [reporte de activación](reports/live-activation-2026-11-10/execution.md).
 Cambio coordinado: SofLIA-HUB/openspec/changes/record-webinars-and-publish-replays.
+
+Las aulas nuevas pueden usar Video SDK. Su activación, credenciales independientes e importación REST se describen en [aulas con Video SDK](live-video-sdk.md). Los requisitos de anfitrión Meeting y licencia Webinars de esta guía corresponden a las sesiones Meeting anteriores.
 
 ## Responsabilidad y acceso
 
 Soflia programa los eventos mediante anfitriones centrales de su cuenta Zoom.
-El instructor usa su identidad de Learning y no necesita asociar una cuenta
+El instructor usa su identidad de Academy y no necesita asociar una cuenta
 Zoom ni comprar una licencia individual. La plataforma conserva la obligación
 de contratar capacidad de grabación cloud y, para recursos webinar, Zoom Webinars.
 Almacenar el vídeo en Soflia no elimina ese requisito del proveedor.
@@ -16,7 +20,7 @@ La grabación no depende del disco del instructor. Cerrar Hub no interrumpe la
 importación del archivo; si la salida del anfitrión termina el evento en Zoom,
 la captura también termina. La aplicación nunca reconstruye minutos perdidos.
 Para ingresar al webinar, el SDK recibe el correo del anfitrión central o el del
-perfil de Learning del participante. Se deriva en el servidor y se transmite
+perfil de Academy del participante. Se deriva en el servidor y se transmite
 solo en el grant de ingreso, sin crear ni exigir una cuenta Zoom al docente.
 
 Los vídeos quedan en el bucket privado live-recordings de SOFIA. Una política
@@ -48,7 +52,8 @@ timestamp/HMAC, cuenta, sesión y anfitrión. Conserva run/files/job antes de re
 sin descargar vídeos en la petición. UUID identifica cada ejecución. Un inicio
 tardío no reabre procesamiento. El cierre se conserva aunque llegue antes del vídeo.
 
-El worker es un proceso Node duradero separado de Next/serverless. Reclama trabajos
+El worker es un proceso Node separado de Next/serverless. Puede ejecutarse como
+servicio continuo o por lotes finitos en GitHub Actions (véase más abajo). Reclama trabajos
 con lease de cinco minutos, heartbeat de veinte segundos, seis intentos y backoff
 con jitter. Postgres limita a dos transferencias globales y una por organización.
 Un fallo de un propietario antiguo no modifica el trabajo de otro.
@@ -83,7 +88,7 @@ Retirar bloquea nuevas concesiones; una ya emitida puede funcionar hasta vencer.
 Contenido ya descargado no puede retirarse del dispositivo del usuario.
 Una descarga iniciada antes del vencimiento puede terminar después de este;
 el TTL limita nuevas peticiones, no revoca bytes o respuestas ya en tránsito.
-Learning reutiliza la actualización de treinta segundos de la ficha; Hub usa
+Academy reutiliza la actualización de treinta segundos de la ficha; Hub usa
 Realtime y el bridge SDK por ventana/origen/nonce, sin un nuevo sondeo del renderer.
 
 ## Preparación y activación
@@ -96,6 +101,13 @@ Realtime y el bridge SDK por ventana/origen/nonce, sin un nuevo sondeo del rende
    Verificar licencias, scopes API/eventos, cuota, grabación automática,
    capacidad webinar, privacidad del original, on-demand/correos y retención Zoom.
    Mantener ZOOM_RECORDING_PRIVACY_APPROVED sin aprobar hasta esa revisión.
+
+   El ingreso del instructor al estudio de Hub usa la aceptación del aviso en
+   cada intento. Learning valida la versión aceptada en la petición autenticada
+   antes de emitir el acceso y conserva las comprobaciones de la cuenta y de
+   grabación automática. En Meeting, la aceptación sustituye la aprobación de
+   cuenta para ese ingreso. La aprobación de cuenta se sigue usando al programar
+   eventos, en el acceso heredado y para activar aulas del proveedor Video.
 3. Configurar RECORDING_S3_ENDPOINT, RECORDING_S3_ACCESS_KEY, RECORDING_S3_SECRET_KEY
    y, si hace falta, RECORDING_S3_REGION. Deben corresponder al Storage de SOFIA,
    bucket live-recordings. Aprobar límites globales del proyecto y del bucket;
@@ -104,7 +116,8 @@ Realtime y el bridge SDK por ventana/origen/nonce, sin un nuevo sondeo del rende
 4. Proveer Node compatible con el proyecto, dependencias del lockfile y FFprobe
    administrado mediante RECORDING_FFPROBE_PATH o PATH. RECORDING_SPOOL_DIRECTORY
    debe ser privado, propiedad exclusiva del worker, con disco para los vídeos en vuelo.
-   Supervisar el proceso y sus recursos; no ejecutar el worker en una función efímera.
+   Supervisar el proceso y sus recursos; no ejecutar el worker dentro de una petición
+   HTTP o función serverless. Un runner de Actions puede ejecutar el lote finito.
 5. Ensayar en staging reunión y webinar reales: automático, host/participante,
    ensayo previo, pausas, reconexión, evento perdido, copia S3 y reproducción.
    Comprobar layout, memoria/disco/tiempo y aislamiento. La recuperación SDK por
@@ -130,11 +143,62 @@ entorno y sin leer archivos .env desde los scripts:
 ```powershell
 npm run recordings:worker
 npm run recordings:worker -- --once
+npm run recordings:worker -- --drain
 npm run recordings:maintenance
 npm run recordings:maintenance -- --apply --confirm
 npm run recordings:maintenance -- --purge --apply --confirm
 npm run recordings:maintenance -- --spool-clean --apply --confirm
 ```
+
+## Importación con GitHub Actions
+
+El workflow [.github/workflows/live-recording-importer.yml](../.github/workflows/live-recording-importer.yml)
+ejecuta `recordings:worker -- --drain` desde `main` cada dos horas, en el minuto
+17 UTC. También admite **Run workflow** desde Actions para importar de inmediato.
+Los horarios de GitHub pueden retrasarse; no hay promesa de importación instantánea.
+El lote reconcilia primero, procesa hasta diez trabajos y termina al vaciarse la
+cola. La ejecución se cancela a las cuatro horas; Actions tiene diez minutos
+adicionales para el cierre y la recuperación. La base de datos conserva leases,
+backoff y archivos confirmados. Un fallo recuperable produce una ejecución fallida,
+no un éxito aparente. La siguiente ejecución respeta `available_at`.
+
+La ejecución usa Ubuntu estándar, Node 22, FFprobe del sistema y `npm ci` sin
+scripts de instalación. Las actions están fijadas por SHA, el token de GitHub solo
+lee código y no se persiste en Git. No se ejecuta con secretos en pull requests.
+No sube vídeos como artifacts ni usa caché. Los temporales privados desaparecen
+con el runner; el archivo definitivo permanece en `live-recordings` de Supabase.
+
+Secretos del repositorio, exclusivos del paso de importación:
+
+| Secreto de Actions | Uso |
+| --- | --- |
+| `RECORDING_SUPABASE_SERVICE_ROLE_KEY` | Clave de servidor de Learning; acceso administrativo, nunca frontend |
+| `RECORDING_ZOOM_VIDEO_API_KEY` | Lectura de grabaciones Video SDK de la cuenta y de una sesión |
+| `RECORDING_ZOOM_VIDEO_API_JWT_ISSUER` y `RECORDING_ZOOM_VIDEO_API_JWT_SECRET` | Alternativa a la clave S2S si Zoom requiere JWT. Ambos son obligatorios cuando se usa este modo |
+| `RECORDING_S3_ACCESS_KEY` | Acceso S3 al almacenamiento aprobado |
+| `RECORDING_S3_SECRET_KEY` | Secreto del mismo acceso S3 |
+
+La clave S2S de lectura no requiere credenciales SDK de ingreso ni permisos para
+crear sesiones o eliminar grabaciones. Renovarla antes de su vencimiento y
+actualizar el secreto de Actions. El par JWT puede tener acceso más amplio al
+proyecto y solo se instala con autorización explícita. Las claves S3 y Supabase actuales son administrativas;
+limitar quién puede modificar workflows o `main`. Nunca imprimir valores ni
+agregar secretos a issues, commits, artifacts o argumentos de shell.
+
+El runner estándar es gratuito en este repositorio mientras sea público,
+según [facturación de Actions](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
+Esto no cambia el coste de Zoom, Storage o su tráfico. Si cambia la visibilidad
+del repositorio, revisar presupuesto antes de mantener el horario.
+
+El disco anunciado del runner estándar es 14 GB; dependencias y sistema ocupan
+parte. Antes de descargar se exige espacio libre para el archivo y una reserva
+de 1 GiB. El máximo de código de 50 GiB no garantiza que cualquier archivo quepa
+en Actions. Un archivo que no quepa falla sin llenar el disco y requiere un
+ejecutor con capacidad suficiente. No se fragmenta ni publica un vídeo truncado.
+
+Rollback: deshabilitar únicamente este workflow desde Actions. Las grabaciones
+confirmadas, la cola y la captura en Zoom permanecen; habilitarlo de nuevo retoma
+los trabajos elegibles. Render no es necesario para esta modalidad.
 
 ## Soporte, retención y recuperación
 
@@ -172,3 +236,9 @@ Fuentes oficiales: [Zoom REST](https://developers.zoom.us/docs/api/meetings/),
 y [compatibilidad S3](https://supabase.com/docs/guides/storage/s3/compatibility).
 La licencia/capacidad de la cuenta real y el flujo audiovisual real siguen pendientes
 de PoC autorizada; las pruebas locales no los acreditan.
+
+## Diagnóstico seguro
+
+npm run recordings:health -- --help describe el diagnóstico. Sin --database comprueba exclusivamente la presencia de nombres de configuración y la aprobación de privacidad, sin leer archivos .env ni contactar servicios. No imprime valores. Con --database consulta contadores de trabajos pendientes/en ejecución/fallidos, leases vencidos y última actividad. La última actividad no demuestra que un worker esté vivo: el resultado conserva worker_liveness como unknown. Ni configuración completa ni contadores sustituyen el piloto de captura, archivo y reproducción real.
+
+La preparación desde Engine y la participación negociada del aula se describen en [integración de preparación](architecture/live-engine-preparation.md). Estas funciones no activan grabación, licencias ni publicación por organización.

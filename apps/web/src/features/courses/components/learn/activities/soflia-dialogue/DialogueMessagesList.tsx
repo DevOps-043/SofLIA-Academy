@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { SofliaChatAvatar } from "@/core/components/SofliaAvatar/SofliaChatProvider";
 import { useTranslation } from "react-i18next";
 import type { DialogueMessagesEndRef, DialogueSession } from "./dialogue.types";
 import { DialogueMessageBubble } from "./DialogueMessageBubble";
@@ -39,7 +39,7 @@ export function DialogueMessagesList({
         ))
       ) : (
         <div className="rounded-2xl border border-dashed border-gray-200 bg-white/55 px-4 py-8 text-center dark:border-white/10 dark:bg-white/[0.025]">
-          <Sparkles className="mx-auto h-5 w-5 text-accent" />
+          <div className="mx-auto w-fit"><SofliaChatAvatar size={144} /></div>
           <p className="mt-2 text-sm font-medium text-gray-900 dark:text-white">{t("activities.dialogue.emptyTitle")}</p>
           <p className="mt-1 text-xs text-gray-500 dark:text-white/40">{t("activities.dialogue.emptyDescription")}</p>
         </div>

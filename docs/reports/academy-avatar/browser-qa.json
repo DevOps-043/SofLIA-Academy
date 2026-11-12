@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "Chat general y curso: identidad nueva y reacciones independientes al borrador",
+    "Audio WAV local del reproductor compartido medido sin otra captura ni cambios al reproductor",
+    "Cuaderno: espera real, propuesta pendiente, aplicación explícita y éxito",
+    "Tema claro y traducciones EN/PT cargadas sin cambiar la identidad",
+    "Paneles y compositor a 390 px sin desbordamiento horizontal",
+    "Movimiento reducido detiene los motores y conserva el estado legible"
+  ],
+  "errors": []
+}

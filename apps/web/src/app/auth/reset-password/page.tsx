@@ -7,7 +7,7 @@ import {
 } from '@/features/auth/components/AuthExperience';
 
 export const metadata = {
-  title: 'Restablecer contraseña | SofLIA',
+  title: 'Restablecer contraseña | SofLIA Academy',
   description: 'Crea una nueva contraseña segura para tu cuenta',
 };
 

@@ -18,7 +18,7 @@ const args = (context: LiveContext, sessionId: string) => ({ p_org: context.orgI
 export async function readWorkspace(context: LiveContext, sessionId: string): Promise<WorkspaceSnapshot> {
   const data = rpcData(await context.db.rpc('live_workspace_snapshot', args(context, sessionId)));
   const parsed = workspaceSnapshotSchema.safeParse(data);
-  if (!parsed.success) throw new LiveError(503, 'Learning devolvió un estado del aula incompatible');
+  if (!parsed.success) throw new LiveError(503, 'SofLIA Academy devolvió un estado del aula incompatible');
   return parsed.data;
 }
 export function matchWorkspaceFaq(question: string, faq: WorkspaceSnapshot['settings']['faq']): string | undefined {

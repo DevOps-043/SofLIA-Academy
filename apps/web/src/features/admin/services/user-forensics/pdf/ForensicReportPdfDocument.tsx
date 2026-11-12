@@ -103,7 +103,7 @@ export function ForensicReportPdfDocument({
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.eyebrow}>SofLIA Learning · Auditoría forense</Text>
+        <Text style={styles.eyebrow}>SofLIA Academy · Auditoría forense</Text>
         <Text style={styles.title}>Dictamen Pericial y Forense</Text>
         <View style={styles.metaRow}>
           <Text style={styles.metaItem}>Usuario: {userLabel}</Text>
@@ -170,7 +170,7 @@ export function ForensicReportPdfDocument({
         )}
 
         <Text style={styles.footer} fixed>
-          Documento generado automáticamente por SofLIA Learning. Marcas de tiempo en UTC.
+          Documento generado automáticamente por SofLIA Academy. Marcas de tiempo en UTC.
           {analysis.fallbackUsed ? ' Análisis determinista de respaldo (IA no disponible).' : ''} Confidencial · uso interno de auditoría.
         </Text>
       </Page>

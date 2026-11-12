@@ -1,6 +1,6 @@
 # Zoom en Soflia: investigación y plan de implementación
 
-Estado: antecedente histórico. La decisión posterior de ejecutar las sesiones en Soflia Hub de escritorio reemplaza el alcance del aula y SDK en Learning. El contrato e implementación vigentes están en [Sesiones de Learning en Hub](learning-hub-synchronous-plan.md) y en los planes Word Learning Hub v2. La investigación de productos Zoom se conserva como referencia. La bandera de activación registrada en esta revisión histórica se retiró: el módulo vigente está disponible permanentemente.
+Estado: antecedente histórico. La decisión posterior de ejecutar las sesiones en Soflia Hub de escritorio reemplaza el alcance del aula y SDK en Academy. El contrato e implementación vigentes están en [Sesiones de Academy en Hub](learning-hub-synchronous-plan.md) y en los planes Word Learning Hub v2. La investigación de productos Zoom se conserva como referencia. La bandera de activación registrada en esta revisión histórica se retiró: el módulo vigente está disponible permanentemente.
 
 Fecha de revisión: 10 de octubre de 2026. Commit solicitado: `7ec2c3135cdf9ff1a1ec438c5cd2b0201856e14e`. Checkout contrastado: `36b4b35c955b9099ea6ac8bcc28c01ae5fe6241e`.
 

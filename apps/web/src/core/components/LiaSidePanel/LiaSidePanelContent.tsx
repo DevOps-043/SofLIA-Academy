@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { SofliaChatProvider, SofliaChatAvatar, SofliaComposerPresence } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { chooseReadableTextColor } from '@/core/theme/color-engine';
 import { SofLIAPersonalizationSettings } from '../../../features/lia/components/SofLIAPersonalizationSettings';
@@ -17,7 +18,7 @@ function LiaSidePanelContent() {
   const {
     t, user, isOpen, closePanel,
     isDarkMode, isLightTheme, themeColors,
-    messages, isLoading, clearHistory, currentConversationId,
+    messages, isLoading, clearHistory, currentConversationId, avatarTurn, avatarScope, chatError,
     inputValue, setInputValue, inputRef, messagesEndRef, chatContainerRef,
     handleChatScroll, handleSendMessage, handleQuickAction, handleLinkClick, quickActions,
     currentTip, tips,
@@ -72,8 +73,14 @@ function LiaSidePanelContent() {
     '--lia-header-height': '72px',
   } as React.CSSProperties;
 
+  const latestResponse = [...messages].reverse().find(message => message.role === 'assistant');
   return (
-    <>
+    <SofliaChatProvider scope={`general:${avatarScope ?? user?.id ?? ''}`} conversationId={currentConversationId}
+      active={isOpen} turn={avatarTurn} loading={isLoading} revealing={typewriterReveal.isTyping}
+      speaking={isSpeaking || isAssistantLiveSpeaking} listening={isDictating || (isLiveVoiceActive && liveVoiceStatus === 'listening')}
+      processing={isProcessingDictation || liveVoiceStatus === 'connecting' || liveVoiceStatus === 'processing' || liveVoiceStatus === 'preparing-audio'}
+      error={Boolean(chatError || dictationError || deleteError || liveVoiceStatus === 'error')}
+      permission={showDeleteConfirm} draft={inputValue} response={latestResponse}>
       <AnimatePresence mode="wait">
         {isOpen && (
           <motion.aside
@@ -134,6 +141,7 @@ function LiaSidePanelContent() {
                   handleChatScroll={handleChatScroll}
                 />
 
+                {messages.length > 0 && <SofliaComposerPresence />}
                 <InputArea
                   t={t}
                   themeColors={themeColors}
@@ -256,19 +264,7 @@ function LiaSidePanelContent() {
                     onClick={(e) => e.stopPropagation()}
                     style={{ position: 'relative' }}
                   >
-                    <motion.img
-                      layoutId="lia-avatar-header"
-                      src="/lia-avatar.webp"
-                      alt="SofLIA Expanded"
-                      style={{
-                        width: 'min(80vw, 400px)',
-                        height: 'min(80vw, 400px)',
-                        borderRadius: '50%',
-                        objectFit: 'cover',
-                        border: `4px solid ${themeColors.accentColor}`,
-                        boxShadow: `0 0 50px color-mix(in srgb, ${themeColors.accentColor} 50.2%, transparent)`,
-                      }}
-                    />
+                    <SofliaChatAvatar size={320} />
                     <div style={{ marginTop: '20px', textAlign: 'center', color: 'white' }}>
                       <h3 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 8px 0' }}>SofLIA</h3>
                       <p style={{ opacity: 0.8, margin: 0 }}>Learning Intelligence Assistant</p>
@@ -288,7 +284,7 @@ function LiaSidePanelContent() {
           onClose={() => setIsPersonalizationOpen(false)}
         />
       )}
-    </>
+    </SofliaChatProvider>
   );
 }
 

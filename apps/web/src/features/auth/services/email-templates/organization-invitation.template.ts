@@ -46,7 +46,7 @@ export function buildOrganizationInvitationEmailContent(
           <div class="content">
             <h1 class="title">Invitación de ${safeOrganizationName}</h1>
             <p class="text">Hola,</p>
-            <p class="text">Has sido invitado/a a unirte a <strong>${safeOrganizationName}</strong> en SofLIA, nuestra plataforma de aprendizaje y desarrollo continuo.</p>
+            <p class="text">Has sido invitado/a a unirte a <strong>${safeOrganizationName}</strong> en SofLIA Academy, nuestra plataforma de aprendizaje y desarrollo continuo.</p>
             ${safeCustomMessage
               ? `<div class="custom-message">"${safeCustomMessage}"</div>`
               : ''}
@@ -69,9 +69,9 @@ export function buildOrganizationInvitationEmailContent(
           </div>
           <div class="footer">
             <p class="footer-text">Enviado a través de</p>
-            <img src="${safeSofliaLogoUrl}" alt="SofLIA" class="footer-logo" />
+            <img src="${safeSofliaLogoUrl}" alt="SofLIA Academy" class="footer-logo" />
             <p class="footer-text">Este es un mensaje automático. Por favor, no respondas a este correo.</p>
-            <p class="footer-copyright">&copy; ${year} SofLIA. Todos los derechos reservados.</p>
+            <p class="footer-copyright">&copy; ${year} SofLIA Academy. Todos los derechos reservados.</p>
           </div>
         </div>
       </body>

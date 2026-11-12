@@ -20,10 +20,10 @@ const deploymentUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(deploymentUrl),
-  title: 'SofLIA',
-  description: 'Plataforma educativa de inteligencia artificial con asistente virtual LIA. Capacitacion, comunidad y adopcion de IA en el entorno laboral.',
+  title: 'SofLIA Academy',
+  description: 'SofLIA Academy: Plataforma educativa de inteligencia artificial con asistente virtual LIA. Capacitacion, comunidad y adopcion de IA en el entorno laboral.',
   keywords: ['educacion', 'inteligencia artificial', 'chatbot', 'capacitacion', 'IA', 'LIA'],
-  authors: [{ name: 'Equipo SofLIA' }],
+  authors: [{ name: 'Equipo SofLIA Academy' }],
   robots: 'index, follow',
   icons: {
     icon: '/icono.ico',
@@ -33,11 +33,12 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'SofLIA',
+    title: 'SofLIA Academy',
   },
   openGraph: {
-    title: 'SofLIA',
-    description: 'Plataforma educativa de inteligencia artificial con asistente virtual LIA',
+    siteName: 'SofLIA Academy',
+    title: 'SofLIA Academy',
+    description: 'SofLIA Academy: Plataforma educativa de inteligencia artificial con asistente virtual LIA',
     type: 'website',
     locale: 'es_ES',
   },

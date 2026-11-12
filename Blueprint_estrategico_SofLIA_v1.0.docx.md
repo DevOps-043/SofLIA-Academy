@@ -16,7 +16,7 @@ Sistema de adopción organizacional para upskilling y reskilling de empresas en 
 
 La empresa no debe competir en categorías tradicionales de software; debe dominar la categoría de **arquitectura de capacidades organizacionales y transformación operativa**, garantizando que el talento evolucione al ritmo de la tecnología.
 
-El ecosistema tecnológico propio —SofLIA Engine, SofLIA Learning, SofLIA Agent y SofLIA Skills— es el **habilitador estratégico** que permite que este proceso de upskilling sea completamente estructurado, escalable, medible y personalizado para cada institución.
+El ecosistema tecnológico propio —SofLIA Engine, SofLIA Academy, SofLIA Agent y SofLIA Skills— es el **habilitador estratégico** que permite que este proceso de upskilling sea completamente estructurado, escalable, medible y personalizado para cada institución.
 
 La oportunidad de mercado es clara: en México, Banco de México reportó que solo 24.3% de las empresas de más de 100 trabajadores utilizaba o planeaba utilizar IA en los siguientes 12 meses, y que 61.1% de quienes la usan o planean usarla aún estaban evaluando su conveniencia o en pruebas piloto. Los principales obstáculos reportados incluyen desconocimiento de los trabajadores, falta de personal capacitado y falta de recursos o presupuesto. ([Banco de México](https://www.banxico.org.mx/publicaciones-y-prensa/reportes-sobre-las-economias-regionales/recuadros/%7BDF639879-47B1-CECF-F7BA-668C5223FCD8%7D.pdf)) KPMG también reporta que 56% de las compañías en México no han identificado claramente el valor comercial de la IA y que solo 27% cuenta con una estrategia bien definida y alineada con la visión de la empresa. ([KPMG](https://kpmg.com/mx/es/sala-de-prensa/comunicados-de-prensa/2025/10/cp-empresas-en-mexico-y-centroamerica-apuestan-por-la-ia.html))
 
@@ -162,7 +162,7 @@ Motor para diseñar, estructurar y producir contenidos, rutas de aprendizaje, ma
 
 Es el formato ejecutivo de talleres, cursos y experiencias de aprendizaje aplicado de SofLIA. Integra visión estratégica, capacitación práctica, casos de uso reales, acompañamiento inteligente y medición de avance para acelerar la adopción de inteligencia artificial en líderes y equipos. Su propósito es convertir la capacitación en una capacidad organizacional medible, alineada a prioridades de negocio, productividad y transformación operativa.
 
-### **SofLIA Learning**
+### **SofLIA Academy**
 
 Entorno de aprendizaje y despliegue donde se administran cursos, usuarios, cohortes, actividades, certificaciones, seguimiento y analítica.
 
@@ -182,11 +182,11 @@ La regla debe ser:
 
 No decir:
 
-“Te rentamos SofLIA Learning.”
+“Te rentamos SofLIA Academy.”
 
 Sí decir:
 
-“Implementamos un programa de adopción organizacional de IA mediante **SofLIA Nexus**, nuestro formato de talleres y experiencias de aprendizaje aplicado. El programa se despliega a través de **SofLIA Learning**, incorpora el acompañamiento inteligente de **SofLIA Agent** y proporciona recursos prácticos mediante **SofLIA Skills**, asegurando que el aprendizaje se traduzca en capacidades organizacionales medibles y resultados en la operación diaria.”
+“Implementamos un programa de adopción organizacional de IA mediante **SofLIA Nexus**, nuestro formato de talleres y experiencias de aprendizaje aplicado. El programa se despliega a través de **SofLIA Academy**, incorpora el acompañamiento inteligente de **SofLIA Agent** y proporciona recursos prácticos mediante **SofLIA Skills**, asegurando que el aprendizaje se traduzca en capacidades organizacionales medibles y resultados en la operación diaria.”
 
 # **3\. Narrativa central**
 
@@ -422,7 +422,7 @@ Modalidades:
 
 **•**  Curso listo para LMS corporativo.
 
-**•**  Curso desplegado en SofLIA Learning.
+**•**  Curso desplegado en SofLIA Academy.
 
 **•**  Curso con SofLIA Agent como tutor.
 
@@ -686,7 +686,7 @@ Acompañamiento mensual a dirección general o comité interno de IA.
 
 **•**  Material para LMS corporativo.
 
-**•**  Material para SofLIA Learning.
+**•**  Material para SofLIA Academy.
 
 ## **8.7 Playbooks de transformación operativa y recursos**
 
@@ -818,7 +818,7 @@ SofLIA produce y administra el programa en su entorno de aprendizaje.
 
 ### **Modalidad D: Programa Integral de Evolución SofLIA**
 
-Incluye SofLIA Learning, SofLIA Agent, SofLIA Skills, acompañamiento, métricas y reportes.
+Incluye SofLIA Academy, SofLIA Agent, SofLIA Skills, acompañamiento, métricas y reportes.
 
 ### **Modalidad E: Consultoría \+ acompañamiento**
 
@@ -835,7 +835,7 @@ SofLIA acompaña continuamente a la empresa como socio externo de adopción de I
 | **Por proyecto** | Diagnósticos, producción de cursos, pilotos. |
 | **Por usuario** | Programas de capacitación escalables. |
 | **Por cohorte** | Directivos, mandos medios o grupos funcionales. |
-| **Por licencia** | Acceso temporal a SofLIA Learning, Agent y Skills. |
+| **Por licencia** | Acceso temporal a SofLIA Academy, Agent y Skills. |
 | **Por suscripción** | Acceso continuo a contenidos, agentes y recursos. |
 | **Por retainer** | Acompañamiento estratégico mensual. |
 | **Enterprise anual** | Implementación integral multiárea. |
@@ -1216,7 +1216,7 @@ Componentes:
 
 **•**  SofLIA Engine.
 
-**•**  SofLIA Learning.
+**•**  SofLIA Academy.
 
 **•**  SofLIA Agent.
 
@@ -1236,7 +1236,7 @@ La tecnología es el habilitador; el resultado es el cierre permanente de la bre
 
 **•**  Producción de cursos.
 
-**•**  Despliegue en SofLIA Learning.
+**•**  Despliegue en SofLIA Academy.
 
 **•**  Acompañamiento con SofLIA Agent.
 
@@ -1350,7 +1350,7 @@ SofLIA no requiere necesariamente un presupuesto nuevo de "tecnología". Al ser 
 
 Respuesta:
 
-SofLIA no se vende como otra plataforma. La plataforma es solo un habilitador cuando se requiere. Podemos trabajar con su infraestructura actual o desplegar el programa en SofLIA Learning si eso facilita la implementación.
+SofLIA no se vende como otra plataforma. La plataforma es solo un habilitador cuando se requiere. Podemos trabajar con su infraestructura actual o desplegar el programa en SofLIA Academy si eso facilita la implementación.
 
 ## **Objeción 4: “Ya tenemos proveedores tradicionales de capacitación.”**
 

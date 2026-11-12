@@ -38,7 +38,7 @@ export function buildOrganizationInvitationHtml(
           <p class="text">
             Has sido invitado/a a unirte a
             <strong>${viewModel.safeOrganizationName}</strong>
-            en SofLIA, nuestra plataforma de aprendizaje y desarrollo continuo.
+            en SofLIA Academy, nuestra plataforma de aprendizaje y desarrollo continuo.
           </p>
           ${renderCustomMessage(viewModel)}
           <div style="text-align: center; margin: 40px 0;">
@@ -62,12 +62,12 @@ export function buildOrganizationInvitationHtml(
         </div>
         <div class="footer">
           <p style="color: rgb(136, 136, 136); font-size: 12px;">Enviado a través de</p>
-          <img src="${viewModel.safeSofliaLogoUrl}" alt="SofLIA" style="height: 32px;" />
+          <img src="${viewModel.safeSofliaLogoUrl}" alt="SofLIA Academy" style="height: 32px;" />
           <p style="color: rgb(136, 136, 136); font-size: 12px;">
             Este es un mensaje automático. Por favor, no respondas a este correo.
           </p>
           <p style="color: rgb(170, 170, 170); font-size: 11px;">
-            &copy; ${viewModel.year} SofLIA. Todos los derechos reservados.
+            &copy; ${viewModel.year} SofLIA Academy. Todos los derechos reservados.
           </p>
         </div>
       </div>

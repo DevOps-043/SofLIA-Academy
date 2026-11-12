@@ -1,4 +1,5 @@
 import "server-only";
+import { reconcileVideoRecordings } from "./video.server";
 import { z } from "zod";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { LiveDatabase } from "../database.types";
@@ -22,7 +23,8 @@ export async function reconcileRecordings(
   signal?: AbortSignal,
 ) {
   const store = recordingDb(db);
-  let imported = 0;
+  let imported = await reconcileVideoRecordings(db, signal);
+  if (!process.env.ZOOM_PLATFORM_HOST_IDS?.trim()) return imported;
   for (const host of platformHostIds()) {
     signal?.throwIfAborted();
     const previous = checked(

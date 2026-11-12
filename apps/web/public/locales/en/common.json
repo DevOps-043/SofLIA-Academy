@@ -1,5 +1,5 @@
 {
-  "appName": "SofLIA",
+  "appName": "SofLIA Academy",
   "welcome": "Welcome",
   "language": "Language",
   "change_language": "Change language",
@@ -90,7 +90,7 @@
     "home": "Home",
     "login": "Sign in",
     "register": "Sign up",
-    "logoAlt": "SofLIA Learning logo",
+    "logoAlt": "SofLIA Academy logo",
     "clickCounter": "Counter: {{current}}/{{total}}"
   },
   "auth": {
@@ -1403,7 +1403,7 @@
     "retry": "Retry",
     "backToPanel": "Back to Panel",
     "badge": "Issued certificates",
-    "pageTitle": "SofLIA and partner company certificates",
+    "pageTitle": "SofLIA Academy and partner company certificates",
     "pageSubtitle": "Each card shows the real document issued for that course.",
     "statsCerts": "Certificates",
     "statsOrgs": "Companies",
@@ -1441,7 +1441,7 @@
     "verifyPublic": "Verify publicly",
     "share": "Share certificate",
     "shareTitle": "Certificate: {{title}}",
-    "shareText": "I completed the course \"{{title}}\" and this is my verified certificate on SofLIA.",
+    "shareText": "I completed the course \"{{title}}\" and this is my verified certificate on SofLIA Academy.",
     "shareDescription": "Share this certificate issued by {{issuer}}.",
     "invalidHash": "Invalid certificate hash",
     "errorValidate": "Error validating the certificate",
@@ -1721,7 +1721,7 @@
     "features": {
       "badge": "Desktop Application",
       "title": "What is SofLIA Hub?",
-      "description": "SofLIA Hub is your ultimate personal assistant and the central connector to our entire ecosystem. Much more than an application, it allows you to integrate SofLIA Learning, ProjectHub, and the Productivity Area directly into your operating system. Connect with WhatsApp, Google, and Microsoft, search and interact with files on your computer, and share folders, projects, prompts, and chats with your entire team, all from one place.",
+      "description": "SofLIA Hub is your ultimate personal assistant and the central connector to our entire ecosystem. Much more than an application, it allows you to integrate SofLIA Academy, ProjectHub, and the Productivity Area directly into your operating system. Connect with WhatsApp, Google, and Microsoft, search and interact with files on your computer, and share folders, projects, prompts, and chats with your entire team, all from one place.",
       "items": {
         "lia": {
           "title": "Your Personal AI Assistant",
@@ -1729,7 +1729,7 @@
         },
         "ecosystem": {
           "title": "Complete Ecosystem",
-          "desc": "Interact with the entire SofLIA ecosystem, from ProjectHub to SofLIA Learning. Share chats, projects, folders, and prompts directly with your team."
+          "desc": "Interact with the entire SofLIA ecosystem, from ProjectHub to SofLIA Academy. Share chats, projects, folders, and prompts directly with your team."
         },
         "integrations": {
           "title": "Powerful Integrations",
@@ -1780,6 +1780,25 @@
         "updates": "Automatic Updates",
         "source": "Protected Source Code"
       }
+    }
+  },
+  "sofliaAvatar": {
+    "label": "SofLIA",
+    "expressions": {
+      "idle": "Waiting",
+      "listening": "Listening",
+      "thinking": "Thinking",
+      "speaking": "Responding",
+      "success": "Success",
+      "warning": "Warning",
+      "curious": "Curiosity",
+      "happy": "Joy",
+      "confused": "Uncertainty",
+      "focused": "Focusing",
+      "acknowledging": "Confirmation",
+      "sleeping": "Resting",
+      "surprised": "Surprise",
+      "concerned": "Concern"
     }
   }
 }

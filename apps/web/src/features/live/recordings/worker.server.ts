@@ -1,4 +1,5 @@
 import "server-only";
+import { loadVideoRecording } from "./video.server";
 import path from "node:path";
 import { tmpdir } from "node:os";
 import { unlink } from "node:fs/promises";
@@ -134,7 +135,11 @@ export async function processRecordingJob(
         .eq("id", run.id)
         .in("status", ["processing", "failed", "missing"]),
     );
-    const meta = z
+    const sourceSession = checked(await db.from("live_sessions").select("zoom_meeting_id,zoom_webinar_id,session_type,video_provider").eq("id", run.session_id).single());
+    if (!sourceSession) throw new Error("La sesión de grabación no existe.");
+    const video = sourceSession.video_provider === "zoom-video";
+    const videoMeta = video ? await loadVideoRecording(db, run) : null;
+    const meta = videoMeta ?? z
       .object({
         uuid: z.string(),
         host_id: z.string(),
@@ -150,20 +155,7 @@ export async function processRecordingJob(
       );
     if (meta.uuid !== run.provider_uuid || meta.host_id !== run.host_id)
       throw new Error("La instancia del proveedor no coincide.");
-    const sourceSession = checked(
-      await db
-        .from("live_sessions")
-        .select("zoom_meeting_id,zoom_webinar_id,session_type")
-        .eq("id", run.session_id)
-        .single(),
-    );
-    if (
-      !sourceSession ||
-      String(meta.id) !==
-        (sourceSession.session_type === "webinar"
-          ? sourceSession.zoom_webinar_id
-          : sourceSession.zoom_meeting_id)
-    )
+    if (!video && String(meta.id) !== (sourceSession.session_type === "webinar" ? sourceSession.zoom_webinar_id : sourceSession.zoom_meeting_id))
       throw new Error("La grabación pertenece a otro evento.");
     if (!run.starts_at && meta.start_time)
       checked(
@@ -173,7 +165,7 @@ export async function processRecordingJob(
           .eq("id", run.id)
           .is("starts_at", null),
       );
-    await ingestRecordingEvent(db, {
+    if (!video) await ingestRecordingEvent(db, {
       event: "recording.completed",
       payload: { account_id: run.account_id, object: meta },
     });
@@ -211,6 +203,7 @@ export async function processRecordingJob(
             ),
             controller.signal,
             renew,
+            videoMeta ? async () => videoMeta.downloadToken : undefined,
           );
           break;
         } catch (error) {
@@ -284,7 +277,7 @@ export async function processRecordingJob(
       latest?.ends_at || null,
       latest?.coverage || "unknown",
     );
-    if (coverage === "complete" && sourceSession.session_type === "webinar") {
+    if (!video && coverage === "complete" && sourceSession.session_type === "webinar") {
       const editorial = await zoomRequest(
         `/webinars/${encodeURIComponent(sourceSession.zoom_webinar_id!)}`,
       ).catch(() => null);
@@ -335,6 +328,8 @@ export async function processRecordingJob(
         ).toISOString(),
       }),
     );
+    // El scheduler debe observar el fallo aunque la recuperación esté encolada.
+    throw new Error("La importación quedó pendiente de recuperación.");
   } finally {
     clearInterval(timer);
     clearTimeout(deadline);

@@ -92,7 +92,7 @@ export function Navbar() {
             >
               SofLIA
               <span className="ml-2 px-1.5 py-0.5 text-xs font-bold text-white bg-accent rounded-md tracking-wide uppercase">
-                Learning
+                Academy
               </span>
             </span>
 

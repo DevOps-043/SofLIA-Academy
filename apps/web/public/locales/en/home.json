@@ -1,6 +1,6 @@
 {
   "nav": {
-    "homeLabel": "Go to SofLIA home",
+    "homeLabel": "Go to SofLIA Academy home",
     "primaryLabel": "Primary navigation",
     "mobileLabel": "Mobile navigation",
     "system": "The system",
@@ -102,7 +102,7 @@
       },
       {
         "id": "learning",
-        "name": "SofLIA Learning",
+        "name": "SofLIA Academy",
         "role": "Applied learning",
         "description": "Delivers learning experiences, guided practice and personalized paths connected to real work."
       },
@@ -157,7 +157,7 @@
       },
       {
         "id": "learning",
-        "title": "SofLIA Learning deployment",
+        "title": "SofLIA Academy deployment",
         "description": "We activate personalized paths, tracking, practice and measurement inside the SofLIA environment.",
         "outcome": "Execution at scale"
       },
@@ -388,7 +388,7 @@
     "note": "A focused, executive conversation with no commitment."
   },
   "footer": {
-    "copyright": "© {{year}} SofLIA. Talent evolution with measurable impact.",
+    "copyright": "© {{year}} SofLIA Academy. Talent evolution with measurable impact.",
     "legalLabel": "Legal information and access",
     "privacy": "Privacy",
     "terms": "Terms",

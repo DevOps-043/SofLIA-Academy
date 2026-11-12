@@ -1,7 +1,7 @@
 import type { CertificatePlatformBrand, CertificateVisualTokens } from '@/features/certificates/types/certificate'
 
 export const SOFLIA_PLATFORM_BRAND: CertificatePlatformBrand = {
-  name: 'SofLIA',
+  name: 'SofLIA Academy',
   logoUrl: '/icono.png',
 }
 

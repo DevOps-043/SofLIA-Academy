@@ -55,7 +55,7 @@ function createNextConfig(appDir) {
     serverExternalPackages,
     images,
     env: {
-      NEXT_PUBLIC_APP_NAME: 'Aprende y Aplica',
+      NEXT_PUBLIC_APP_NAME: 'SofLIA Academy',
       NEXT_PUBLIC_APP_VERSION: '1.0.0',
     },
     headers,

@@ -1,8 +1,10 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { SofliaChatProvider, SofliaChatAvatar, SofliaComposerPresence, SofliaAvatarBadge } from '@/core/components/SofliaAvatar/SofliaChatProvider'
+import type { AvatarExpression } from '@/core/components/SofliaAvatar/avatar-model'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Check, Loader2, Send, Sparkles, WandSparkles, X } from 'lucide-react'
+import { Check, Loader2, Send, WandSparkles, X } from 'lucide-react'
 
 import { useBusinessPanelTheme } from '@/features/business-panel/hooks/useBusinessPanelTheme'
 import {
@@ -35,7 +37,11 @@ const MAX_HISTORY = 8
  * Panel derecho dedicado a SofLIA: muestra el análisis del apunte y un chat
  * donde SofLIA lee la nota y responde/sugiere mejoras (Fase 1: solo texto).
  */
-export function NotebookSofliaPanel({
+export function NotebookSofliaPanel(props: NotebookSofliaPanelProps) {
+  return <NotebookSofliaConversation key={`${props.orgSlug}:${props.noteId}`} {...props} />
+}
+
+function NotebookSofliaConversation({
   orgSlug,
   noteId,
   showAnalysis = true,
@@ -47,6 +53,11 @@ export function NotebookSofliaPanel({
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [isSending, setIsSending] = useState(false)
+  const [avatarTurn, setAvatarTurn] = useState(0)
+  const [avatarError, setAvatarError] = useState(false)
+  const [avatarResult, setAvatarResult] = useState<{ key: string; expression: AvatarExpression }>()
+  const active = useRef(true)
+  useEffect(() => { active.current = true; return () => { active.current = false } }, [])
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -64,6 +75,9 @@ export function NotebookSofliaPanel({
     ]
     setMessages(nextHistory)
     setInput('')
+    setAvatarTurn(value => value + 1)
+    setAvatarError(false)
+    setAvatarResult(undefined)
     setIsSending(true)
     try {
       // El historial que viaja al servidor solo lleva rol y texto.
@@ -71,6 +85,7 @@ export function NotebookSofliaPanel({
         .slice(-MAX_HISTORY)
         .map(({ role, content }) => ({ role, content }))
       const result = await askNotebookAssistant(orgSlug, noteId, text, history)
+      if (!active.current) return
       setMessages((prev) => [
         ...prev,
         {
@@ -82,11 +97,13 @@ export function NotebookSofliaPanel({
       ])
       scrollToBottom()
     } catch (error) {
+      if (!active.current) return
+      setAvatarError(true)
       onError(
         error instanceof Error ? error.message : t('soflia.chat.errorFallback'),
       )
     } finally {
-      setIsSending(false)
+      if (active.current) setIsSending(false)
     }
   }
 
@@ -102,9 +119,15 @@ export function NotebookSofliaPanel({
     if (!onApplyEdit) return
     onApplyEdit(html)
     resolveProposal(index, 'applied')
+    setAvatarResult({ key: `applied:${index}`, expression: 'success' })
   }
 
+  const responseIndex = messages.map(message => message.role).lastIndexOf('assistant')
+  const response = responseIndex >= 0 ? { id: String(responseIndex), content: messages[responseIndex].content } : undefined
   return (
+    <SofliaChatProvider scope={`notebook:${orgSlug}:${noteId}`} turn={avatarTurn} loading={isSending}
+      error={avatarError} draft={input} response={response} result={avatarResult}
+      permission={messages.some(message => message.proposalState === 'pending')}>
     <div className={styles.sofliaStack}>
       {showAnalysis && (
         <NoteEnrichmentPanel orgSlug={orgSlug} noteId={noteId} onError={onError} />
@@ -115,7 +138,7 @@ export function NotebookSofliaPanel({
       >
         <div className={styles.chatHeader}>
           <span className={styles.chatHeaderIcon}>
-            <Sparkles />
+            <SofliaAvatarBadge size={42} />
           </span>
           <div>
             <p className={styles.chatTitle}>{t('soflia.chat.title')}</p>
@@ -129,7 +152,7 @@ export function NotebookSofliaPanel({
         >
           {messages.length === 0 ? (
             <div className={styles.chatEmpty}>
-              <WandSparkles />
+              <SofliaChatAvatar size={144} />
               <p>
               {t('soflia.chat.placeholder')}
               </p>
@@ -237,6 +260,7 @@ export function NotebookSofliaPanel({
           )}
         </div>
 
+        {messages.length > 0 && <SofliaComposerPresence />}
         <div className={styles.chatComposer}>
           <textarea
             value={input}
@@ -269,5 +293,6 @@ export function NotebookSofliaPanel({
         </div>
       </div>
     </div>
+    </SofliaChatProvider>
   )
 }

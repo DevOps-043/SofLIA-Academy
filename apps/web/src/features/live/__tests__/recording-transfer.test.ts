@@ -37,6 +37,16 @@ const stream = (
     headers: { "content-type": "video/mp4", ...headers },
   });
 describe("Transferencia de grabaciones", () => {
+  it("renueva la credencial Video sin sustituirla por OAuth Meeting", async () => {
+    directory = await mkdtemp(path.join(tmpdir(), "soflia-recording-test-"));
+    const fetcher = vi.fn().mockResolvedValueOnce(new Response(null, { status: 401 })).mockResolvedValueOnce(stream("1234"));
+    const token = vi.fn(async (refresh: boolean) => refresh ? "video-renovado" : "video-inicial");
+    vi.stubGlobal("fetch", fetcher);
+    await downloadRecording("https://zoom.us/recording", file, 4, directory, new AbortController().signal, async () => {}, token);
+    expect(token.mock.calls).toEqual([[false], [true]]);
+    expect(fetcher.mock.calls[0][1].headers.Authorization).toBe("Bearer video-inicial");
+    expect(fetcher.mock.calls[1][1].headers.Authorization).toBe("Bearer video-renovado");
+  });
   it.each([
     "http://zoom.us/file",
     "https://zoom.us.evil.test/file",

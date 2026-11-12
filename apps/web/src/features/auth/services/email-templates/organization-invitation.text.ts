@@ -5,7 +5,7 @@ export function buildOrganizationInvitationText(
   customMessage?: string
 ) {
   return `
-Invitación de ${input.organizationName} en SofLIA
+Invitación de ${input.organizationName} en SofLIA Academy
 
 Hola,
 
@@ -21,9 +21,9 @@ INFORMACIÓN IMPORTANTE:
 - El enlace es de uso único y personal.
 
 Atentamente,
-Equipo de SofLIA en colaboración con ${input.organizationName}
+Equipo de SofLIA Academy en colaboración con ${input.organizationName}
 
 ---
-Este es un mensaje automático enviado a través de SofLIA. Por favor, no respondas a este correo.
+Este es un mensaje automático enviado a través de SofLIA Academy. Por favor, no respondas a este correo.
     `.trim();
 }

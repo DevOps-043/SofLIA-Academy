@@ -1,3 +1,5 @@
+import { engineSessionManifestSchema } from './engine-preparation.contract';
+export { engineSessionManifestSchema } from './engine-preparation.contract';
 import { z } from 'zod';
 import { recordingOperationSchema,recordingResponseSchema,recordingSnapshotSchema } from './recordings/contract';
 
@@ -9,7 +11,6 @@ export const studioMaterialSchema = z.object({ id, name: text(160), kind: z.enum
 const quizBase = z.object({ id, question: text(300), options: z.array(text(120)).min(2).max(6).refine((items) => new Set(items).size === items.length), correct: z.number().int().min(0).max(5) }).strict();
 export const studioQuizSchema = quizBase.refine((quiz) => quiz.correct < quiz.options.length);
 const practice = z.object({ id, title: text(160), instructions: text(2000) }).strict();
-export const engineSessionManifestSchema = z.object({ version: z.literal(1), course_id: id, revision: text(100), scenes: z.array(studioSceneSchema).max(12), materials: z.array(studioMaterialSchema).max(20), quizzes: z.array(studioQuizSchema).max(20), practices: z.array(practice).max(20) }).strict();
 export const studioClockSchema = z.object({ mode: z.enum(['timer', 'stopwatch']), seconds: z.number().int().min(0).max(86400), running: z.boolean(), updated_at: z.string().datetime() }).strict();
 export const studioReactionSchema=z.enum(['👏','👍','💡','❤️','🎉','😂']);
 export const studioCommandSchema = z.discriminatedUnion('type', [
@@ -35,11 +36,14 @@ export const studioCommandSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('import_engine'), manifest: engineSessionManifestSchema }).strict(),
 ]);
 export type StudioCommand = z.infer<typeof studioCommandSchema>;
+export const STUDIO_RECORDING_NOTICE_VERSION = 1;
+export const STUDIO_RECORDING_NOTICE_HEADER = 'X-Soflia-Studio-Recording-Notice';
+export const STUDIO_RECORDING_NOTICE_REQUIRED = 'Se requiere aceptar el aviso vigente de grabación.';
 export const studioOperationSchema = z.discriminatedUnion('type', [
   z.object({type:z.literal('recordings'),operation:recordingOperationSchema}).strict(),
   z.object({ type: z.literal('snapshot') }).strict(),
   z.object({ type: z.literal('command'), id, revision: z.number().int().nonnegative(), command: studioCommandSchema }).strict(),
-  z.object({ type: z.literal('zoom') }).strict(),
+  z.object({ type: z.literal('zoom'), recording_notice_version: z.literal(STUDIO_RECORDING_NOTICE_VERSION).optional() }).strict(),
   z.object({ type: z.literal('upload'), name: text(160), mime: text(100), bytes: z.number().int().min(1).max(25 * 1024 * 1024) }).strict(),
 ]);
 export const studioRequestSchema = studioReferenceSchema.extend({ operation: studioOperationSchema, participation_version:z.literal(1).optional() }).strict();

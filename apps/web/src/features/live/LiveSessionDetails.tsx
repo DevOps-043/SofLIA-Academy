@@ -40,7 +40,7 @@ export function LiveSessionDetails({ orgSlug, sessionId }: { orgSlug: string; se
       {!closed ? <>
         <p>La reunión, el audio, el video y el chat se abren en Soflia Hub de escritorio.</p>
         <a href={data.hub_url} className={styles.button}>Abrir Soflia Hub <ArrowUpRight size={16} /></a>
-        <p className={styles.muted} style={{ marginTop: 14 }}>Permite al navegador abrir la aplicación. Si Hub solicita inicio de sesión, usa tu cuenta de Soflia Learning. Puedes volver a pulsar el botón si la aplicación aún no estaba instalada.</p>
+        <p className={styles.muted} style={{ marginTop: 14 }}>Permite al navegador abrir la aplicación. Si Hub solicita inicio de sesión, usa tu cuenta de SofLIA Academy. Puedes volver a pulsar el botón si la aplicación aún no estaba instalada.</p>
       </> : <p>Esta sesión está {session.status === "ended" ? "finalizada" : "cancelada"}.</p>}
       {data.canManage && !closed && <div className={styles.actions} style={{ marginTop: 22 }}>
         {session.status === "scheduled" && <button disabled={busy} className={styles.secondary} onClick={() => changeStatus("cancelled")}>Cancelar sesión</button>}

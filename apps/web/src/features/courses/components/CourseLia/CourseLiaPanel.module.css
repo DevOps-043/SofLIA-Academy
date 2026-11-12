@@ -190,3 +190,9 @@
   .typingDot,
   .suggestionSkeleton { animation: none; }
 }
+
+/* El personaje conserva su silueta completa y espacio para las letras de reposo. */
+.emptyVisual { width: 176px; height: 176px; margin-bottom: 18px; }
+@media (max-height: 560px) { .emptyVisual { width: 112px; height: 112px; } }
+
+.emptyVisual > div { width: 100% !important; height: 100% !important; }

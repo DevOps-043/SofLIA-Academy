@@ -41,6 +41,9 @@ beforeAll(async () => {
   );
   await database.exec(migration);
   await database.exec(readFileSync(resolve(process.cwd(), "../../supabase/migrations/20261010173000_live_hub_desktop.sql"), "utf8"));
+  const periodMigration = readFileSync(resolve(process.cwd(), "../../supabase/migrations/20261111110000_live_catalog_session_periods.sql"), "utf8");
+  await database.exec(periodMigration);
+  await database.exec(periodMigration);
   await database.exec(`
     insert into organizations values('${ids.org}'),('${ids.otherOrg}');
     insert into users(id,display_name) values('${ids.teacher}','Teacher'),('${ids.otherTeacher}','Other teacher'),('${ids.student}','Student'),('${ids.outsider}','Other org student'),('${ids.admin}','Admin');
@@ -64,6 +67,58 @@ async function asUser(userId: string) {
   await database.exec("set role authenticated");
 }
 describe("In Live migration and tenant isolation", () => {
+  it("conserva las clases todavía en vivo cuando exceden su duración estimada", async () => {
+    await database.exec(`reset role;update live_sessions set starts_at=now()-interval '2 hours' where id='${ids.session}';set role service_role`);
+    try {
+      const next = await database.query<{ catalog: { total: number } }>("select live_catalog($1,$2,true,null,0,20,0,0,'upcoming') as catalog", [ids.org,ids.teacher]);
+      const past = await database.query<{ catalog: { total: number } }>("select live_catalog($1,$2,true,null,0,20,0,0,'past') as catalog", [ids.org,ids.teacher]);
+      expect(next.rows[0].catalog.total).toBe(1);
+      expect(past.rows[0].catalog.total).toBe(0);
+    } finally {
+      await database.exec(`reset role;update live_sessions set starts_at=now() where id='${ids.session}'`);
+    }
+  });
+  it("separa clases propias del instructor y catálogo completo del administrador", async () => {
+    await database.exec(`reset role;set role service_role;
+      insert into live_sessions(organization_id,course_id,instructor_id,title,starts_at,duration_minutes,status)
+      values('${ids.org}','${ids.course}','${ids.otherTeacher}','Clase de otro instructor',now()+interval '1 day',60,'scheduled');
+    `);
+    try {
+      const own = await database.query<{ catalog: { sessions: { title: string }[] } }>("select live_catalog($1,$2,true,null,0,20,0,0,'upcoming') as catalog", [ids.org,ids.teacher]);
+      expect(own.rows[0].catalog.sessions.some(session => session.title === 'Clase de otro instructor')).toBe(false);
+      const admin = await database.query<{ catalog: { sessions: { title: string }[] } }>("select live_catalog($1,$2,true,null,0,20,0,0,'upcoming') as catalog", [ids.org,ids.admin]);
+      expect(admin.rows[0].catalog.sessions.some(session => session.title === 'Clase de otro instructor')).toBe(true);
+      await asUser(ids.student);
+      await expect(database.query("select live_catalog($1,$2,true)", [ids.org,ids.student])).rejects.toThrow(/permission denied/);
+    } finally {
+      await database.exec("reset role;delete from live_sessions where title='Clase de otro instructor'");
+    }
+  });
+  it("filtra vencimiento antes del total y la paginación sin modificar sesiones", async () => {
+    await database.exec(`reset role;set role service_role;
+      insert into live_sessions(organization_id,course_id,instructor_id,title,starts_at,duration_minutes,status)
+      select '${ids.org}','${ids.course}','${ids.teacher}','Periodo vencido ' || i,now()-interval '2 days',60,'scheduled' from generate_series(1,21) i;
+      insert into live_sessions(organization_id,course_id,instructor_id,title,starts_at,duration_minutes,status)
+      values('${ids.org}','${ids.course}','${ids.teacher}','Periodo futuro uno',now()+interval '1 day',60,'scheduled'),
+      ('${ids.org}','${ids.course}','${ids.teacher}','Periodo futuro dos',now()+interval '2 days',60,'scheduled');
+    `);
+    try {
+      const next = await database.query<{ catalog: { total: number; sessions: { title: string }[] } }>("select live_catalog($1,$2,true,null,1,1,0,0,'upcoming') as catalog", [ids.org,ids.teacher]);
+      expect(next.rows[0].catalog.total).toBe(3);
+      expect(next.rows[0].catalog.sessions.map(session => session.title)).toEqual(['Periodo futuro uno']);
+      const past = await database.query<{ catalog: { total: number; sessions: { status: string }[] } }>("select live_catalog($1,$2,true,null,0,20,0,0,'past') as catalog", [ids.org,ids.teacher]);
+      expect(past.rows[0].catalog.total).toBe(21);
+      expect(past.rows[0].catalog.sessions).toHaveLength(20);
+      expect(past.rows[0].catalog.sessions.every(session => session.status === 'scheduled')).toBe(true);
+      const student = await database.query<{ catalog: { total: number } }>("select live_catalog($1,$2,false,null,0,20,0,0,'upcoming') as catalog", [ids.org,ids.student]);
+      expect(student.rows[0].catalog.total).toBe(3);
+      const other = await database.query<{ catalog: { total: number } }>("select live_catalog($1,$2,true,null,0,20,0,0,'upcoming') as catalog", [ids.otherOrg,ids.teacher]);
+      expect(other.rows[0].catalog.total).toBe(0);
+    } finally {
+      await database.exec("reset role;delete from live_sessions where title like 'Periodo %'");
+    }
+  });
+
   it("excluye asignaciones canceladas de catálogo y RLS sin borrar su historia", async () => {
     await database.exec(`reset role;update organization_course_assignments set status='cancelled' where user_id='${ids.student}'`);
     try {

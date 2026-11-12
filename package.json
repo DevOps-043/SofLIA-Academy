@@ -1,7 +1,7 @@
 {
-  "name": "aprende-y-aplica",
+  "name": "soflia-academy",
   "version": "1.0.0",
-  "description": "Plataforma educativa Aprende y Aplica - Chat-Bot-LIA",
+  "description": "SofLIA Academy - Plataforma de capacitacion corporativa en inteligencia artificial",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -44,7 +44,8 @@
     "performance:public": "node scripts/check-public-performance.mjs",
     "performance:lighthouse": "npx @lhci/cli@0.15.1 autorun --config=lighthouserc.cjs",
     "observability:health-check": "node scripts/check-observability-health.mjs",
-    "auth:migrate-legacy": "tsx scripts/migrate-legacy-users-to-supabase-auth.ts"
+    "auth:migrate-legacy": "tsx scripts/migrate-legacy-users-to-supabase-auth.ts",
+    "recordings:health": "node node_modules/tsx/dist/cli.mjs --conditions=react-server --tsconfig apps/web/tsconfig.json scripts/live-recording-health.ts"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.56.1",
@@ -85,7 +86,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/aprende-y-aplica/chat-bot-lia.git"
+    "url": "https://github.com/DevOps-043/SofLIA-Academy.git"
   },
   "keywords": [
     "educacion",
@@ -95,7 +96,7 @@
     "express",
     "typescript"
   ],
-  "author": "Equipo SOFLIA",
+  "author": "Equipo SofLIA Academy",
   "license": "MIT",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

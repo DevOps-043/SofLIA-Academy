@@ -7,6 +7,7 @@ import { appendAssistantResponse } from './response';
 import type { SubmitCourseMessageParams, UseSubmitLiaCourseMessageParams } from './types';
 
 export function useSubmitLiaCourseMessage({
+  onTurnStarted,
   isLoading,
   messages,
   userId,
@@ -39,6 +40,7 @@ export function useSubmitLiaCourseMessage({
         setMessages(optimisticMessages ?? [...requestHistory, createUserMessage(normalizedMessage)]);
       }
 
+      onTurnStarted?.();
       setIsLoading(true);
       setError(null);
       abortControllerRef.current?.abort();
@@ -71,6 +73,6 @@ export function useSubmitLiaCourseMessage({
         abortControllerRef.current = null;
       }
     },
-    [abortControllerRef, conversationIdRef, isLoading, messages, organizationId, setError, setIsLoading, setMessages, userId, userJobTitle, userName]
+    [onTurnStarted, abortControllerRef, conversationIdRef, isLoading, messages, organizationId, setError, setIsLoading, setMessages, userId, userJobTitle, userName]
   );
 }

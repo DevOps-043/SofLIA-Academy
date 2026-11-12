@@ -36,6 +36,7 @@ export async function getHubSessionAccess(
 ) {
   if (["ended", "cancelled"].includes(session.status))
     throw new LiveError(409, "La sesión ya está cerrada");
+  if (session.video_provider === "zoom-video") throw new LiveError(409, "Abre esta aula desde el estudio integrado de Soflia Hub para usar Video SDK.");
   const webinar = session.session_type === "webinar";
   const resourceId = webinar
     ? session.zoom_webinar_id

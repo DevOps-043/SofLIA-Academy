@@ -16,7 +16,7 @@ import {
   verifyTotp,
 } from './totp';
 
-const ISSUER = 'SofLIA Learning';
+const ISSUER = 'SofLIA Academy';
 
 type MfaFactorStatus = 'pending' | 'active' | 'revoked';
 

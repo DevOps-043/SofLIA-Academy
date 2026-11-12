@@ -4,7 +4,7 @@ export const COURSE_LIA_BUTTON_BOTTOM_PX = 24;
 export const COURSE_LIA_BUTTON_RIGHT_PX = 24;
 export const COURSE_LIA_BUTTON_SIZE_PX = 60;
 export const MOBILE_BOTTOM_NAV_HEIGHT = 104;
-export const LIA_AVATAR_SRC = '/lia-avatar.webp';
+export const LIA_AVATAR_SRC = '/assets/soflia-avatar/badge-idle.webp';
 export const VOICE_BAR_SCALES = [0.25, 1, 0.45, 0.8, 0.3, 0.95, 0.5];
 
 export const COURSE_LIA_COLORS = {

@@ -61,7 +61,7 @@ function ActivityIcon({
       className={styles.cardIcon}
     >
       {isSofliaActivity ? (
-        <img src="/lia-avatar.webp" alt="SofLIA" className="h-full w-full object-cover" />
+        <img src="/assets/soflia-avatar/badge-idle.webp" alt="SofLIA" className="h-full w-full object-contain" />
       ) : isQuiz ? (
         <FileText className={iconClass} />
       ) : activity.activity_type === 'reading' ? (

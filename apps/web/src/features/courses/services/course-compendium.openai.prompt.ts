@@ -80,7 +80,7 @@ export function buildCourseCompendiumPromptForOpenAi(
 
   const hasNotes = extracts.length > 0
 
-  return `Genera la sintesis de estudio de un curso que el usuario acaba de completar en SofLIA Learning.
+  return `Genera la sintesis de estudio de un curso que el usuario acaba de completar en SofLIA Academy.
 
 El objetivo es una guia de repaso que le ayude a consolidar lo aprendido, construida sobre sus propios apuntes.
 

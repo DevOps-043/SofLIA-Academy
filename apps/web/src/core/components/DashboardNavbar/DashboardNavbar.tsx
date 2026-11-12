@@ -81,7 +81,7 @@ export function DashboardNavbar({
             >
               <img
                 src="/Logo.png"
-                alt="SofLIA"
+                alt="SofLIA Academy"
                 className="w-full h-full object-contain"
               />
               {/* Efecto visual cuando está activado */}

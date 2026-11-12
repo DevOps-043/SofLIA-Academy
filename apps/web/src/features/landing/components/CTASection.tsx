@@ -76,7 +76,7 @@ export function CTASection() {
             <div className="relative">
               <Image
                 src="/Logo.png"
-                alt="SofLIA Logo"
+                alt="SofLIA Academy"
                 width={80}
                 height={80}
                 className="w-16 h-16 lg:w-20 lg:h-20 object-contain"

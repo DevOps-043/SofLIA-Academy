@@ -2,7 +2,7 @@ import { NotificationPage } from '@/features/notifications/components/Notificati
 import { DashboardNavbar } from '@/core/components/DashboardNavbar/DashboardNavbar'
 
 export const metadata = {
-  title: 'Notificaciones | SofLIA',
+  title: 'Notificaciones | SofLIA Academy',
   description: 'Gestiona tus notificaciones y mantente al día con tu aprendizaje.'
 }
 

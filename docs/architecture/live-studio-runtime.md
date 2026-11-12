@@ -16,6 +16,7 @@ Pruebas de migración PGlite cubren reejecución, CAS, deduplicación, acceso RL
 
 Rollback: retirar endpoint o volver al cliente anterior, preservando tablas y bucket. No se ejecutó SQL remoto, no se publicó y no se modificaron secretos.
 
+<<<<<<< HEAD
 
 ## Reacciones y cadencia de mensajes
 
@@ -68,3 +69,8 @@ snapshot.participation_version=1; sin confirmación Hub oculta comandos nuevos y
 conserva aula/chat/medios anteriores. El parámetro JSON opcional queda aceptado
 solo para consumidores intermedios. La cabecera no autoriza ninguna operación:
 se siguen verificando bearer, organización, membresía y rol en el servidor.
+=======
+## Preparación y participación coordinadas
+
+La continuación del 3 de noviembre de 2026 añade reacciones y cadencia transaccionales, negociación de respuesta legacy y entrega firmada de preparación desde Engine. El contrato, autorización, límites y migración están en [preparación de sesiones](live-engine-preparation.md). La firma del servidor no sustituye membresía, permiso docente ni comprobación de curso en SofLIA Academy.
+>>>>>>> 5e8da1368862cae7dd427adacaa38fc0631ffd85

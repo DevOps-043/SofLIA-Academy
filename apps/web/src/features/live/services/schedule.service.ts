@@ -1,4 +1,5 @@
 import "server-only";
+import { prepareVideoSession, videoProviderForNewSession, videoRequest, videoSessionPath } from "../video-sdk.server";
 import { z } from "zod";
 import { createHash } from "node:crypto";
 import type { LiveContext } from "../server";
@@ -17,6 +18,7 @@ export async function scheduleSession(context: LiveContext, body: unknown) {
   if (!context.canTeach)
     throw new LiveError(403, "Necesitas el rol de instructor");
   const { request_id: requestId, ...input } = scheduleSchema.parse(body);
+  const provider = videoProviderForNewSession();
   const course = checked(
     await context.db
       .from("courses")
@@ -55,6 +57,7 @@ export async function scheduleSession(context: LiveContext, body: unknown) {
           .eq("id", previous.session_id)
           .single(),
       );
+      if (session?.video_provider === "zoom-video") return { session };
       const credentials = checked(
         await context.db
           .from("live_zoom_credentials")
@@ -80,10 +83,20 @@ export async function scheduleSession(context: LiveContext, body: unknown) {
     );
   }
   checked(reservation);
+  let videoRemoteId: string | undefined;
   let meetingId: string | undefined;
   let host: string | undefined;
   const resource = input.session_type === "webinar" ? "webinars" : "meetings";
   try {
+    if (provider === "zoom-video") {
+      const prepared = await prepareVideoSession(requestId);
+      videoRemoteId = prepared.remoteId;
+      const session = checked(await context.db.rpc("live_finalize_video_session", {
+        p_request: requestId, p_remote: prepared.remoteId, p_password: prepared.password, p_account: prepared.account,
+        p_session: { ...input, organization_id: context.orgId, instructor_id: context.userId },
+      }));
+      return { session };
+    }
     host = await claimPlatformHost(
       context,
       requestId,
@@ -169,6 +182,10 @@ export async function scheduleSession(context: LiveContext, body: unknown) {
         ),
       };
     let state: "failed" | "uncertain" = "uncertain";
+    if (provider === "zoom-video" && videoRemoteId && !saved.error) {
+      try { await videoRequest(`/videosdk/sessions/${videoSessionPath(videoRemoteId)}`, "DELETE"); state = "failed"; }
+      catch { logger.error("La compensación Video SDK requiere reconciliación", { requestId }); }
+    }
     if (meetingId && !saved.error) {
       try {
         await zoomRequest(`/${resource}/${meetingId}`, "DELETE");

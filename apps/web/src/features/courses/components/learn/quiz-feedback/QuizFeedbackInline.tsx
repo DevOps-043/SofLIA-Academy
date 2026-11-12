@@ -1,5 +1,6 @@
 "use client";
 
+import { SofliaAvatar } from "@/core/components/SofliaAvatar/SofliaAvatar";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, RefreshCw, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -36,12 +37,8 @@ export function QuizFeedbackInline({
         >
           <header className="flex items-center justify-between gap-3 px-4 py-3 border-b border-gray-200 dark:border-white/5">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-accent/30 bg-accent/10">
-                <img
-                  src="/lia-avatar.webp"
-                  alt="SofLIA"
-                  className="h-full w-full object-cover"
-                />
+              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center">
+                <SofliaAvatar state={isLoading ? "thinking" : error ? "concerned" : "acknowledging"} />
               </div>
               <span className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                 {t("activities.quizFeedback.title")}

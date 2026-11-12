@@ -83,7 +83,7 @@ export function OnboardingModal({
                     }}
                   >
                     <div className="relative w-full h-full rounded-full overflow-hidden bg-white/10 backdrop-blur-sm">
-                      <Image src="/lia-avatar.webp" alt="LIA" fill sizes="256px" className="object-cover" priority />
+                      <Image src="/assets/soflia-avatar/badge-idle.webp" alt="LIA" fill sizes="256px" className="object-contain" priority />
                     </div>
                   </motion.div>
 

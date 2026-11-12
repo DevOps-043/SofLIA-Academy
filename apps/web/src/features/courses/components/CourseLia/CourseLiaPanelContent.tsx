@@ -1,5 +1,7 @@
 'use client';
 
+import { SofliaChatProvider, SofliaComposerPresence } from '@/core/components/SofliaAvatar/SofliaChatProvider';
+
 import { ChatSuggestionsChips } from './chat-suggestions';
 import { CourseLiaHeader } from './components/CourseLiaHeader';
 import { CourseLiaInput } from './components/CourseLiaInput';
@@ -13,7 +15,12 @@ export function CourseLiaPanelContent(props: CourseLiaProps) {
   const controller = useCourseLiaController(props);
   const isPanelOpen = controller.isOpen && (!controller.isInteractionBlocked || controller.currentActivity !== null);
 
+  const latestResponse = [...controller.messages].reverse().find(message => message.role === 'assistant');
   return (
+    <SofliaChatProvider scope={`course:${controller.avatarScope ?? ''}:${props.lessonId ?? ''}`} conversationId={controller.liaChat.currentConversationId}
+      active={isPanelOpen} turn={controller.avatarTurn} loading={controller.isLoading}
+      speaking={controller.isSpeaking} listening={controller.isListening}
+      error={Boolean(controller.chatError || controller.voiceError)} draft={controller.inputValue} response={latestResponse}>
     <CourseLiaPanelShell
       isMobile={controller.isMobile}
       isOpen={isPanelOpen}
@@ -56,6 +63,7 @@ export function CourseLiaPanelContent(props: CourseLiaProps) {
         onSuggestionClick={controller.handleSuggestionClick}
         forceCollapse={controller.currentActivity?.timestamp || false}
       />
+      {controller.messages.length > 0 && <SofliaComposerPresence />}
       <CourseLiaInput
         inputRef={controller.inputRef}
         inputValue={controller.inputValue}
@@ -78,5 +86,6 @@ export function CourseLiaPanelContent(props: CourseLiaProps) {
         themeColors={controller.themeColors}
       />
     </CourseLiaPanelShell>
+    </SofliaChatProvider>
   );
 }

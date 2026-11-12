@@ -10,7 +10,7 @@ import { verifyToken } from '@/lib/security/signed-token'
 import type { VerificationChallengeCookie } from '@/lib/security/security-state'
 
 export const metadata: Metadata = {
-  title: 'Verificación de Seguridad | SofLIA',
+  title: 'Verificación de Seguridad | SofLIA Academy',
   description: 'Verificación de seguridad para continuar navegando en SofLIA.',
   robots: {
     index: false,

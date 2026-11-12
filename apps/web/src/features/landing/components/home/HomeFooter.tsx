@@ -17,7 +17,7 @@ export function HomeFooter() {
           <span className={styles.footerMark}>
             <Image src="/Logo.png" alt="" fill sizes="32px" className="object-contain" />
           </span>
-          SofLIA
+          SofLIA Academy
         </div>
         <p className={styles.footerCopy}>{t('footer.copyright', { year })}</p>
       </div>

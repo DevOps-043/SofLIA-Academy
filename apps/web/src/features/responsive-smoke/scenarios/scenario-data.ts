@@ -28,7 +28,7 @@ export const businessPublicBenefits = [
 export const organizations = [
   {
     id: 'org-1',
-    name: 'SofLIA Learning Enterprise Norteamerica',
+    name: 'SofLIA Academy Enterprise Norteamerica',
     role: 'Administrador',
     slug: 'soflia-enterprise-north-america',
   },
