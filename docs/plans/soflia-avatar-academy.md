@@ -75,6 +75,12 @@ animación de conversación. Los fallos globales previos siguen pendientes.
 
 ## Entrega
 
+Corrección posterior de contraste: el visor usa tokens propios cian/ámbar
+luminosos independientes del acento de acciones de UI. Se reforzaron trazos de
+boca y cejas y opacidad mínima, incluida la expresión de sueño. Se repitieron
+las 75 pruebas dirigidas y las seis comprobaciones visuales con resultado
+aprobado; las capturas del reporte reflejan esta corrección.
+
 Rama `codex/academy-avatar-2d`, desde `8aee8be2`. No implica despliegue de
 producción ni migración. La reversión consiste en revertir el commit de esta
 integración; el retrato original permanece en los recursos de Academy.

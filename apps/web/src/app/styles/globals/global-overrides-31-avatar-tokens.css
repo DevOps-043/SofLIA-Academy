@@ -1,0 +1,5 @@
+/* Identidad luminosa del visor, independiente del tema y del color de acciones. */
+:root {
+  --color-avatar-face: rgb(138 255 240);
+  --color-avatar-warning: rgb(255 224 138);
+}
