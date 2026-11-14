@@ -1,4 +1,5 @@
 .panel {
+  --lia-header-height: calc(113px + env(safe-area-inset-top, 0px));
   position: fixed;
   top: 0.75rem;
   right: 0.75rem;
@@ -73,8 +74,8 @@
 .avatarButton {
   position: relative;
   display: inline-flex;
-  width: 2.45rem;
-  height: 2.45rem;
+  width: 88px;
+  height: 88px;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
@@ -283,24 +284,7 @@
   text-align: center;
 }
 
-.emptyVisual {
-  position: relative;
-  display: inline-flex;
-  width: 4.4rem;
-  height: 4.4rem;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
 
-.emptyVisual::before {
-  position: absolute;
-  inset: -1rem;
-  border-radius: 50%;
-  content: "";
-  background: color-mix(in srgb, var(--lia-accent) 12%, transparent);
-  filter: blur(1rem);
-}
 
 .emptyAvatar {
   position: relative;
@@ -1083,8 +1067,16 @@
   }
 }
 
-/* El personaje conserva su silueta completa y espacio para las letras de reposo. */
-.emptyVisual { width: 176px; height: 176px; margin-bottom: 18px; }
-@media (max-height: 560px) { .emptyVisual { width: 112px; height: 112px; } }
 
-.emptyVisual > div { width: 100% !important; height: 100% !important; }
+
+/* La presencia reactiva ocupa sólo la cabecera, también con historial y voz. */
+@media (max-width: 640px), (max-height: 560px) {
+  .panel { --lia-header-height: calc(97px + env(safe-area-inset-top, 0px)); }
+  .avatarButton { width: 72px; height: 72px; }
+}
+@media (max-width: 400px) {
+  .header { gap: 0.35rem; padding-inline: 0.55rem; }
+  .identity { gap: 0.3rem; }
+  .headerActions { gap: 0; }
+  .iconButton { width: 1.85rem; }
+}

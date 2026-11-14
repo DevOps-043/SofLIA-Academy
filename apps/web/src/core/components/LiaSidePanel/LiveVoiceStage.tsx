@@ -1,10 +1,9 @@
 'use client';
 
-import { SofliaChatAvatar } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MicOff } from 'lucide-react';
+import { AudioLines, MicOff } from 'lucide-react';
 import type { LiaThemeColors } from './types';
 
 interface LiveVoiceStageProps {
@@ -100,7 +99,7 @@ export function LiveVoiceStage({
           />
         ))}
 
-        <SofliaChatAvatar size={248} />
+        <AudioLines size={48} color={themeColors.accentColor} aria-hidden="true" />
       </div>
 
       <p

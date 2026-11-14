@@ -30,7 +30,8 @@ describe('LiveVoiceStage', () => {
     );
 
     expect(html).toContain('data-testid="lia-live-voice-stage"');
-    expect(html).toContain('class="soflia-avatar');
+    expect(html).not.toContain('class="soflia-avatar');
+    expect(html).toContain('lucide-audio-lines');
     expect(html).not.toContain('/lia-avatar.webp');
     expect(html).toContain('aria-label="Detener conversación por voz"');
     expect(html).not.toContain('Escribe un mensaje');

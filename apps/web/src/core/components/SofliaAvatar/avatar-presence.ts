@@ -27,6 +27,7 @@ export function createAvatarPresence() {
     if (input.mode === 'focused') return 'focused';
     if (input.mode === 'thinking') return workSince && now - workSince >= 6000 ? 'focused' : 'thinking';
     if (input.mode === 'speaking') return 'speaking';
+    if (input.mode === 'listening') return 'listening';
     if (outcomeUntil > now) return outcomeExpression;
     if (input.draft?.trim()) return draftExpression(input.draft);
     if (now - activated < 900) return 'happy';

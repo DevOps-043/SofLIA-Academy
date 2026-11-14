@@ -1,6 +1,6 @@
 'use client';
 
-import { SofliaChatProvider, SofliaComposerPresence } from '@/core/components/SofliaAvatar/SofliaChatProvider';
+import { SofliaChatProvider } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 
 import { ChatSuggestionsChips } from './chat-suggestions';
 import { CourseLiaHeader } from './components/CourseLiaHeader';
@@ -63,7 +63,6 @@ export function CourseLiaPanelContent(props: CourseLiaProps) {
         onSuggestionClick={controller.handleSuggestionClick}
         forceCollapse={controller.currentActivity?.timestamp || false}
       />
-      {controller.messages.length > 0 && <SofliaComposerPresence />}
       <CourseLiaInput
         inputRef={controller.inputRef}
         inputValue={controller.inputValue}

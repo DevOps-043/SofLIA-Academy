@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { SofliaChatProvider, SofliaChatAvatar, SofliaComposerPresence } from '@/core/components/SofliaAvatar/SofliaChatProvider';
+import { SofliaChatProvider, SofliaChatAvatar } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { chooseReadableTextColor } from '@/core/theme/color-engine';
 import { SofLIAPersonalizationSettings } from '../../../features/lia/components/SofLIAPersonalizationSettings';
@@ -70,7 +70,6 @@ function LiaSidePanelContent() {
     '--lia-on-user': chooseReadableTextColor(themeColors.messageBubbleUser),
     '--lia-input-bg': themeColors.inputBg,
     '--lia-input-border': themeColors.inputBorder,
-    '--lia-header-height': '72px',
   } as React.CSSProperties;
 
   const latestResponse = [...messages].reverse().find(message => message.role === 'assistant');
@@ -112,6 +111,7 @@ function LiaSidePanelContent() {
               messages={messages}
               closePanel={closePanel}
               setIsAvatarExpanded={setIsAvatarExpanded}
+              avatarExpanded={isAvatarExpanded}
             />
 
             {isLiveVoiceActive ? (
@@ -141,7 +141,6 @@ function LiaSidePanelContent() {
                   handleChatScroll={handleChatScroll}
                 />
 
-                {messages.length > 0 && <SofliaComposerPresence />}
                 <InputArea
                   t={t}
                   themeColors={themeColors}

@@ -1,6 +1,6 @@
 'use client';
 
-import { SofliaAvatarBadge } from '@/core/components/SofliaAvatar/SofliaChatProvider';
+import { SofliaChatProfile } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -21,6 +21,7 @@ interface PanelHeaderProps {
   themeColors: LiaThemeColors;
   isLightTheme: boolean;
   isSpeaking: boolean;
+  avatarExpanded?: boolean;
   isVoiceEnabled: boolean;
   toggleVoiceEnabled: () => void;
   isVoiceTogglePending: boolean;
@@ -40,6 +41,7 @@ interface PanelHeaderProps {
 export function PanelHeader({
   t,
   isSpeaking,
+  avatarExpanded = false,
   isVoiceEnabled,
   toggleVoiceEnabled,
   isVoiceTogglePending,
@@ -81,7 +83,7 @@ export function PanelHeader({
               transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
             />
           )}
-          <SofliaAvatarBadge size={48} />
+          {!avatarExpanded && <SofliaChatProfile />}
           <span className={styles.presence} aria-hidden="true" />
         </button>
 

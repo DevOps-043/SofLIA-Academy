@@ -1,6 +1,6 @@
 'use client'
 
-import { SofliaChatProvider, SofliaChatAvatar, SofliaComposerPresence, SofliaAvatarBadge } from '@/core/components/SofliaAvatar/SofliaChatProvider'
+import { SofliaChatProvider, SofliaChatProfile } from '@/core/components/SofliaAvatar/SofliaChatProvider'
 import type { AvatarExpression } from '@/core/components/SofliaAvatar/avatar-model'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -136,15 +136,15 @@ function NotebookSofliaConversation({
       <div
         className={styles.chatCard}
       >
-        <div className={styles.chatHeader}>
+        <header className={styles.chatHeader}>
           <span className={styles.chatHeaderIcon}>
-            <SofliaAvatarBadge size={42} />
+            <SofliaChatProfile />
           </span>
           <div>
             <p className={styles.chatTitle}>{t('soflia.chat.title')}</p>
             <span className={styles.chatStatus}>SofLIA</span>
           </div>
-        </div>
+        </header>
 
         <div
           ref={scrollRef}
@@ -152,7 +152,6 @@ function NotebookSofliaConversation({
         >
           {messages.length === 0 ? (
             <div className={styles.chatEmpty}>
-              <SofliaChatAvatar size={144} />
               <p>
               {t('soflia.chat.placeholder')}
               </p>
@@ -260,7 +259,6 @@ function NotebookSofliaConversation({
           )}
         </div>
 
-        {messages.length > 0 && <SofliaComposerPresence />}
         <div className={styles.chatComposer}>
           <textarea
             value={input}

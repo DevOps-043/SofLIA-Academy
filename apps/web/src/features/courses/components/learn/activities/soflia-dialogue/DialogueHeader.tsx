@@ -1,5 +1,6 @@
 "use client";
 
+import { SofliaChatProfile } from "@/core/components/SofliaAvatar/SofliaChatProvider";
 import { AlertCircle, CheckCircle2, Gauge, MessageSquareText, Sparkles, Target } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getStateTone } from "./dialogue-state";
@@ -33,7 +34,8 @@ export function DialogueHeader({
   const { t } = useTranslation("learn");
 
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-gray-200/70 bg-white/45 px-4 py-3 dark:border-white/10 dark:bg-white/[0.025]">
+    <header className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-gray-200/70 bg-white/45 px-4 py-3 dark:border-white/10 dark:bg-white/[0.025]">
+      <SofliaChatProfile />
       <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[11px] font-semibold ${getStateTone(session?.state)}`}>
         {canPracticeAgain ? <CheckCircle2 className="h-3.5 w-3.5" /> : canRetry ? <AlertCircle className="h-3.5 w-3.5" /> : <Sparkles className="h-3.5 w-3.5" />}
         {stateLabel}
@@ -61,6 +63,6 @@ export function DialogueHeader({
           />
         </div>
       </div>
-    </div>
+    </header>
   );
 }

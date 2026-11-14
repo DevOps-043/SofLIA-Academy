@@ -28,20 +28,18 @@ export function SofliaChatProvider({ children, ...input }: ChatAvatarInput & { c
   return <ChatAudioContext.Provider value={audio.available ? { level: audio.level, features: audio.features } : undefined}><ChatAvatarContext.Provider value={expression}>{children}</ChatAvatarContext.Provider></ChatAudioContext.Provider>;
 }
 
-export function SofliaChatAvatar({ size = 168, className = '' }: { size?: number; className?: string }) {
-  const expression = useContext(ChatAvatarContext);
+export function SofliaChatAvatar({ size = 168, className = '', expression: override }: { size?: number; className?: string; expression?: AvatarExpression }) {
+  const current = useContext(ChatAvatarContext);
+  const expression = override ?? current;
   const audio = useContext(ChatAudioContext);
   return <div className={`${styles.slot} ${className}`} style={{ width: size, height: size }}>
     <SofliaAvatar state={expression} audioLevel={audio?.level} audioFeatures={audio?.features} textActivity={expression === 'speaking' && !audio} />
   </div>;
 }
 
-export function SofliaComposerPresence() {
-  const expression = useContext(ChatAvatarContext); const { t } = useTranslation('common');
-  return <div className={styles.composer}>
-    <SofliaChatAvatar size={76} />
-    <span className={styles.status}>{t('sofliaAvatar.label')} <span aria-hidden="true">·</span> {t(`sofliaAvatar.expressions.${expression}`)}</span>
-  </div>;
+/** Una presencia reactiva en la cabecera, compartida por todas las superficies. */
+export function SofliaChatProfile({ expression }: { expression?: AvatarExpression }) {
+  return <SofliaChatAvatar size={88} className={styles.profile} expression={expression} />;
 }
 
 export function SofliaAvatarBadge({ size = 40, className = '' }: { size?: number; className?: string }) {

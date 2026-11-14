@@ -1,6 +1,6 @@
 "use client";
 
-import { SofliaChatProvider, SofliaComposerPresence } from "@/core/components/SofliaAvatar/SofliaChatProvider";
+import { SofliaChatProvider } from "@/core/components/SofliaAvatar/SofliaChatProvider";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { DialogueFooter } from "./soflia-dialogue/DialogueFooter";
@@ -57,7 +57,6 @@ export function SofliaDialogueActivityRenderer({
         userInitials={userInitials}
         userProfilePictureUrl={user?.profile_picture_url}
       />
-      <SofliaComposerPresence />
       <DialogueFooter
         canPracticeAgain={dialogue.canPracticeAgain}
         canSendMessage={dialogue.canSendMessage}

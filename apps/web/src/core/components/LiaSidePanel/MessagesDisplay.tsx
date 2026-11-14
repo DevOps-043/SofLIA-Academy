@@ -1,6 +1,5 @@
 'use client';
 
-import { SofliaChatAvatar } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -85,14 +84,6 @@ export function MessagesDisplay({
       >
         {messages.length === 0 ? (
           <div className={styles.emptyState}>
-            <motion.div
-              className={styles.emptyVisual}
-              initial={{ scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <SofliaChatAvatar size={176} />
-            </motion.div>
 
             <motion.div
               key={currentTip}

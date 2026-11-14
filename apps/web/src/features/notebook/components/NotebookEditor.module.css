@@ -1547,3 +1547,7 @@
     transition-duration: 1ms;
   }
 }
+
+/* El perfil de SofLIA es el único personaje animado del chat del apunte. */
+.chatHeaderIcon { width: 88px; height: 88px; border: 0; border-radius: 0; background: transparent; }
+@media (max-width: 640px), (max-height: 560px) { .chatHeaderIcon { width: 72px; height: 72px; } }

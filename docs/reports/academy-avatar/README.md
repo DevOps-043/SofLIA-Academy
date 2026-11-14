@@ -8,10 +8,11 @@ con datos locales, un tema controlado y sin credenciales. El endpoint del
 cuaderno se intercepta en el navegador; la señal de audio es un WAV sintetizado
 localmente sobre el reproductor compartido. No mide latencia de servicios reales.
 
-- [Tema oscuro](dark.png): borradores con duda y sorpresa independientes.
+- [Tema oscuro](dark.png): perfiles superiores con duda y sorpresa independientes.
 - [Tema claro](light.png): conversación y propuesta aplicada al apunte.
-- [Móvil a 390 px](mobile.png): paneles sin desbordamiento horizontal.
-- [Resultados automáticos](browser-qa.json): seis verificaciones y cero errores.
+- [Móvil a 390 px](mobile.png): paneles con perfiles de 72 px y sin duplicados.
+- [Resultados automáticos](browser-qa.json): siete verificaciones y cero errores,
+  incluyendo un único personaje por chat, escritorio a 88 px y ancho de 320 px.
 
 Para reproducir desde la raíz del repositorio, iniciar en una terminal:
 

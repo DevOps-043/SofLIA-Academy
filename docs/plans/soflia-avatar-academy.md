@@ -75,6 +75,26 @@ animación de conversación. Los fallos globales previos siguen pendientes.
 
 ## Entrega
 
+Actualización del 13 de noviembre de 2026: cada chat concentra el personaje
+reactivo en la cabecera, de 88 px en escritorio y 72 px en móvil o poca altura.
+Se retiraron las presencias inferiores y los personajes grandes de bienvenida
+y voz, conservando los controles de voz y el texto de estado. General, cursos,
+cuaderno, actividades y retroalimentación comparten el perfil. Al ampliar el
+avatar del chat general se oculta el original mientras está abierto el ampliado.
+La escucha tiene prioridad inmediata sobre el saludo de activación.
+
+Validación de esta actualización: 82 pruebas dirigidas aprobadas en 13 archivos,
+ESLint de 18 archivos aprobado, `type-check:core` y build completo con postbuild
+Lambda aprobados. `type-check:features` conserva los siete diagnósticos previos,
+sin nuevos. QA de navegador: siete comprobaciones aprobadas con un solo perfil
+por chat, audio local, borradores, aprobación explícita del cuaderno, ambos
+temas, ES/EN/PT, anchos de 390/320 px y movimiento reducido. La muestra usa
+componentes reales aislados; no es una sesión autenticada de producción.
+
+El usuario autorizó commit y despliegue a `main`. El avance se realiza desde
+`6d927722`, preservando la reparación del merge y las fuentes locales. El
+resultado remoto de Netlify se verifica después de publicar.
+
 Corrección posterior de contraste: el visor usa tokens propios cian/ámbar
 luminosos independientes del acento de acciones de UI. Se reforzaron trazos de
 boca y cejas y opacidad mínima, incluida la expresión de sueño. Se repitieron

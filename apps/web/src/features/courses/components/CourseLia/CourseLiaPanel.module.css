@@ -59,7 +59,7 @@
 
 .headerMobile { padding-top: calc(0.75rem + env(safe-area-inset-top, 0px)); }
 .identity { display: flex; min-width: 0; align-items: center; gap: 0.7rem; }
-.avatarWrap { position: relative; display: inline-flex; width: 2.45rem; height: 2.45rem; flex-shrink: 0; align-items: center; justify-content: center; }
+.avatarWrap { position: relative; display: inline-flex; width: 88px; height: 88px; flex-shrink: 0; align-items: center; justify-content: center; }
 .avatarPulse { position: absolute; inset: -0.2rem; border: 1px solid var(--course-lia-accent); border-radius: 50%; pointer-events: none; }
 .avatar { position: relative; z-index: 1; width: 100%; height: 100%; border: 1px solid color-mix(in srgb, var(--course-lia-accent) 75%, transparent); border-radius: 50%; object-fit: cover; box-shadow: 0 0.6rem 1.6rem color-mix(in srgb, var(--course-lia-accent) 12%, transparent); }
 .presence { position: absolute; z-index: 2; width: 0.58rem; height: 0.58rem; right: -0.05rem; bottom: -0.02rem; border: 2px solid var(--course-lia-panel); border-radius: 50%; background: var(--course-lia-accent); box-shadow: 0 0 0.7rem color-mix(in srgb, var(--course-lia-accent) 52%, transparent); }
@@ -108,8 +108,6 @@
 .messages::-webkit-scrollbar,
 .suggestions::-webkit-scrollbar { display: none; width: 0; height: 0; }
 .emptyState { display: flex; min-height: 100%; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem 1.15rem; text-align: center; }
-.emptyVisual { position: relative; display: inline-flex; width: 4.4rem; height: 4.4rem; align-items: center; justify-content: center; margin-bottom: 1rem; }
-.emptyVisual::before { position: absolute; inset: -1rem; border-radius: 50%; content: ""; background: color-mix(in srgb, var(--course-lia-accent) 12%, transparent); filter: blur(1rem); }
 .emptyAvatar { position: relative; width: 4rem; height: 4rem; border: 1px solid color-mix(in srgb, var(--course-lia-accent) 72%, transparent); border-radius: 50%; object-fit: cover; box-shadow: 0 0.8rem 2.5rem color-mix(in srgb, var(--course-lia-accent) 13%, transparent); }
 .emptyEyebrow { margin: 0 0 0.45rem; color: var(--course-lia-accent); font-family: var(--font-system-label); font-size: 0.58rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; }
 .emptyTitle { margin: 0; color: var(--course-lia-text); font-family: var(--font-system-display); font-size: 1.8rem; font-weight: 300; letter-spacing: -0.035em; line-height: 1; }
@@ -191,8 +189,7 @@
   .suggestionSkeleton { animation: none; }
 }
 
-/* El personaje conserva su silueta completa y espacio para las letras de reposo. */
-.emptyVisual { width: 176px; height: 176px; margin-bottom: 18px; }
-@media (max-height: 560px) { .emptyVisual { width: 112px; height: 112px; } }
 
-.emptyVisual > div { width: 100% !important; height: 100% !important; }
+
+@media (max-width: 640px), (max-height: 560px) { .avatarWrap { width: 72px; height: 72px; } }
+@media (max-width: 400px) { .header { gap: 0.35rem; padding-inline: 0.55rem; } .identity { gap: 0.3rem; } }

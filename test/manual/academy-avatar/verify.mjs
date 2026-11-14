@@ -20,6 +20,16 @@ try {
   await page.locator('.soflia-avatar__layer').evaluateAll(async images => Promise.all(images.map(image => image.decode())));
   const general = page.locator('[data-qa-surface="general"]'); const course = page.locator('[data-qa-surface="course"]'); const notebook = page.locator('[data-qa-surface="notebook"]');
   assert.equal(await page.locator('img[src*="/lia-avatar."]').count(), 0);
+  const verifySingleProfile = async () => {
+    for (const surface of [general, course, notebook]) {
+      assert.equal(await surface.locator('.soflia-avatar').count(), 1);
+      assert.equal(await surface.locator('header .soflia-avatar').count(), 1);
+    }
+  };
+  await verifySingleProfile();
+  assert.equal(await general.locator('header .soflia-avatar').evaluate(element => getComputedStyle(element.parentElement).width), '88px');
+  result.checks.push('Un único perfil reactivo superior de 88 px en general, curso y cuaderno, incluso sin mensajes');
+
   await general.locator('textarea').fill('No entiendo??');
   await page.waitForFunction(() => document.querySelector('[data-qa-surface="general"] .soflia-avatar').dataset.expression === 'confused');
   await course.locator('textarea').fill('wow!!');
@@ -27,6 +37,7 @@ try {
   result.checks.push('Chat general y curso: identidad nueva y reacciones independientes al borrador');
   await page.locator('.qa-grid').screenshot({ path: fileURLToPath(new URL('dark.png', reports)) });
   await page.getByLabel('Con conversación').check();
+  await verifySingleProfile();
   await general.locator('textarea').fill(''); await course.locator('textarea').fill('');
   await page.getByRole('button', { name: 'Audio local de prueba' }).click();
   await page.waitForFunction(() => {
@@ -51,8 +62,13 @@ try {
   await page.getByRole('button', { name: 'Cambiar idioma' }).click();
   result.checks.push('Tema claro y traducciones EN/PT cargadas sin cambiar la identidad');
   await page.setViewportSize({ width: 390, height: 844 });
+  await verifySingleProfile();
+  assert.equal(await general.locator('header .soflia-avatar').evaluate(element => getComputedStyle(element.parentElement).width), '72px');
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   await page.locator('.qa-grid').screenshot({ path: fileURLToPath(new URL('mobile.png', reports)) });
+  await page.setViewportSize({ width: 320, height: 700 });
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  await verifySingleProfile();
   result.checks.push('Paneles y compositor a 390 px sin desbordamiento horizontal');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.waitForFunction(() => [...document.querySelectorAll('.soflia-avatar')].every(element => element.dataset.running === 'false'));

@@ -1,6 +1,4 @@
 .slot { position: relative; flex-shrink: 0; max-width: 100%; pointer-events: none; }
 .badge { display: block; flex-shrink: 0; max-width: 100%; object-fit: contain; }
-.composer { display: flex; min-height: 68px; flex-shrink: 0; align-items: center; gap: 4px; padding: 0 16px; }
-.status { color: var(--lia-muted, var(--course-lia-muted, var(--color-gray-500))); font-size: 11px; line-height: 1.5; letter-spacing: .015em; }
-.status span { margin-inline: 3px; color: var(--color-accent); }
-@media (max-height: 560px) { .composer { min-height: 48px; } .composer .slot { width: 54px !important; height: 54px !important; } }
+.profile { width: 88px !important; height: 88px !important; }
+@media (max-width: 640px), (max-height: 560px) { .profile { width: 72px !important; height: 72px !important; } }

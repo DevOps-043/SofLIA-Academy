@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 import type { SofLIAMessage } from '@/core/types/lia.types';
-import { SofliaChatAvatar } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 import styles from '../CourseLiaPanel.module.css';
 import type { NormalizedLiaLink } from '../lia-link.utils';
 import type { CourseLiaProps, CourseLiaThemeColors } from '../types';
@@ -42,14 +41,6 @@ export function CourseLiaMessages(props: CourseLiaMessagesProps) {
     <div className={styles.messages}>
       {isEmpty ? (
         <div className={styles.emptyState}>
-          <motion.div
-            className={styles.emptyVisual}
-            initial={{ scale: 0.92, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <SofliaChatAvatar size={176} />
-          </motion.div>
           <motion.div
             initial={{ y: 8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

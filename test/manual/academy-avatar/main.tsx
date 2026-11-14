@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import React, { useEffect, useRef, useState } from 'react';
 import i18n from 'i18next';
 import { initReactI18next, useTranslation } from 'react-i18next';
-import { SofliaChatProvider, SofliaChatAvatar, SofliaComposerPresence } from '@/core/components/SofliaAvatar/SofliaChatProvider';
+import { SofliaChatProvider } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 import { SofliaAvatar } from '@/core/components/SofliaAvatar/SofliaAvatar';
 import { AVATAR_EXPRESSIONS, type AvatarExpression } from '@/core/components/SofliaAvatar/avatar-model';
 import { getSharedAudioElement } from '@/core/services/tts/client/ios-audio-unlock';
@@ -42,7 +42,6 @@ function Panel({ course, dark, mode, history, audioSpeaking }: { course?: boolea
       <div className={`${course ? courseStyles.panel : panelStyles.panel} qa-frame`} style={{ ...variables, ...courseVariables } as React.CSSProperties}>
         {course ? <CourseLiaHeader isSpeaking={audioSpeaking} isVoiceEnabled={false} isVoiceTogglePending={false} onClearHistory={noop} onClose={noop} onToggleVoice={noop} /> : <PanelHeader t={t} themeColors={theme} isLightTheme={!dark} isSpeaking={audioSpeaking} isVoiceEnabled={false} toggleVoiceEnabled={noop} isVoiceTogglePending={false} showHistory={false} closeHistory={noop} setShowHistory={noop} isOptionsMenuOpen={false} setIsOptionsMenuOpen={noop} optionsMenuRef={options} setIsPersonalizationOpen={noop} clearHistory={noop} messages={messages} closePanel={noop} setIsAvatarExpanded={noop} />}
         {course ? <CourseLiaMessages copiedMessageId={null} editInputRef={field} editingMessageId={null} editingValue="" isDarkMode={dark} isLoading={loading} lessonTitle="De la idea a la práctica" messages={messages} messagesEndRef={end} onCancelEditing={noop} onCopyMessage={noop} onEditKeyDown={noop} onLinkClick={noop} onStartEditing={noop} onSubmitEditedMessage={noop} setEditingValue={noop} stop={noop} themeColors={theme} /> : <MessagesDisplay messages={messages} isLoading={loading} typewriterReveal={{ messageId: null, length: 0, isTyping: false }} currentTip="Tus ideas tienen un lugar para empezar." themeColors={theme} isLightTheme={!dark} isDarkMode={dark} handleLinkClick={noop} quickActions={[]} handleQuickAction={noop} messagesEndRef={end} chatContainerRef={container} handleChatScroll={noop} />}
-        {history && <SofliaComposerPresence />}
         {course ? <CourseLiaInput inputRef={field} inputValue={input} isInteractionBlocked={false} isLightTheme={!dark} isListening={false} isMobile={false} onInputChange={setInput} onKeyDown={noop} onPrimaryAction={noop} primaryActionLabel="Enviar" primaryActionMode="send" setVoiceError={noop} themeColors={theme} voiceError={null} /> : <InputArea t={t} themeColors={theme} isLightTheme={!dark} inputValue={input} setInputValue={setInput} inputRef={field} isDictating={false} isDictationEnabled={false} isVoiceEnabled={false} isLiveVoiceConnecting={false} isProcessingDictation={false} interimTranscript="" finalTranscript="" stopDictation={noop} toggleDictation={noop} toggleLiveVoice={noop} handleSendMessage={noop} isResponding={loading} />}
       </div>
     </SofliaChatProvider>

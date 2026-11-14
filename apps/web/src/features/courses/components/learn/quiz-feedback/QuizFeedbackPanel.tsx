@@ -1,6 +1,6 @@
 "use client";
 
-import { SofliaAvatar } from "@/core/components/SofliaAvatar/SofliaAvatar";
+import { SofliaChatProfile } from "@/core/components/SofliaAvatar/SofliaChatProvider";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, RefreshCw, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -129,8 +129,8 @@ export function QuizFeedbackPanel({
           >
             <header className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 dark:border-white/10">
               <div className="flex min-w-0 items-center gap-3">
-                <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center">
-                  <SofliaAvatar state={isLoading ? "thinking" : error ? "concerned" : "acknowledging"} />
+                <div className="flex flex-shrink-0 items-center justify-center">
+                  <SofliaChatProfile expression={isLoading ? "thinking" : error ? "concerned" : "acknowledging"} />
                 </div>
                 <div className="min-w-0">
                   <h2
