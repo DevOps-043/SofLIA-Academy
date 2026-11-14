@@ -6,6 +6,8 @@ import { SofliaChatProvider } from '@/core/components/SofliaAvatar/SofliaChatPro
 import { SofliaAvatar } from '@/core/components/SofliaAvatar/SofliaAvatar';
 import { AVATAR_EXPRESSIONS, type AvatarExpression } from '@/core/components/SofliaAvatar/avatar-model';
 import { getSharedAudioElement } from '@/core/services/tts/client/ios-audio-unlock';
+import { LiaPanelContext } from '@/core/contexts/LiaPanelContext';
+import { LiaFloatingButton } from '@/core/components/LiaSidePanel/LiaFloatingButton';
 import { PanelHeader } from '@/core/components/LiaSidePanel/PanelHeader';
 import { MessagesDisplay } from '@/core/components/LiaSidePanel/MessagesDisplay';
 import { InputArea } from '@/core/components/LiaSidePanel/InputArea';
@@ -48,6 +50,7 @@ function Panel({ course, dark, mode, history, audioSpeaking }: { course?: boolea
   </section>;
 }
 function App() {
+  const [showLauncher, setShowLauncher] = useState(false);
   const [dark, setDark] = useState(true); const [mode, setMode] = useState<AvatarExpression>('idle'); const [history, setHistory] = useState(false); const [audioSpeaking, setAudioSpeaking] = useState(false);
   useEffect(() => { getSharedAudioElement(); }, []);
   useEffect(() => { document.documentElement.classList.toggle('dark', dark); document.documentElement.classList.toggle('light', !dark); }, [dark]);
@@ -58,7 +61,8 @@ function App() {
     for (let n = 0; n < rate * duration; n++) view.setInt16(44 + n * 2, Math.sin(n * Math.PI * 2 * 320 / rate) * (Math.sin(n / rate * 12) > -.3 ? .2 : .01) * 32767, true);
     const audio = getSharedAudioElement()!; const url = URL.createObjectURL(new Blob([buffer], { type: 'audio/wav' })); audio.src = url; audio.onended = () => { setAudioSpeaking(false); URL.revokeObjectURL(url); }; await audio.play(); setAudioSpeaking(true);
   };
-  return <main><header className="qa-controls"><strong>SofLIA Academy · QA local</strong><label><input type="checkbox" checked={dark} onChange={event => setDark(event.target.checked)} /> Tema oscuro</label><label><input type="checkbox" checked={history} onChange={event => setHistory(event.target.checked)} /> Con conversación</label><select aria-label="Escenario simulado" value={mode} onChange={event => setMode(event.target.value as AvatarExpression)}>{AVATAR_EXPRESSIONS.map(expression => <option key={expression} value={expression}>{expression}</option>)}</select><button onClick={() => void playSample()}>Audio local de prueba</button><button onClick={() => void i18n.changeLanguage(i18n.language === 'es' ? 'en' : i18n.language === 'en' ? 'pt' : 'es')}>Cambiar idioma</button></header>
+  return <main><header className="qa-controls"><strong>SofLIA Academy · QA local</strong><label><input type="checkbox" checked={showLauncher} onChange={event => setShowLauncher(event.target.checked)} /> Mostrar acceso flotante</label><label><input type="checkbox" checked={dark} onChange={event => setDark(event.target.checked)} /> Tema oscuro</label><label><input type="checkbox" checked={history} onChange={event => setHistory(event.target.checked)} /> Con conversación</label><select aria-label="Escenario simulado" value={mode} onChange={event => setMode(event.target.value as AvatarExpression)}>{AVATAR_EXPRESSIONS.map(expression => <option key={expression} value={expression}>{expression}</option>)}</select><button onClick={() => void playSample()}>Audio local de prueba</button><button onClick={() => void i18n.changeLanguage(i18n.language === 'es' ? 'en' : i18n.language === 'en' ? 'pt' : 'es')}>Cambiar idioma</button></header>
+    <LiaPanelContext.Provider value={{ isOpen: !showLauncher, togglePanel: () => setShowLauncher(false), openPanel: noop, closePanel: noop, pageContext: null, setPageContext: noop }}><LiaFloatingButton /></LiaPanelContext.Provider>
     <div className="qa-grid"><Panel dark={dark} mode={mode} history={history} audioSpeaking={audioSpeaking} /><Panel course dark={dark} mode={mode} history={history} audioSpeaking={false} /><section data-qa-surface="notebook"><p className="qa-heading">Cuaderno de aprendizaje</p><NotebookSofliaPanel orgSlug="qa-local" noteId="nota-local" showAnalysis={false} onApplyEdit={noop} onError={noop} /></section></div>
     <div className="qa-expressions">{AVATAR_EXPRESSIONS.map(expression => <div key={expression}><div style={{ width: 160, height: 160 }}><SofliaAvatar state={expression} /></div><span>{expression}</span></div>)}</div>
   </main>;

@@ -1,5 +1,7 @@
 'use client';
 
+import { SofliaChatWelcome } from '@/core/components/SofliaAvatar/SofliaChatProvider';
+
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -11,6 +13,7 @@ import styles from './LiaSidePanel.module.css';
 
 interface MessagesDisplayProps {
   messages: LiaMessage[];
+  hideWelcome?: boolean;
   isLoading: boolean;
   /** Estado del revelado "máquina de escribir" gestionado por useLiaSidePanelLogic. */
   typewriterReveal: AssistantTypewriterRevealState;
@@ -28,6 +31,7 @@ interface MessagesDisplayProps {
 
 export function MessagesDisplay({
   messages,
+  hideWelcome = false,
   isLoading,
   typewriterReveal,
   currentTip,
@@ -84,6 +88,7 @@ export function MessagesDisplay({
       >
         {messages.length === 0 ? (
           <div className={styles.emptyState}>
+            <SofliaChatWelcome hidden={hideWelcome} />
 
             <motion.div
               key={currentTip}

@@ -1,3 +1,4 @@
+import { SofliaChatWelcome } from '@/core/components/SofliaAvatar/SofliaChatProvider';
 import type { RefObject } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -41,6 +42,7 @@ export function CourseLiaMessages(props: CourseLiaMessagesProps) {
     <div className={styles.messages}>
       {isEmpty ? (
         <div className={styles.emptyState}>
+          <SofliaChatWelcome />
           <motion.div
             initial={{ y: 8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

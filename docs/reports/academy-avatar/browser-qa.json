@@ -1,7 +1,7 @@
 {
   "checks": [
-    "Un único perfil reactivo superior de 88 px en general, curso y cuaderno, incluso sin mensajes",
-    "Chat general y curso: identidad nueva y reacciones independientes al borrador",
+    "Bienvenida central de 260 px y acceso flotante de 96 px transparente, sin burbuja",
+    "Primer borrador oculta la bienvenida sin reaparecer al borrarlo; sólo queda el perfil superior",
     "Audio WAV local del reproductor compartido medido sin otra captura ni cambios al reproductor",
     "Cuaderno: espera real, propuesta pendiente, aplicación explícita y éxito",
     "Tema claro y traducciones EN/PT cargadas sin cambiar la identidad",

@@ -1,7 +1,7 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
 import { cloneElement, createRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { SofliaChatAvatar, SofliaChatProvider } from '../SofliaChatProvider';
+import { SofliaChatAvatar, SofliaChatProvider, SofliaChatWelcome } from '../SofliaChatProvider';
 import { PanelHeader } from '../../LiaSidePanel/PanelHeader';
 import { LiveVoiceStage } from '../../LiaSidePanel/LiveVoiceStage';
 import type { LiaThemeColors } from '../../LiaSidePanel/types';
@@ -42,15 +42,34 @@ describe('perfil superior único de Academy', () => {
     expect(document.querySelectorAll('.soflia-avatar')).toHaveLength(1);
     expect(document.querySelector('[data-testid="lia-live-voice-stage"] .soflia-avatar')).toBeNull();
   });
-  it('el diálogo vacío o enviando conserva las expresiones sólo en la cabecera', () => {
-    const body = (sending: boolean) => <SofliaChatProvider scope="actividad">{dialogue}
+  it('el diálogo muestra bienvenida al inicio y sólo cabecera al enviar', () => {
+    const body = (sending: boolean) => <SofliaChatProvider scope="actividad" loading={sending}>{dialogue}
       <DialogueMessagesList messagesEndRef={createRef<HTMLDivElement>()} sending={sending} session={null}
         userDisplayName="Estudiante" userInitials="E" /></SofliaChatProvider>;
     const view = render(body(false));
-    expect(document.querySelectorAll('.soflia-avatar')).toHaveLength(1);
+    expect(document.querySelectorAll('.soflia-avatar')).toHaveLength(2);
+    expect(document.querySelector('[data-soflia-welcome]')).not.toBeNull();
     view.rerender(body(true));
     expect(document.querySelectorAll('.soflia-avatar')).toHaveLength(1);
     expect(document.querySelectorAll('header .soflia-avatar')).toHaveLength(1);
+  });
+  it('oculta la bienvenida al escribir, no reaparece al borrar y se reinicia en otro chat', () => {
+    const body = (scope: string, draft = '') => <SofliaChatProvider scope={scope} draft={draft}>{general}<SofliaChatWelcome /></SofliaChatProvider>;
+    const view = render(body('chat-a'));
+    expect(document.querySelector('[data-soflia-welcome]')).not.toBeNull();
+    view.rerender(body('chat-a', 'Hola'));
+    expect(document.querySelector('[data-soflia-welcome]')).toBeNull();
+    expect(document.querySelectorAll('.soflia-avatar')).toHaveLength(1);
+    view.rerender(body('chat-a'));
+    expect(document.querySelector('[data-soflia-welcome]')).toBeNull();
+    view.rerender(body('chat-b'));
+    expect(document.querySelector('[data-soflia-welcome]')).not.toBeNull();
+  });
+  it('el historial y la escucha activa no muestran una nueva bienvenida', () => {
+    const view = render(<SofliaChatProvider scope="historial" response={{id:'previa',content:'Respuesta previa'}}>{general}<SofliaChatWelcome /></SofliaChatProvider>);
+    expect(document.querySelector('[data-soflia-welcome]')).toBeNull();
+    view.rerender(<SofliaChatProvider scope="voz" listening>{general}<SofliaChatWelcome /></SofliaChatProvider>);
+    expect(document.querySelector('[data-soflia-welcome]')).toBeNull();
   });
   it('al ampliar el avatar oculta el perfil original para no duplicarlo', () => {
     render(<SofliaChatProvider scope="ampliado">{cloneElement(general, { avatarExpanded: true })}

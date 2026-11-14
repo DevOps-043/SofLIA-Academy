@@ -75,6 +75,27 @@ animación de conversación. Los fallos globales previos siguen pendientes.
 
 ## Entrega
 
+Refinamiento de bienvenida del 13 de noviembre: el acceso flotante general y
+de cursos mide 96 px y conserva únicamente la silueta transparente del personaje,
+sin fondo circular, borde, sombra de botón ni anillo pulsante. El acceso de la
+barra móvil usa una imagen de 48 px sin marco circular.
+
+El chat vacío muestra una bienvenida central de 260 px (180 px con poca altura).
+Al primer carácter se retira de inmediato y queda el perfil superior reactivo;
+borrar el borrador no la recupera. Una conversación nueva reinicia la bienvenida.
+Historial, carga, voz o decisiones pendientes no muestran una bienvenida nueva.
+El avatar ampliado del chat general oculta la bienvenida mientras está abierto.
+Este comportamiento se comparte con cursos, actividades y cuaderno.
+
+Verificación: 86 pruebas dirigidas aprobadas en 14 archivos, ESLint de 12 archivos
+aprobado, core typecheck aprobado y los mismos siete diagnósticos previos de
+features. Build completo con postbuild Lambda aprobado; QA local de navegador
+con siete comprobaciones aprobadas, incluyendo fondo transparente, entrada y
+borrado de texto, audio, temas, móvil y aprobación explícita del cuaderno.
+Se conservan los bloqueos del acceso al asistente durante actividades.
+Publicación autorizada por la solicitud de implementación y despliegue en curso;
+avance desde `f987732a` sin reescribir historial.
+
 Actualización del 13 de noviembre de 2026: cada chat concentra el personaje
 reactivo en la cabecera, de 88 px en escritorio y 72 px en móvil o poca altura.
 Se retiraron las presencias inferiores y los personajes grandes de bienvenida

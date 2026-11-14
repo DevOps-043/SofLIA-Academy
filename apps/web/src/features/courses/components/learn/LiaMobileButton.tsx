@@ -15,14 +15,13 @@ export function LiaMobileButton() {
           ? "opacity-45 grayscale cursor-not-allowed text-gray-400 dark:text-white/40"
           : isOpen
             ? ""
-            : "text-gray-500 dark:text-white/60 hover:bg-gray-200/50 dark:hover:bg-primary/30"
+            : "text-gray-500 dark:text-white/60"
       }`}
       style={!isInteractionBlocked && isOpen ? {
-        backgroundColor: 'color-mix(in srgb, var(--learn-accent) 15%, transparent)',
         color: 'var(--learn-accent)',
       } : undefined}
     >
-      <div className="w-6 h-6 rounded-full overflow-hidden border-2 border-current">
+      <div className="w-12 h-12 flex-shrink-0">
         <img src="/assets/soflia-avatar/badge-idle.webp" alt="SofLIA" className="w-full h-full object-contain" />
       </div>
       <span className="text-xs font-medium">SofLIA</span>

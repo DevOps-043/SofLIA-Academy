@@ -1,6 +1,6 @@
 'use client'
 
-import { SofliaChatProvider, SofliaChatProfile } from '@/core/components/SofliaAvatar/SofliaChatProvider'
+import { SofliaChatProvider, SofliaChatProfile, SofliaChatWelcome } from '@/core/components/SofliaAvatar/SofliaChatProvider'
 import type { AvatarExpression } from '@/core/components/SofliaAvatar/avatar-model'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -152,6 +152,7 @@ function NotebookSofliaConversation({
         >
           {messages.length === 0 ? (
             <div className={styles.chatEmpty}>
+              <SofliaChatWelcome />
               <p>
               {t('soflia.chat.placeholder')}
               </p>

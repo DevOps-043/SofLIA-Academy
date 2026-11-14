@@ -2,3 +2,9 @@
 .badge { display: block; flex-shrink: 0; max-width: 100%; object-fit: contain; }
 .profile { width: 88px !important; height: 88px !important; }
 @media (max-width: 640px), (max-height: 560px) { .profile { width: 72px !important; height: 72px !important; } }
+
+.welcome { width: min(260px, 100%); aspect-ratio: 1; flex-shrink: 0; margin: 0 auto 16px; }
+.welcome > .slot { width: 100% !important; height: 100% !important; }
+.launcher { background: transparent; border: 0; box-shadow: none; padding: 0; }
+.launcher:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; border-radius: 16px; }
+@media (max-height: 560px) { .welcome { width: min(180px, 100%); margin-bottom: 8px; } }

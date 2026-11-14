@@ -9,10 +9,13 @@ cuaderno se intercepta en el navegador; la señal de audio es un WAV sintetizado
 localmente sobre el reproductor compartido. No mide latencia de servicios reales.
 
 - [Tema oscuro](dark.png): perfiles superiores con duda y sorpresa independientes.
+- [Bienvenida](welcome.png): personaje central antes de la primera interacción.
+- [Acceso flotante](launcher.png): silueta de 96 px sin burbuja de fondo.
 - [Tema claro](light.png): conversación y propuesta aplicada al apunte.
 - [Móvil a 390 px](mobile.png): paneles con perfiles de 72 px y sin duplicados.
-- [Resultados automáticos](browser-qa.json): siete verificaciones y cero errores,
-  incluyendo un único personaje por chat, escritorio a 88 px y ancho de 320 px.
+- [Resultados automáticos](browser-qa.json): siete verificaciones y cero errores;
+  al escribir desaparece la bienvenida y queda sólo el perfil superior, incluso
+  tras borrar el borrador. Incluye escritorio y anchos de 390/320 px.
 
 Para reproducir desde la raíz del repositorio, iniciar en una terminal:
 

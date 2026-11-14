@@ -1,3 +1,4 @@
+import avatarStyles from '@/core/components/SofliaAvatar/SofliaAvatarSlot.module.css';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -28,11 +29,12 @@ export function CourseLiaFloatingButton() {
             width: `${COURSE_LIA_BUTTON_SIZE_PX}px`,
             height: `${COURSE_LIA_BUTTON_SIZE_PX}px`,
             zIndex: 9998,
-            background: 'rgba(0,0,0,0.01)',
-            borderRadius: '50%',
+            background: 'transparent',
+            borderRadius: 0,
           }}
         >
           <motion.button
+            className={avatarStyles.launcher}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
@@ -43,16 +45,16 @@ export function CourseLiaFloatingButton() {
             style={{
               width: '100%',
               height: '100%',
-              borderRadius: '50%',
-              background: 'var(--color-gray-800)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-              border: '2px solid rgba(255,255,255,0.1)',
+              borderRadius: 0,
+              background: 'transparent',
+              boxShadow: 'none',
+              border: 'none',
               cursor: isInteractionBlocked ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               padding: 0,
-              overflow: 'hidden',
+              overflow: 'visible',
               filter: isInteractionBlocked ? 'grayscale(100%) opacity(0.5)' : 'none',
             }}
             aria-label={t('lia.openAssistant')}

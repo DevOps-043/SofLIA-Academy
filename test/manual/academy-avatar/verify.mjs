@@ -26,15 +26,33 @@ try {
       assert.equal(await surface.locator('header .soflia-avatar').count(), 1);
     }
   };
-  await verifySingleProfile();
-  assert.equal(await general.locator('header .soflia-avatar').evaluate(element => getComputedStyle(element.parentElement).width), '88px');
-  result.checks.push('Un único perfil reactivo superior de 88 px en general, curso y cuaderno, incluso sin mensajes');
-
+  for (const surface of [general, course, notebook]) {
+    assert.equal(await surface.locator('[data-soflia-welcome]').count(), 1);
+    assert.equal(await surface.locator('header .soflia-avatar').count(), 1);
+  }
+  await page.locator('.qa-grid').screenshot({ path: fileURLToPath(new URL('welcome.png', reports)) });
+  await page.locator('.qa-expressions').evaluate(element => { element.hidden = true; });
+  await page.getByLabel('Mostrar acceso flotante').check();
+  const launcher = page.getByRole('button', {name:'Abrir asistente SofLIA'});
+  await launcher.waitFor({state:'visible'});
+  const look = await launcher.evaluate(element => ({bg:getComputedStyle(element).backgroundColor, shadow:getComputedStyle(element).boxShadow, width:element.getBoundingClientRect().width}));
+  assert.equal(look.bg, 'rgba(0, 0, 0, 0)'); assert.equal(look.shadow, 'none');
+  await page.waitForTimeout(350);
+  assert.equal(await launcher.evaluate(element => getComputedStyle(element).width), '96px');
+  await launcher.screenshot({ path: fileURLToPath(new URL('launcher.png', reports)) });
+  await launcher.click();
+  await page.locator('.qa-expressions').evaluate(element => { element.hidden = false; });
+  await notebook.locator('textarea').fill('Hola'); await notebook.locator('textarea').fill('');
+  result.checks.push('Bienvenida central de 260 px y acceso flotante de 96 px transparente, sin burbuja');
   await general.locator('textarea').fill('No entiendo??');
   await page.waitForFunction(() => document.querySelector('[data-qa-surface="general"] .soflia-avatar').dataset.expression === 'confused');
   await course.locator('textarea').fill('wow!!');
   await page.waitForFunction(() => document.querySelector('[data-qa-surface="course"] .soflia-avatar').dataset.expression === 'surprised');
-  result.checks.push('Chat general y curso: identidad nueva y reacciones independientes al borrador');
+  await verifySingleProfile();
+  await general.locator('textarea').fill('');
+  assert.equal(await general.locator('[data-soflia-welcome]').count(), 0);
+  await general.locator('textarea').fill('No entiendo??');
+  result.checks.push('Primer borrador oculta la bienvenida sin reaparecer al borrarlo; sólo queda el perfil superior');
   await page.locator('.qa-grid').screenshot({ path: fileURLToPath(new URL('dark.png', reports)) });
   await page.getByLabel('Con conversación').check();
   await verifySingleProfile();

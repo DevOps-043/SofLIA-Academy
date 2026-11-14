@@ -126,6 +126,7 @@ function LiaSidePanelContent() {
             ) : (
               <>
                 <MessagesDisplay
+                  hideWelcome={isAvatarExpanded}
                   messages={messages}
                   isLoading={isLoading}
                   typewriterReveal={typewriterReveal}
