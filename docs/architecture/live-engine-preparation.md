@@ -2,7 +2,7 @@
 
 Estado: implementación local coordinada, pendiente de despliegue y piloto. Fecha: 2026-11-03.
 
-Engine permite a un revisor de la organización activa consultar sus sesiones de Learning y entregar una preparación aprobada. Learning vuelve a comprobar membresía, permiso docente, organización, curso y estado programado. No se entregan notas, respuestas ni criterios privados del facilitador.
+Engine permite a un revisor de la organización activa consultar sus sesiones de Learning y entregar una preparación aprobada. Learning vuelve a comprobar membresía, permiso docente, organización, curso y estado programado. La primera versión entregaba láminas y prácticas públicas. La ampliación local del 17 de noviembre incorpora bloques, criterios de conducción y notas del ponente, que Academy conserva en el estado privado y excluye de las respuestas de participantes.
 
 El contrato canónico está en [engine-preparation.contract.ts](../../apps/web/src/features/live/engine-preparation.contract.ts). Hub y Engine mantienen copias verificables mediante sus sincronizadores. La sesión de autoría y la sesión de impartición son identidades diferentes; cada entrega conserva artefacto, sesión de autoría y revisión.
 
@@ -19,3 +19,5 @@ Participación se negocia por X-Soflia-Studio-Participation: 1. El snapshot lega
 Activación: Video SDK y participación se aplicaron con aprobación explícita en Learning principal el 2026-11-03; consultar el [registro de ejecución](../reports/live-activation-2026-11-03/execution.md). El usuario aplicó después la migración de autoría de Engine por SQL Editor y aportó su postflight completo, verificado y conservado en el repositorio Engine. Falta comprobar/reconciliar ese historial manual, publicar Learning compatible, configurar la conexión de servidor y verificar contratos antes de entregar Hub/Engine. Ensayar actor sin curso, organización ajena, repetición, clase iniciada, retiro de membresía y revisión antigua. No se enviaron cursos reales durante esta implementación.
 
 Rollback: retirar la entrega nueva y el intervalo coordinadamente, conservar estado, tablas y archivos. No retirar la migración Video mientras existan aulas de ese proveedor.
+
+La [ampliación de preparación](live-preparation-expansion.md) documenta el encabezado X-Soflia-Studio-Preparation, la compatibilidad y el orden de publicación.

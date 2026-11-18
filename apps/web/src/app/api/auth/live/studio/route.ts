@@ -18,7 +18,9 @@ export async function POST(request: NextRequest) {
     const operation = input.operation.type === 'zoom'
       ? { ...input.operation, recording_notice_version: recordingNoticeVersion }
       : input.operation;
-    const response = json(await executeStudio(context, input.session_id, operation, participationVersion));
+    const preparationVersion = request.headers.get('X-Soflia-Studio-Preparation') === '1' ? 1 : 0;
+    const documentsVersion = request.headers.get('X-Soflia-Studio-Documents') === '1' ? 1 : 0;
+    const response = json(await executeStudio(context, input.session_id, operation, participationVersion, preparationVersion, documentsVersion));
     response.headers.set('Referrer-Policy', 'no-referrer');
     return response;
   });

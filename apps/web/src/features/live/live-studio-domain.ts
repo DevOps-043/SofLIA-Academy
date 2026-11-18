@@ -94,12 +94,23 @@ export function applyStudioCommand(previous: StudioState, input: StudioCommand, 
       state.submissions.push({ practice_id: command.practice_id, user_id: actor.id, content: command.content, created_at: now }); break;
     }
     case 'clock': state.clock = { ...command.clock, updated_at: now }; break;
+    case 'publish_document': {
+      const document = state.engine_preparation?.documents?.find(item => item.id === command.document_id);
+      if (!document?.applicable || !document.participant_sections.length) invalid('El documento no está disponible para el participante.');
+      const published = (state.published_document_ids || []).filter(id => id !== command.document_id);
+      state.published_document_ids = command.published ? [...published, command.document_id] : published;
+      break;
+    }
     case 'import_engine': {
+      if (state.answers.length || state.submissions.length) invalid('La sesión ya tiene trabajo de participantes. Conserva el paquete vigente.');
       const manifest = command.manifest;
       if (manifest.course_id !== actor.courseId) deny('El contenido pertenece a otro curso');
       for (const collection of [manifest.scenes, manifest.materials, manifest.quizzes, manifest.practices]) {
         if (new Set(collection.map((item) => item.id)).size !== collection.length) invalid('El manifiesto tiene identificadores duplicados');
       }
+      delete state.engine_payload_hash;
+      state.published_document_ids = [];
+      state.engine_preparation = manifest.preparation;
       state.scenes = manifest.scenes; state.materials = manifest.materials; state.quizzes = manifest.quizzes; state.practices = manifest.practices;
       state.active_scene_id = manifest.scenes[0]?.id ?? null; state.active_quiz_id = null; state.answers = []; state.submissions = []; state.engine_revision = manifest.revision; break;
     }
@@ -108,12 +119,22 @@ export function applyStudioCommand(previous: StudioState, input: StudioCommand, 
   return studioStateSchema.parse(state);
 }
 
+export function projectPublishedDocuments(state: StudioState) {
+  return (state.engine_preparation?.documents || [])
+    .filter(document => document.applicable && document.participant_sections.length && state.published_document_ids?.includes(document.id))
+    .map(document => ({ id: document.id, kind: document.kind, title: document.title, sections: document.participant_sections }));
+}
+
 /** Nunca devuelve claves de quiz, entregas ajenas ni conversaciones de otras salas. */
 export function projectStudioState(state: StudioState, actor: StudioActor, now: string) {
   const room = state.members.find((member) => member.user_id === actor.id)?.room_id ?? null;
   if (state.moderation.restrictions[actor.id] === 'blocked') deny('Tu acceso a esta sesión está bloqueado');
+  const { engine_preparation, engine_payload_hash, published_document_ids, ...publicState } = state;
+  void published_document_ids;
+  void engine_payload_hash;
   return {
-    ...state,
+    ...publicState,
+    ...(actor.canManage && engine_preparation ? { engine_preparation } : {}),
     reaction_events:(state.reaction_events??[]).filter(event=>event.room_id===room&&Date.parse(now)-Date.parse(event.created_at)>=0&&Date.parse(now)-Date.parse(event.created_at)<5000),
     participation:state.participation?.[actor.id]?{[actor.id]:state.participation[actor.id]}:{},
     messages: state.messages.filter((message) => actor.canManage || message.room_id === room),

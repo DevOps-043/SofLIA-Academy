@@ -15,7 +15,7 @@ function request(version?:string,body:unknown=input,token='eyJhbGciOiJIUzI1NiJ9.
 beforeEach(()=>{vi.resetAllMocks();mocks.getUser.mockResolvedValue({data:{user:{id:'teacher'}},error:null});mocks.org.mockResolvedValue({data:{id:'org',is_active:true},error:null});mocks.actor.mockResolvedValue({userId:'teacher',orgId:'org'});mocks.execute.mockResolvedValue({});});
 describe('negociación HTTP del estudio',()=>{
   it.each([[undefined,0],['1',1],['99',0]] as const)('negocia por cabecera sin añadir campos al JSON: %s',async(version,expected)=>{
-    expect((await POST(request(version))).status).toBe(200);expect(mocks.execute).toHaveBeenCalledWith(expect.objectContaining({userId:'teacher'}),session,{type:'snapshot'},expected);
+    expect((await POST(request(version))).status).toBe(200);expect(mocks.execute).toHaveBeenCalledWith(expect.objectContaining({userId:'teacher'}),session,{type:'snapshot'},expected,0,0);
   });
   it('sigue denegando acceso no autenticado o sin membresía',async()=>{
     expect((await POST(request('1',input,''))).status).toBe(401);expect(mocks.execute).not.toHaveBeenCalled();mocks.actor.mockRejectedValueOnce(new LiveError(403,'Sin membresía'));expect((await POST(request('1'))).status).toBe(403);expect(mocks.execute).not.toHaveBeenCalled();
@@ -34,15 +34,34 @@ describe('aviso de grabación junto con negociación de participación', () => {
     expect(response.status).toBe(200);
     expect(mocks.execute).toHaveBeenCalledWith(expect.objectContaining({ userId: 'teacher' }), session, {
       type: 'zoom', recording_notice_version: version === String(STUDIO_RECORDING_NOTICE_VERSION) ? STUDIO_RECORDING_NOTICE_VERSION : undefined,
-    }, 0);
+    }, 0, 0, 0);
     expect(response.headers.get('Referrer-Policy')).toBe('no-referrer');
   });
   it('conserva ambas cabeceras y no acepta el aviso enviado sólo en el cuerpo', async () => {
     const body = { ...input, operation: { type: 'zoom', recording_notice_version: STUDIO_RECORDING_NOTICE_VERSION } };
     await POST(request('1', body));
-    expect(mocks.execute).toHaveBeenLastCalledWith(expect.anything(), session, { type: 'zoom', recording_notice_version: undefined }, 1);
+    expect(mocks.execute).toHaveBeenLastCalledWith(expect.anything(), session, { type: 'zoom', recording_notice_version: undefined }, 1, 0, 0);
     const req = request('1', body); req.headers.set(STUDIO_RECORDING_NOTICE_HEADER, String(STUDIO_RECORDING_NOTICE_VERSION));
     await POST(req);
-    expect(mocks.execute).toHaveBeenLastCalledWith(expect.anything(), session, { type: 'zoom', recording_notice_version: STUDIO_RECORDING_NOTICE_VERSION }, 1);
+    expect(mocks.execute).toHaveBeenLastCalledWith(expect.anything(), session, { type: 'zoom', recording_notice_version: STUDIO_RECORDING_NOTICE_VERSION }, 1, 0, 0);
+  });
+});
+
+describe('preparación por cabecera', () => {
+  it('activa lectura de preparación con identidad verificada', async () => {
+    const req = request('1');
+    req.headers.set('X-Soflia-Studio-Preparation', '1');
+    expect((await POST(req)).status).toBe(200);
+    expect(mocks.execute).toHaveBeenCalledWith(expect.objectContaining({userId:'teacher'}), session, {type:'snapshot'}, 1, 1, 0);
+  });
+});
+
+describe('documentos negociados por HTTP', () => {
+  it('negocia documentos con la identidad verificada y la preparación', async () => {
+    const req = request('1');
+    req.headers.set('X-Soflia-Studio-Preparation', '1');
+    req.headers.set('X-Soflia-Studio-Documents', '1');
+    expect((await POST(req)).status).toBe(200);
+    expect(mocks.execute).toHaveBeenCalledWith(expect.objectContaining({userId:'teacher'}), session, {type:'snapshot'}, 1, 1, 1);
   });
 });

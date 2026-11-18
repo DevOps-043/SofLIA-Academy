@@ -19,7 +19,7 @@ export async function hubActorContext(userId: string, orgSlug: string) {
 }
 
 /** Acota bytes reales incluso sin Content-Length; no acepta streams ilimitados. */
-export async function readWorkspaceBody(request: Request): Promise<unknown> {
+export async function readWorkspaceBody(request: Request, maxBytes = 32768): Promise<unknown> {
   const reader = request.body?.getReader();
   if (!reader) throw new LiveError(400, 'Falta el cuerpo de la solicitud');
   const chunks: Uint8Array[] = [];
@@ -28,7 +28,7 @@ export async function readWorkspaceBody(request: Request): Promise<unknown> {
     for (let chunk = await reader.read(); !chunk.done; chunk = await reader.read()) {
       const value = chunk.value;
       length += value.byteLength;
-      if (length > 32768) { await reader.cancel(); throw new LiveError(413, 'La solicitud supera el límite del aula'); }
+      if (length > maxBytes) { await reader.cancel(); throw new LiveError(413, 'La solicitud supera el límite del aula'); }
       chunks.push(value);
     }
   } finally { reader.releaseLock(); }

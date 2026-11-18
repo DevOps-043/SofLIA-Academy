@@ -1,4 +1,5 @@
-import { engineSessionManifestSchema } from './engine-preparation.contract';
+import { publishedSessionDocumentSchema } from './engine-session-documents.contract';
+import { engineConductionSchema, engineSessionManifestSchema } from './engine-preparation.contract';
 export { engineSessionManifestSchema } from './engine-preparation.contract';
 import { z } from 'zod';
 import { recordingOperationSchema,recordingResponseSchema,recordingSnapshotSchema } from './recordings/contract';
@@ -14,6 +15,7 @@ const practice = z.object({ id, title: text(160), instructions: text(2000) }).st
 export const studioClockSchema = z.object({ mode: z.enum(['timer', 'stopwatch']), seconds: z.number().int().min(0).max(86400), running: z.boolean(), updated_at: z.string().datetime() }).strict();
 export const studioReactionSchema=z.enum(['👏','👍','💡','❤️','🎉','😂']);
 export const studioCommandSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('publish_document'), document_id: text(200), published: z.boolean() }).strict(),
   z.object({type:z.literal('reaction'),emoji:studioReactionSchema,room_id:id.nullable()}).strict(),
   z.object({type:z.literal('chat_interval'),seconds:z.number().int().min(0).max(300)}).strict(),
   z.object({ type: z.literal('post'), content: text(2000), question: z.boolean(), room_id: id.nullable() }).strict(),
@@ -49,6 +51,9 @@ export const studioOperationSchema = z.discriminatedUnion('type', [
 export const studioRequestSchema = studioReferenceSchema.extend({ operation: studioOperationSchema, participation_version:z.literal(1).optional() }).strict();
 export const studioStateSchema = z.object({
   version: z.literal(1), revision: z.number().int().nonnegative(), engine_revision: z.string().max(100).nullable(),
+  engine_preparation: engineConductionSchema.optional(),
+  engine_payload_hash: z.string().regex(/^[a-f0-9]{64}$/).optional(),
+  published_document_ids: z.array(text(200)).max(14).optional(),
   moderation: z.object({ locked: z.boolean(), reactions: z.boolean(), message_interval_seconds:z.number().int().min(0).max(300).default(0), restrictions: z.record(id, z.enum(['chat', 'blocked'])) }).strict(),
   reaction_events:z.array(z.object({id,user_id:id,author:text(160),emoji:studioReactionSchema,room_id:id.nullable(),created_at:z.string().datetime()}).strict()).max(100).default([]),
   participation:z.record(id,z.object({last_message_at:z.string().datetime().optional(),last_reaction_at:z.string().datetime().optional()}).strict()).refine(items=>Object.keys(items).length<=5000).default({}),
@@ -67,7 +72,8 @@ export type StudioState = z.infer<typeof studioStateSchema>;
 export const studioSnapshotSchema = z.object({
   participation_version:z.literal(1).optional(),
   session_id: id, user_id: id, can_manage: z.boolean(), title: text(160), server_time: z.string().datetime(),
-  state: studioStateSchema.omit({ quizzes: true }).extend({ quizzes: z.array(quizBase.omit({ correct: true }).extend({ correct: z.number().int().min(0).max(5).optional() })).max(20) }),
+  state: studioStateSchema.omit({ published_document_ids: true, quizzes: true }).extend({ quizzes: z.array(quizBase.omit({ correct: true }).extend({ correct: z.number().int().min(0).max(5).optional() })).max(20) }),
+  published_documents: z.array(publishedSessionDocumentSchema).max(14).optional(),
   asset_urls: z.record(z.string(), z.string().url().max(4096)),
 }).strict();
 export type StudioSnapshot = z.infer<typeof studioSnapshotSchema>;

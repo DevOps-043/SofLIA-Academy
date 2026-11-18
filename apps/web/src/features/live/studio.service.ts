@@ -2,7 +2,7 @@ import 'server-only';
 import { createHash, randomUUID } from 'node:crypto';
 import type { Json } from '@/lib/supabase/types';
 import { checked, liveSession, liveActorContext, LiveError, type LiveContext } from './server';
-import { applyStudioCommand, emptyStudioState, projectStudioState, StudioDomainError, type StudioActor } from './live-studio-domain';
+import { applyStudioCommand, emptyStudioState, projectStudioState, projectPublishedDocuments, StudioDomainError, type StudioActor } from './live-studio-domain';
 import { studioResponseSchema, studioStateSchema, type studioOperationSchema } from './live-studio.contract';
 import type { z } from 'zod';
 import { createZoomStudioJoin } from './studio-zoom.server';
@@ -18,7 +18,7 @@ async function revalidateStudioAccess(context: LiveContext, sessionId: string) {
   return liveSession(fresh, sessionId);
 }
 
-export async function executeStudio(context: LiveContext, sessionId: string, operation: z.infer<typeof studioOperationSchema>, participationVersion:0|1=0) {
+export async function executeStudio(context: LiveContext, sessionId: string, operation: z.infer<typeof studioOperationSchema>, participationVersion:0|1=0, preparationVersion:0|1=0, documentsVersion:0|1=0) {
   if(participationVersion!==1&&operation.type==='command'&&['reaction','chat_interval'].includes(operation.command.type))throw new LiveError(409,'Actualiza Hub para usar los controles de participación.');
   if(operation.type==='recordings')return recordingOperation(context,sessionId,operation.operation);
   const { session, canManage } = await liveSession(context, sessionId);
@@ -47,9 +47,15 @@ export async function executeStudio(context: LiveContext, sessionId: string, ope
   let next = state;
   if (operation.type === 'command') {
     const hash = createHash('sha256').update(JSON.stringify(operation.command)).digest('hex');
+    if (operation.command.type === 'import_engine' && state.engine_revision === operation.command.manifest.revision &&
+      state.engine_payload_hash && state.engine_payload_hash !== hash) {
+      throw new LiveError(409, 'La revisión de preparación ya fue recibida con otro contenido.');
+    }
+    const alreadyDelivered = operation.command.type === 'import_engine' &&
+      state.engine_revision === operation.command.manifest.revision && state.engine_payload_hash === hash;
     const duplicate = checked(await context.db.from('live_studio_commands').select('payload_hash').eq('session_id', sessionId).eq('user_id', context.userId).eq('id', operation.id).maybeSingle());
     if (duplicate && duplicate.payload_hash !== hash) throw new LiveError(409, 'El identificador de operación ya fue utilizado');
-    if (!duplicate) {
+    if (!duplicate && !alreadyDelivered) {
       // SQL fusiona presencia sobre el estado vigente bajo bloqueo, sin perder otros actores.
       if (operation.command.type !== 'presence' && operation.revision !== state.revision) throw new LiveError(409, 'El estado cambió. Actualiza antes de repetir la acción');
       try { next = applyStudioCommand(state, operation.command, actor, operation.id, new Date().toISOString(), randomUUID); }
@@ -57,6 +63,7 @@ export async function executeStudio(context: LiveContext, sessionId: string, ope
         if (error instanceof StudioDomainError) throw new LiveError(error.code === 'forbidden' ? 403 : error.code === 'closed' ? 409 : error.code === 'rate_limited' ? 429 : 400, error.message);
         throw error;
       }
+      if (operation.command.type === 'import_engine') next.engine_payload_hash = hash;
       await verifyStudioAssets(context, sessionId, state, next);
       const committed = await context.db.rpc('live_studio_commit', { p_org: context.orgId, p_user: context.userId, p_session: sessionId, p_id: operation.id, p_hash: hash, p_expected: operation.revision, p_type: operation.command.type, p_state: next as unknown as Json });
       if (committed.error) {
@@ -85,5 +92,6 @@ export async function executeStudio(context: LiveContext, sessionId: string, ope
   // Revalidar membresía tras llamadas al proveedor antes de entregar contenido.
   const finalAccess = await revalidateStudioAccess(context, sessionId);
   if (finalAccess.canManage !== canManage) throw new LiveError(403, 'Los permisos de la sesión cambiaron');
-  return projectStudioResponse(studioResponseSchema.parse({ snapshot: { session_id: sessionId, user_id: actor.id, can_manage: actor.canManage, title: session.title, server_time: now, state: visible, asset_urls } }), participationVersion === 1);
+  const published_documents = projectPublishedDocuments(next);
+  return projectStudioResponse(studioResponseSchema.parse({ snapshot: { session_id: sessionId, user_id: actor.id, can_manage: actor.canManage, title: session.title, server_time: now, state: visible, asset_urls, published_documents } }), participationVersion === 1, preparationVersion === 1, documentsVersion === 1);
 }

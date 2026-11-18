@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LiveError } from '../errors';
@@ -69,5 +70,37 @@ describe('fronteras del estudio en Learning', () => {
     await expect(purgeStudioAssets(ctx.db)).rejects.toThrow(); expect(from).not.toHaveBeenCalled();
     expect(await purgeStudioAssets(ctx.db)).toBe(1); expect(confirm).toHaveBeenCalledWith('status','purging');
     expect(remove.mock.invocationCallOrder[1]).toBeLessThan(confirm.mock.invocationCallOrder[0]);
+  });
+});
+
+describe('identidad inmutable de preparación', () => {
+  it('rechaza otra carga con la misma revisión antes de escribir', async () => {
+    const state = { ...emptyStudioState(), engine_revision: 'engine:origen:sesion:1', engine_payload_hash: 'a'.repeat(64) };
+    const rpc = vi.fn();
+    const ctx = context({ rpc, from: (table: string) => {
+      const chain = { select: () => chain, eq: () => chain, single: async () => ({ data: {display_name:'Docente'}, error:null }), maybeSingle: async () => ({ data: table === 'live_studio_state' ? {state} : null, error:null }) };
+      return chain;
+    } });
+    mocks.liveSession.mockResolvedValue({ session: {id:session, course_id:org, status:'scheduled', title:'Clase'}, canManage:true });
+    await expect(executeStudio(ctx, session, {type:'command', id:user, revision:0, command:{type:'import_engine',manifest:{version:1,course_id:org,revision:state.engine_revision,scenes:[],materials:[],quizzes:[],practices:[]}}},1)).rejects.toThrow('otro contenido');
+    expect(rpc).not.toHaveBeenCalled();
+  });
+});
+
+describe('reenvío de preparación ya aplicada', () => {
+  it('confirma la misma huella sin volver a importar ni escribir', async () => {
+    const manifest = {version:1 as const,course_id:org,revision:'engine:curso:sesion:2',scenes:[],materials:[],quizzes:[],practices:[]};
+    const command = {type:'import_engine' as const,manifest};
+    const state = {...emptyStudioState(),revision:2,engine_revision:manifest.revision,engine_payload_hash:createHash('sha256').update(JSON.stringify(command)).digest('hex')};
+    const rpc = vi.fn();
+    const ctx=context({rpc,from:(table:string)=>{
+      const chain={select:()=>chain,eq:()=>chain,single:async()=>({data:{display_name:'Docente'},error:null}),maybeSingle:async()=>({data:table==='live_studio_state'?{state}:table==='organizations'?{is_active:true}:null,error:null})};
+      return chain;
+    }});
+    mocks.liveSession.mockResolvedValue({session:{id:session,course_id:org,status:'scheduled',title:'Clase'},canManage:true});
+    mocks.liveActorContext.mockResolvedValue(ctx);
+    const response=await executeStudio(ctx,session,{type:'command',id:user,revision:0,command},1,1,1);
+    expect(response.snapshot?.state.revision).toBe(2);
+    expect(rpc).not.toHaveBeenCalled();
   });
 });
