@@ -46,7 +46,7 @@ export function resolvePrefetchRoutes(
   if (orgSlug) {
     const orgBaseRoutes = [
       `/${orgSlug}/business-user/dashboard`,
-      `/${orgSlug}/business-panel/dashboard`,
+      `/${orgSlug}/business-panel/reviews`,
       `/${orgSlug}/profile`,
       '/certificates',
     ]
@@ -54,20 +54,12 @@ export function resolvePrefetchRoutes(
     if (pathname.includes(`/${orgSlug}/business-user`)) {
       routes = [
         `/${orgSlug}/business-user/analytics`,
-        `/${orgSlug}/business-panel/dashboard`,
+        `/${orgSlug}/business-panel/reviews`,
         `/${orgSlug}/profile`,
         '/certificates',
       ]
-    } else if (pathname.includes(`/${orgSlug}/business-panel/courses`)) {
-      routes = [
-        `/${orgSlug}/business-panel/dashboard`,
-        `/${orgSlug}/business-panel/users`,
-        `/${orgSlug}/profile`,
-      ]
     } else if (pathname.includes(`/${orgSlug}/business-panel`)) {
       routes = [
-        `/${orgSlug}/business-panel/courses`,
-        `/${orgSlug}/business-panel/users`,
         `/${orgSlug}/business-user/dashboard`,
         `/${orgSlug}/profile`,
       ]

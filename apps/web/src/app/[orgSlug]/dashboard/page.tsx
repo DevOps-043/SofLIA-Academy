@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { SessionService } from '@/features/auth/services/session.service';
+import { getOrganizationDashboardPath } from '@/core/utils/organizationNavigation';
 
 interface DashboardPageProps {
   params: Promise<{ orgSlug: string }>;
@@ -10,7 +11,7 @@ interface DashboardPageProps {
  * Organization Dashboard Page
  *
  * This page redirects users to the appropriate dashboard based on their role:
- * - owner/admin -> business-panel/dashboard (admin panel)
+ * - owner/admin -> business-panel/reviews
  * - member -> business-user/dashboard (user dashboard)
  */
 export default async function OrganizationDashboardPage({ params }: DashboardPageProps) {
@@ -64,11 +65,5 @@ export default async function OrganizationDashboardPage({ params }: DashboardPag
   // Platform admins default to business panel
   const role = isPlatformAdmin ? 'admin' : membership?.role;
 
-  if (role === 'owner' || role === 'admin') {
-    // Admins go to the business panel
-    redirect(`/${orgSlug}/business-panel/dashboard`);
-  } else {
-    // Members go to the business user dashboard
-    redirect(`/${orgSlug}/business-user/dashboard`);
-  }
+  redirect(getOrganizationDashboardPath({ slug: orgSlug, role }));
 }

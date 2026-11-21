@@ -5,6 +5,7 @@ import { checked, LiveError } from "../errors";
 import type { LiveCatalog } from "../types";
 const catalogQuerySchema = z.object({
   view: z.enum(["instructor", "student"]).default("student"),
+  scope: z.literal("mine").optional(),
   instructor: z.string().uuid().optional(),
   page: z.coerce.number().int().min(0).max(100000).default(0),
   coursePage: z.coerce.number().int().min(0).max(100000).default(0),
@@ -18,6 +19,7 @@ export async function listLiveCatalog(
 ): Promise<LiveCatalog> {
   const query = catalogQuerySchema.parse(Object.fromEntries(parameters));
   const teaching = query.view === "instructor";
+  const ownWorkspace = teaching && query.scope === "mine";
   if (teaching && !context.canTeach)
     throw new LiveError(403, "Necesitas el rol de instructor");
   const payload = checked(
@@ -25,7 +27,7 @@ export async function listLiveCatalog(
       p_org: context.orgId,
       p_user: context.userId,
       p_teaching: teaching,
-      ...(query.instructor && context.isAdmin
+      ...(ownWorkspace ? { p_instructor: context.userId } : query.instructor && context.isAdmin
         ? { p_instructor: query.instructor }
         : {}),
       p_offset: query.page * SESSION_PAGE_SIZE,
@@ -43,6 +45,7 @@ export async function listLiveCatalog(
   >;
   return {
     ...catalog,
+    ...(ownWorkspace ? { instructors: [], instructorTotal: 0 } : {}),
     userId: context.userId,
     isAdmin: context.isAdmin,
     canTeach: context.canTeach,

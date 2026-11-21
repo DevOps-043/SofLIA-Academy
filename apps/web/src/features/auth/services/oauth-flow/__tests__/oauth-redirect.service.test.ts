@@ -51,10 +51,10 @@ describe('oauth-redirect.service', () => {
 
   it('builds business-panel routes for owner and admin roles', () => {
     expect(buildBusinessDashboardDestination('acme', 'owner')).toBe(
-      '/acme/business-panel/dashboard'
+      '/acme/business-panel/reviews'
     );
     expect(buildBusinessDashboardDestination('acme', 'admin')).toBe(
-      '/acme/business-panel/dashboard'
+      '/acme/business-panel/reviews'
     );
   });
 
@@ -98,7 +98,7 @@ describe('oauth-redirect.service', () => {
         }),
         'user-1'
       )
-    ).resolves.toBe('/acme/business-panel/dashboard');
+    ).resolves.toBe('/acme/business-panel/reviews');
   });
 
   it('sends business users with multiple active organizations to the selector', async () => {

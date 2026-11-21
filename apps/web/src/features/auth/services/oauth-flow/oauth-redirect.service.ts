@@ -1,4 +1,5 @@
 import type { SupabaseServerClient } from './oauth-flow.types';
+import { getOrganizationDashboardPath } from '@/core/utils/organizationNavigation';
 
 interface UserRoleRow {
   platform_role?: string | null;
@@ -27,11 +28,7 @@ export function buildBusinessDashboardDestination(
   organizationSlug: string,
   organizationRole?: string | null
 ): string {
-  if (organizationRole === 'owner' || organizationRole === 'admin') {
-    return `/${organizationSlug}/business-panel/dashboard`;
-  }
-
-  return `/${organizationSlug}/business-user/dashboard`;
+  return getOrganizationDashboardPath({ slug: organizationSlug, role: organizationRole });
 }
 
 function extractOrganizationSlug(organization: unknown): string | undefined {

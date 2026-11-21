@@ -9,10 +9,10 @@ import {
 describe('organizationNavigation', () => {
   it('routes owners and admins to the business panel dashboard', () => {
     expect(getOrganizationDashboardPath({ slug: 'acme', role: 'owner' })).toBe(
-      '/acme/business-panel/dashboard',
+      '/acme/business-panel/reviews',
     );
     expect(getOrganizationDashboardPath({ slug: 'acme', role: 'admin' })).toBe(
-      '/acme/business-panel/dashboard',
+      '/acme/business-panel/reviews',
     );
   });
 

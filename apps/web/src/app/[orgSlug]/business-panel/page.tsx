@@ -6,5 +6,5 @@ interface Props {
 
 export default async function BusinessPanelRootPage({ params }: Props) {
   const { orgSlug } = await params
-  redirect(`/${orgSlug}/business-panel/dashboard`)
+  redirect(`/${orgSlug}/business-panel/reviews`)
 }

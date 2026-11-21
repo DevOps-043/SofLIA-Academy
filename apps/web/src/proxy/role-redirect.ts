@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { getOrganizationDashboardPath } from '@/core/utils/organizationNavigation'
 
 export interface BusinessOrganizationRedirectTarget {
   role?: string | null
@@ -17,12 +18,8 @@ export function redirectByNormalizedRole(
       return NextResponse.redirect(new URL('/auth/select-organization', request.url))
     }
 
-    const panelSegment = isOrganizationAdminRole(organization.role)
-      ? 'business-panel'
-      : 'business-user'
-
     return NextResponse.redirect(
-      new URL(`/${organization.slug}/${panelSegment}/dashboard`, request.url),
+      new URL(getOrganizationDashboardPath({ slug: organization.slug, role: organization.role }), request.url),
     )
   }
   return NextResponse.redirect(new URL('/dashboard', request.url))
@@ -30,8 +27,4 @@ export function redirectByNormalizedRole(
 
 export function normalizeRole(role: string | null | undefined) {
   return role?.toLowerCase().trim()
-}
-
-function isOrganizationAdminRole(role: string | null | undefined) {
-  return role === 'owner' || role === 'admin'
 }

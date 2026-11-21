@@ -19,9 +19,11 @@ import { buildHubSessionLink } from "./hub-link";
 export function SessionCard({
   session,
   orgSlug,
+  detailsHref,
 }: {
   session: LiveSession;
   orgSlug: string;
+  detailsHref?: string;
 }) {
   return (
     <article className={`${styles.panel} ${styles.card}`}>
@@ -49,7 +51,7 @@ export function SessionCard({
           </a>
         )}
       </div>
-      <Link className={styles.muted} href={`/${orgSlug}/live/${session.id}`}>Ver detalles</Link>
+      <Link className={styles.muted} href={detailsHref ?? `/${orgSlug}/live/${session.id}`}>Ver detalles</Link>
     </article>
   );
 }

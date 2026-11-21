@@ -48,6 +48,7 @@ import {
   applyProxyRateLimits,
 } from './proxy/rate-limits'
 import { createAdminClient } from './lib/supabase/admin'
+import { isCalendarOAuthState } from './features/instructor/calendar-oauth-state'
 import {
   buildEnforcedContentSecurityPolicy,
   createContentSecurityPolicyNonce,
@@ -388,9 +389,22 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
       }
     }
 
-    // console.log('✅ Validación de rol exitosa');
+    if (isOrgScopedBizPanel && pathParts[2] !== 'reviews') {
+      return complete(NextResponse.redirect(new URL(`/${pathParts[0]}/business-panel/reviews`, request.url)));
+    }
   }
   
+  // Outlook reutiliza la URL registrada para iniciar sesión. El callback de
+  // calendario valida su cookie, el proveedor y la sesión activa.
+  if (pathname === '/auth/oauth/microsoft/callback'
+    && isCalendarOAuthState(request.nextUrl.searchParams.get('state'))) {
+    const destination = request.nextUrl.clone();
+    destination.pathname = '/api/instructor-calendar/microsoft';
+    const rewritten = NextResponse.rewrite(destination);
+    for (const cookie of response.cookies.getAll()) rewritten.cookies.set(cookie);
+    return complete(rewritten);
+  }
+
   // Si es una ruta de auth y hay sesión válida, redirigir al dashboard.
   // Excluir /auth/select-organization: usuarios autenticados con múltiples orgs
   // necesitan acceder a esta página para elegir su contexto activo.

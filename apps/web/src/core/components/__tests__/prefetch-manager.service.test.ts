@@ -14,16 +14,14 @@ describe('prefetch-manager.service', () => {
   it('prefetches org-scoped routes for business user dashboards', () => {
     expect(resolvePrefetchRoutes('/acme/business-user/dashboard')).toEqual([
       '/acme/business-user/analytics',
-      '/acme/business-panel/dashboard',
+      '/acme/business-panel/reviews',
       '/acme/profile',
       '/certificates',
     ])
   })
 
-  it('prefetches business-panel routes and the user dashboard for panel switching', () => {
-    expect(resolvePrefetchRoutes('/acme/business-panel/dashboard')).toEqual([
-      '/acme/business-panel/courses',
-      '/acme/business-panel/users',
+  it('prefetches the user dashboard and profile from course reviews', () => {
+    expect(resolvePrefetchRoutes('/acme/business-panel/reviews')).toEqual([
       '/acme/business-user/dashboard',
       '/acme/profile',
     ])
@@ -31,13 +29,13 @@ describe('prefetch-manager.service', () => {
 
   it('limits prefetch on constrained devices', () => {
     expect(
-      resolvePrefetchRoutes('/acme/business-panel/dashboard', {
+      resolvePrefetchRoutes('/acme/business-user/dashboard', {
         conserveResources: true,
       }),
     ).toEqual([
-      '/acme/business-panel/courses',
-      '/acme/business-panel/users',
-      '/acme/business-user/dashboard',
+      '/acme/business-user/analytics',
+      '/acme/business-panel/reviews',
+      '/acme/profile',
     ])
   })
 

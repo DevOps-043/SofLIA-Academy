@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/utils/logger';
 import { handleGoogleCallback } from '@/features/auth/actions/oauth';
 import { buildDesktopHandoffResponse } from '@/lib/auth/desktop-sso-handoff';
+import { isCalendarOAuthState } from '@/features/instructor/calendar-oauth-state';
+import { completeCalendarOAuth } from '@/features/instructor/calendar-callback.server';
 
 function getRedirectDigest(error: unknown): string | null {
   if (!error || typeof error !== 'object' || !('digest' in error)) {
@@ -18,6 +20,10 @@ function getRedirectDigest(error: unknown): string | null {
  * Maneja el callback de Google OAuth después de la autorización
  */
 export async function GET(request: NextRequest) {
+  if (isCalendarOAuthState(request.nextUrl.searchParams.get('state'))) {
+    return completeCalendarOAuth(request, 'google');
+  }
+
   try {
     const searchParams = request.nextUrl.searchParams;
 

@@ -8,6 +8,8 @@
 }
 
 .bar {
+  --org-nav-bg: rgb(255 255 255 / 0.92);
+  --org-nav-text: var(--color-contrast);
   position: relative;
   width: min(100%, var(--org-nav-max-width, 76rem));
   min-height: 4rem;
@@ -26,6 +28,10 @@
     inset 0 1px 0 rgb(255 255 255 / 0.08);
   backdrop-filter: blur(1.4rem) saturate(125%);
   pointer-events: auto;
+}
+
+:global(.dark) .bar {
+  --org-nav-bg: var(--org-nav-dark-bg, rgb(15 20 25 / 0.88));
 }
 
 .bar::after {

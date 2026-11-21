@@ -10,11 +10,9 @@ export function isOrganizationAdminRole(role: OrganizationRouteRole): boolean {
 }
 
 export function getOrganizationDashboardPath(organization: OrganizationRouteTarget): string {
-  const panelSegment = isOrganizationAdminRole(organization.role)
-    ? 'business-panel'
-    : 'business-user';
-
-  return `/${organization.slug}/${panelSegment}/dashboard`;
+  return isOrganizationAdminRole(organization.role)
+    ? `/${organization.slug}/business-panel/reviews`
+    : getOrganizationUserDashboardPath(organization.slug);
 }
 
 export function getOrganizationUserDashboardPath(organizationSlug: string): string {

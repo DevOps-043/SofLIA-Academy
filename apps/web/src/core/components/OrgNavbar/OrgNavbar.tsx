@@ -1,11 +1,10 @@
 'use client'
 
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { Building2 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useOrganizationStore, useCurrentOrganizationSlug } from '@/core/stores/organizationStore'
-import { useThemeStore } from '@/core/stores/themeStore'
 import { darkenHexColor, hexToRgbChannels } from '@/core/theme/color-engine'
 import { resolveOrganizationBrandColors } from '@/core/theme/organization-brand-colors'
 import { NotificationBell } from '../NotificationBell'
@@ -21,13 +20,11 @@ import styles from './OrgNavbar.module.css'
  *   sidebar_background = darkenHexColor(primary, 0.60)
  * so the navbar color matches the dashboard's ModernNavbar exactly.
  */
-export function OrgNavbar() {
+export function OrgNavbar({ leadingAction }: { leadingAction?: ReactNode } = {}) {
   const router = useRouter()
-  const { resolvedTheme } = useThemeStore()
   const org = useOrganizationStore((s) => s.currentOrganization)
   const orgSlug = useCurrentOrganizationSlug()
 
-  const isDark = resolvedTheme !== 'light'
   // Gateado por brandingEnabled: con el branding apagado la navbar usa la
   // paleta de plataforma aunque la org conserve sus colores en la BD.
   const brand = resolveOrganizationBrandColors(org)
@@ -36,37 +33,26 @@ export function OrgNavbar() {
 
   // Derive the same sidebar_background that OrganizationLayoutClient computes from
   // generateOrganizationBrandingTheme so the navbar color matches ModernNavbar on the dashboard.
-  const hasBrandColors = brand.hasBranding
-  const sidebarHex = hasBrandColors && isDark && primary
-    ? darkenHexColor(primary, 0.60)
-    : null
-
-  let navBg: string
-  if (sidebarHex) {
-    // Convert hex → rgba with 0.95 opacity for the same glass-panel effect
-    navBg = `rgba(${hexToRgbChannels(sidebarHex)}, 0.95)`
-  } else {
-    navBg = isDark ? 'rgba(15, 20, 25, 0.88)' : 'rgba(255, 255, 255, 0.92)'
-  }
-
-  const textColor = isDark ? 'var(--color-bg-light)' : 'var(--color-contrast)'
+  const darkNavBg = primary
+    ? `rgba(${hexToRgbChannels(darkenHexColor(primary, 0.60))}, 0.95)`
+    : undefined
   const logoSrc = org?.brandLogoUrl ?? org?.logoUrl ?? null
   const primaryDisplay = primary ?? 'var(--color-primary)'
 
   return (
-    <nav className={styles.shell}>
+    <nav className={styles.shell} aria-label="Barra de la organización">
       <div
         className={styles.bar}
         style={{
-          '--org-nav-bg': navBg,
+          '--org-nav-dark-bg': darkNavBg,
           '--org-nav-accent': accent,
           '--org-nav-primary': primaryDisplay,
-          '--org-nav-text': textColor,
         } as CSSProperties}
       >
       <div className={styles.inner}>
         {/* Brand — org logo + name */}
         <div className={styles.brand}>
+          {leadingAction}
           <div className={styles.mark}>
             {logoSrc ? (
               <Image
@@ -90,9 +76,9 @@ export function OrgNavbar() {
           </div>
 
           {org?.showNavbarName !== false && org?.name && (
-            <h1 className={styles.name}>
+            <span className={styles.name}>
               {org.name}
-            </h1>
+            </span>
           )}
         </div>
 

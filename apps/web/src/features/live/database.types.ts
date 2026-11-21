@@ -8,6 +8,10 @@ type Table<R> = {
   Relationships: [];
 };
 type LiveTables = {
+  instructor_calendar_connections: Table<{
+    user_id: string; provider: string; encrypted_tokens: string; updated_at: string;
+  }>;
+  instructor_calendar_events: Table<{ session_id: string; provider: string; remote_id: string | null }>;
   live_video_credentials: Table<{ session_id: string; session_name: string; remote_id: string; password: string; account_id: string }>;
   live_studio_assets: Table<{ path: string; session_id: string | null; status: 'staged' | 'attached' | 'purging'; created_at: string }>;
   live_studio_state: Table<{ session_id: string; revision: number; state: Json; updated_at: string }>;
@@ -69,6 +73,28 @@ type LiveTables = {
   }>;
 };
 type LiveFunctions = {
+  instructor_course_learner_metrics: {
+    Args: { p_org: string; p_user: string; p_course: string; p_learners: string[] };
+    Returns: {
+      user_id: string; lessons_completed: number; minutes_spent: number; activities_completed: number;
+      sessions_attended: number; last_accessed_at: string | null;
+    }[];
+  };
+  instructor_session_attendee_emails: {
+    Args: { p_org: string; p_user: string; p_session: string };
+    Returns: string[];
+  };
+  create_instructor_learning_path: {
+    Args: { p_org: string; p_user: string; p_id: string; p_title: string; p_description: string; p_courses: string[] };
+    Returns: string;
+  };
+  notify_instructor_course: {
+    Args: {
+      p_org: string; p_user: string; p_course: string; p_request: string; p_kind: string;
+      p_title: string; p_message: string; p_url: string; p_learner?: string;
+    };
+    Returns: number;
+  };
   live_finalize_video_session: { Args: { p_request: string; p_session: Json; p_remote: string; p_password: string; p_account: string }; Returns: LiveSession };
   live_studio_claim_asset_gc: { Args: { p_limit: number }; Returns: string[] };
   live_studio_purge: { Args: Record<string, never>; Returns: undefined };

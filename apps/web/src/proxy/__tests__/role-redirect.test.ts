@@ -11,7 +11,7 @@ describe('redirectByNormalizedRole', () => {
     )
 
     expect(response.headers.get('location')).toBe(
-      'https://soflia.test/acme/business-panel/dashboard',
+      'https://soflia.test/acme/business-panel/reviews',
     )
   })
 

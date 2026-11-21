@@ -34,18 +34,14 @@ function BusinessPanelLayoutInner({ children }: BusinessPanelLayoutProps) {
   const { styles, effectiveStyles, loading: stylesLoading } =
     useOrganizationStylesContext()
 
-  // Client-side fallback: redirect root /[orgSlug]/business-panel to /dashboard.
-  // The server page.tsx also does this redirect, but during client navigation the RSC
-  // redirect instruction can leave the children slot empty briefly (visible as a black
-  // area). This useEffect catches that case and ensures a smooth redirect every time.
+  const [orgSlug, panelSegment, section] = (pathname ?? '').split('/').filter(Boolean)
+  const reviewsPath = panelSegment === 'business-panel' && section !== 'reviews'
+    ? `/${orgSlug}/business-panel/reviews`
+    : null
+
   useEffect(() => {
-    if (!pathname) return
-    const segments = pathname.split('/').filter(Boolean)
-    // e.g. ['valora-it', 'business-panel']
-    if (segments.length === 2 && segments[1] === 'business-panel') {
-      router.replace(`/${segments[0]}/business-panel/dashboard`)
-    }
-  }, [pathname, router])
+    if (reviewsPath) router.replace(reviewsPath)
+  }, [reviewsPath, router])
 
   const [isMounted, setIsMounted] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -191,7 +187,7 @@ function BusinessPanelLayoutInner({ children }: BusinessPanelLayoutProps) {
     return <AuthUnavailableScreen onRetry={() => void refreshUser()} />
   }
 
-  if (isLoading || stylesLoading) {
+  if (isLoading || stylesLoading || reviewsPath) {
     return <PremiumLoadingScreen />
   }
 
